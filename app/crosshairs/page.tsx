@@ -5,21 +5,43 @@ import { Crosshair } from '@/types';
 import { CrosshairForm } from '@/components/crosshairs/CrosshairForm';
 import { CrosshairList } from '@/components/crosshairs/CrosshairList';
 
-export default function CrosshairsPage() {
-  const [crosshairs, setCrosshairs] = useState<Crosshair[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+const DEFAULT_CROSSHAIRS: Crosshair[] = [
+  {
+    id: '1',
+    name: 'Huasopeek (cruz cerrada)',
+    code: 'CSGO-yHtOW-SswFo-Ypfyr-2pswm-zL3ED',
+    description: 'Cruz cerrada clásica para duelos crisp y referencias limpias',
+    team: 'Both',
+    createdAt: new Date('2026-05-28T10:00:00'),
+  },
+  {
+    id: '2',
+    name: 'Ropz (cruz 16:9 o BB)',
+    code: 'CSGO-5UHEt-3RFCY-4Nu8t-4UYGQ-vJN2G',
+    description: 'Cruz proporcional 16:9, perfecta para juego versátil',
+    team: 'Both',
+    createdAt: new Date('2026-05-28T10:05:00'),
+  },
+];
 
-  // Cargar miras del localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('crosshairs');
-    if (saved) {
-      try {
-        setCrosshairs(JSON.parse(saved));
-      } catch (e) {
-        console.error('Error al cargar miras:', e);
-      }
+function getInitialCrosshairs(): Crosshair[] {
+  if (typeof window === 'undefined') return DEFAULT_CROSSHAIRS;
+  const saved = localStorage.getItem('crosshairs');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed.length > 0 ? parsed : DEFAULT_CROSSHAIRS;
+    } catch (e) {
+      console.error('Error al cargar miras:', e);
+      return DEFAULT_CROSSHAIRS;
     }
-  }, []);
+  }
+  return DEFAULT_CROSSHAIRS;
+}
+
+export default function CrosshairsPage() {
+  const [crosshairs, setCrosshairs] = useState<Crosshair[]>(getInitialCrosshairs());
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Guardar en localStorage cuando cambia
   useEffect(() => {

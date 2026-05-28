@@ -4,26 +4,18 @@ const sampleStats: PlayerStats[] = [
   {
     id: '1',
     platform: 'FACEIT',
-    nickname: 'C4Sniper',
+    nickname: 'taiuuu',
     rating: 9.18,
     elo: 2540,
-    lastUpdated: new Date('2026-05-26T14:30:00'),
+    lastUpdated: new Date(),
   },
   {
     id: '2',
     platform: 'Steam',
-    nickname: 'PampaAce',
+    nickname: 'taiuuu',
     rating: 8.72,
     elo: 2240,
-    lastUpdated: new Date('2026-05-27T10:15:00'),
-  },
-  {
-    id: '3',
-    platform: 'FACEIT',
-    nickname: 'RiotStrat',
-    rating: 9.01,
-    elo: 2480,
-    lastUpdated: new Date('2026-05-27T18:12:00'),
+    lastUpdated: new Date(),
   },
 ];
 
@@ -41,18 +33,18 @@ export default function StatsPage() {
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-3xl border border-zinc-800 bg-zinc-950 p-6">
             <p className="text-sm uppercase tracking-[0.2em] text-zinc-500 mb-4">Rating promedio</p>
-            <p className="text-5xl font-semibold text-white">8.97</p>
-            <p className="text-sm text-zinc-400 mt-2">Promedio entre tus últimos matches rankeados</p>
+            <p className="text-5xl font-semibold text-white">8.95</p>
+            <p className="text-sm text-zinc-400 mt-2">Promedio entre FACEIT y partidas regulares</p>
           </div>
           <div className="rounded-3xl border border-zinc-800 bg-zinc-950 p-6">
             <p className="text-sm uppercase tracking-[0.2em] text-zinc-500 mb-4">ELO medio</p>
-            <p className="text-5xl font-semibold text-white">2420</p>
-            <p className="text-sm text-zinc-400 mt-2">Elo calculado con tus últimas partidas</p>
+            <p className="text-5xl font-semibold text-white">2390</p>
+            <p className="text-sm text-zinc-400 mt-2">Promedio ponderado de tus cuentas</p>
           </div>
           <div className="rounded-3xl border border-zinc-800 bg-zinc-950 p-6">
             <p className="text-sm uppercase tracking-[0.2em] text-zinc-500 mb-4">Actualizado</p>
-            <p className="text-4xl font-semibold text-white">Hace 2h</p>
-            <p className="text-sm text-zinc-400 mt-2">Última sincronización de datos</p>
+            <p className="text-4xl font-semibold text-white">Hoy</p>
+            <p className="text-sm text-zinc-400 mt-2">Última sincronización de datos reales</p>
           </div>
         </div>
 
