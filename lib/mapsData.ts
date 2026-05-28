@@ -4,6 +4,8 @@ export const mapsData: MapDetail[] = [
   {
     id: 'dust2',
     name: 'Dust2',
+    image: '/maps/dust2-card.svg',
+    calloutImage: '/maps/callout-bg.svg',
     description:
       'Dust 2 es un mapa A o B. Si no están en medio → están atacando una punta. Fondo es el espacio más importante de A. Oscuro bajo es el choke clave de B. Medio (Xbox/corredor) conecta ambos sites y da info crítica a los CT. Lo más importante es no morir en el default.',
     sideFavor: 'Balanced',
@@ -176,6 +178,8 @@ export const mapsData: MapDetail[] = [
   {
     id: 'mirage',
     name: 'Mirage',
+    image: '/maps/mirage-card.svg',
+    calloutImage: '/maps/callout-bg.svg',
     description:
       'Quien controla medio controla el mapa. Mid → Connector abre A; Short abre B. Los T necesitan obtener control de medio para decidir el flujo de la ronda.',
     sideFavor: 'CT-sided',
@@ -274,6 +278,8 @@ export const mapsData: MapDetail[] = [
   {
     id: 'nuke',
     name: 'Nuke',
+    image: '/maps/nuke-card.svg',
+    calloutImage: '/maps/callout-bg.svg',
     description:
       'Nuke es el mapa más CT-sided — los T deben JUGAR EN BLOQUE siempre. La clave es SEPARAR a los CT: si los CT juegan juntos, nunca entran. No morir en el default es lo MÁS IMPORTANTE en Nuke de terror.',
     sideFavor: 'CT-sided',
@@ -364,6 +370,8 @@ export const additionalMaps: MapDetail[] = [
   {
     id: 'inferno',
     name: 'Inferno',
+    image: '/maps/inferno-card.svg',
+    calloutImage: '/maps/callout-bg.svg',
     description: 'Mapa complejo con múltiples rutas. Requiere coordinación y control de información.',
     sideFavor: 'Balanced',
     callouts: {
@@ -380,6 +388,8 @@ export const additionalMaps: MapDetail[] = [
   {
     id: 'vertigo',
     name: 'Vertigo',
+    image: '/maps/vertigo-card.svg',
+    calloutImage: '/maps/callout-bg.svg',
     description: 'Mapa vertical con alturas. El control de altura es crítico para ganar.',
     sideFavor: 'CT-sided',
     callouts: {
@@ -396,6 +406,8 @@ export const additionalMaps: MapDetail[] = [
   {
     id: 'ancient',
     name: 'Ancient',
+    image: '/maps/ancient-card.svg',
+    calloutImage: '/maps/callout-bg.svg',
     description: 'Mapa arqueológico con dos sites bien diferenciados y medio conectado.',
     sideFavor: 'Balanced',
     callouts: {
@@ -412,6 +424,8 @@ export const additionalMaps: MapDetail[] = [
   {
     id: 'anubis',
     name: 'Anubis',
+    image: '/maps/anubis-card.svg',
+    calloutImage: '/maps/callout-bg.svg',
     description: 'Nuevo mapa con diseño complejo. Múltiples rutas y controlables.',
     sideFavor: 'Balanced',
     callouts: {

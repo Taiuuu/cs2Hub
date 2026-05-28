@@ -21,34 +21,24 @@ export default function MapsPage() {
         </div>
 
         {/* Grid de mapas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {allMaps.map((map) => (
             <Link
               key={map.id}
               href={`/maps/${map.id}`}
-              className="group border border-zinc-800 rounded-lg p-6 hover:border-blue-500 hover:bg-zinc-900 transition-all duration-200"
+              className="group block overflow-hidden rounded-[28px] transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl"
+              aria-label={`Ver detalles de ${map.name}`}
             >
-              {/* Nombre del mapa */}
-              <div className="flex items-start justify-between mb-4">
-                <h2 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
-                  {map.name}
-                </h2>
-                <MapPin className="w-5 h-5 text-zinc-500 group-hover:text-blue-400 transition-colors" />
-              </div>
-
-              {/* Descripción */}
-              <p className="text-sm text-zinc-400 mb-4 line-clamp-2">{map.description}</p>
-
-              {/* Favor del mapa */}
-              <div className="flex items-center gap-2">
-                <span className={`px-3 py-1 rounded text-xs font-medium ${sideColors[map.sideFavor]}`}>
-                  {map.sideFavor}
-                </span>
-                {map.strats.length > 0 && (
-                  <span className="text-xs text-zinc-500">
-                    {map.strats.length} strats
-                  </span>
-                )}
+              <div className="relative h-72 sm:h-80 bg-zinc-950">
+                <img
+                  src={map.image ?? '/maps/callout-bg.svg'}
+                  alt={`Imagen de fondo de ${map.name}`}
+                  className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105 group-hover:brightness-90"
+                />
+                <div className="absolute inset-0 bg-black/30 transition duration-300 group-hover:bg-black/40" />
+                <div className="absolute inset-x-0 bottom-0 p-6">
+                  <h2 className="text-3xl sm:text-4xl font-semibold text-white drop-shadow-lg">{map.name}</h2>
+                </div>
               </div>
             </Link>
           ))}

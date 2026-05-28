@@ -8,6 +8,7 @@ import {
   Map,
   BookOpen,
   BarChart3,
+  Target,
   Menu,
   X,
 } from 'lucide-react';
@@ -23,6 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/crosshairs', label: 'Miras', icon: <Crosshair className="w-5 h-5" /> },
   { href: '/configs', label: 'Configs', icon: <Settings className="w-5 h-5" /> },
   { href: '/maps', label: 'Mapas', icon: <Map className="w-5 h-5" /> },
+  { href: '/tactics', label: 'Tácticas', icon: <Target className="w-5 h-5" /> },
   { href: '/notes', label: 'Notas', icon: <BookOpen className="w-5 h-5" /> },
   { href: '/stats', label: 'Stats', icon: <BarChart3 className="w-5 h-5" /> },
 ];

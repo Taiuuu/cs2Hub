@@ -43,6 +43,7 @@ export interface MapDetail {
   id: string;
   name: MapName;
   image?: string; // URL de la foto del mapa
+  calloutImage?: string; // URL de la imagen del minimap para callouts
   description: string; // filosofía del mapa
   sideFavor: 'T-sided' | 'CT-sided' | 'Balanced';
   callouts: {
