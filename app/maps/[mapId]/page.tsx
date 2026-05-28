@@ -4,7 +4,7 @@ import { useState, use } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { allMaps } from '@/lib/mapsData';
-import { RoundType } from '@/types';
+import { RoundType, Tactic, TacticType } from '@/types';
 
 const roundTypeLabels: Record<RoundType, string> = {
   pistol: 'Pistol',
@@ -22,6 +22,67 @@ const roundTypeColors: Record<RoundType, string> = {
   'anti-eco': 'bg-green-900 hover:bg-green-800',
   'anti-force': 'bg-cyan-900 hover:bg-cyan-800',
   buy: 'bg-blue-900 hover:bg-blue-800',
+};
+
+const sampleTactics: Tactic[] = [
+  {
+    id: 'tac-1',
+    name: 'Rush B rápido con utility',
+    map: 'Dust2',
+    type: 'execute',
+    team: 'T',
+    description: 'Entrada veloz por túnel con humo de puerta, flash de rush y molotov de auto para dejar el postplant limpio.',
+    utility: ['Smoke puerta', 'Flash entry', 'Molotov auto'],
+    createdAt: new Date('2026-05-28T10:00:00'),
+  },
+  {
+    id: 'tac-2',
+    name: 'Split medio-largo',
+    map: 'Dust2',
+    type: 'setup',
+    team: 'T',
+    description: 'Control de medio con dos jugadores y ataque de largo para obligar al CT a rotar.',
+    utility: ['Smoke xbox', 'Flash corto', 'Smoke largo'],
+    createdAt: new Date('2026-05-27T16:30:00'),
+  },
+  {
+    id: 'tac-3',
+    name: 'Hold A con 2-2-1',
+    map: 'Mirage',
+    type: 'setup',
+    team: 'CT',
+    description: 'Un rotador en CT, un ancla en palacio y dos en A para negar cualquier entrada coordinada.',
+    utility: ['Molotov palace', 'Smoke tetris', 'Flash CT'],
+    createdAt: new Date('2026-05-26T18:10:00'),
+  },
+  {
+    id: 'tac-4',
+    name: 'Default de Nuke con información',
+    map: 'Nuke',
+    type: 'setup',
+    team: 'T',
+    description: 'Conseguir control de afuera y rampa para obligar la rotación del CT antes de ejecutar.',
+    utility: ['Smoke squeaky', 'Flash hut', 'Molotov ramp'],
+    createdAt: new Date('2026-05-25T13:45:00'),
+  },
+  {
+    id: 'tac-5',
+    name: 'Retake B organizado',
+    map: 'Vertigo',
+    type: 'execute',
+    team: 'CT',
+    description: 'Controlar late con humo de rafters y molotov de scaffolding para limpiar el site.',
+    utility: ['Smoke rafters', 'Molotov scaffolding', 'Flash site'],
+    createdAt: new Date('2026-05-24T09:20:00'),
+  },
+];
+
+const tacticTypeLabels: Record<TacticType, string> = {
+  smoke: 'Smoke',
+  flash: 'Flash',
+  molotov: 'Molotov',
+  execute: 'Ejecución',
+  setup: 'Setup',
 };
 
 type CalloutMarker = {

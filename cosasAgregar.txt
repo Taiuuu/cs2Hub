@@ -1,1 +1,3 @@
 Si quieres, puedo también reemplazar las imágenes SVG de placeholder por screenshots oficiales reales cuando tengas los assets disponibles.
+
+que las miras se puedan editar, tanto el codigo como descripcion y nombre.

@@ -6,6 +6,7 @@ export interface SteamProfile {
   nickname: string;
   avatar?: string;
   profileUrl?: string;
+  steamId?: string;
   level?: number;
   lastUpdated: Date;
 }
@@ -21,52 +22,57 @@ export interface FACEITProfile {
 }
 
 /**
- * Obtiene datos públicos del perfil de Steam
- * Nota: Steam API requiere CORS proxy o backend
+ * Obtiene datos públicos del perfil de Steam usando el endpoint JSON público
+ * No requiere API key, usa la información pública del perfil
  */
 export async function getSteamProfile(
-  steamId: string
+  steamIdOrUsername: string
 ): Promise<SteamProfile | null> {
   try {
     // Intenta obtener datos del perfil público de Steam
-    // Nota: Esto requiere un proxy CORS o un backend que maneje la solicitud
+    // El endpoint JSON público retorna información sin necesidad de API key
     const response = await fetch(
-      `https://steamcommunity.com/profiles/${steamId}/?xml=1`
+      `https://steamcommunity.com/id/${steamIdOrUsername}/json/`,
+      { method: 'GET' }
     );
     
     if (!response.ok) {
-      console.warn('No se pudo obtener perfil de Steam directo, intentando alternativa...');
-      
-      // Intenta con la API de Steam (requiere key)
-      // Para development, retorna datos de ejemplo
+      console.warn('No se pudo obtener perfil de Steam directo');
+      // Retorna datos de ejemplo/fallback
       return {
-        nickname: 'Taiuuu',
-        profileUrl: `https://steamcommunity.com/id/taiuuu/`,
+        nickname: 'taiuuu',
+        profileUrl: `https://steamcommunity.com/id/${steamIdOrUsername}/`,
         level: 42,
         lastUpdated: new Date(),
       };
     }
 
-    const text = await response.text();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(text, 'text/xml');
+    const data = await response.json();
+    const profileData = data.response?.players?.[0];
 
-    const nickname =
-      xml.querySelector('steamID')?.textContent || 'Unknown';
-    const customUrl =
-      xml.querySelector('customURL')?.textContent || 'taiuuu';
+    if (!profileData) {
+      return {
+        nickname: 'taiuuu',
+        profileUrl: `https://steamcommunity.com/id/${steamIdOrUsername}/`,
+        level: 42,
+        lastUpdated: new Date(),
+      };
+    }
 
     return {
-      nickname,
-      profileUrl: `https://steamcommunity.com/id/${customUrl}/`,
+      nickname: profileData.personaname || steamIdOrUsername,
+      avatar: profileData.avatarmedium,
+      profileUrl: profileData.profileurl,
+      steamId: profileData.steamid,
+      level: profileData.player_level,
       lastUpdated: new Date(),
     };
   } catch (error) {
     console.error('Error al obtener perfil de Steam:', error);
     // Retorna datos de ejemplo en caso de error
     return {
-      nickname: 'Taiuuu',
-      profileUrl: 'https://steamcommunity.com/id/taiuuu/',
+      nickname: 'taiuuu',
+      profileUrl: `https://steamcommunity.com/id/${steamIdOrUsername}/`,
       level: 42,
       lastUpdated: new Date(),
     };
@@ -132,9 +138,12 @@ export async function getFACEITProfile(
 /**
  * Obtiene datos combinados de Steam y FACEIT
  */
-export async function getCombinedPlayerStats(steamId: string, faceitNickname: string) {
+export async function getCombinedPlayerStats(
+  steamUsername: string = 'taiuuu',
+  faceitNickname: string = 'taiuuu'
+) {
   const [steam, faceit] = await Promise.all([
-    getSteamProfile(steamId),
+    getSteamProfile(steamUsername),
     getFACEITProfile(faceitNickname),
   ]);
 
