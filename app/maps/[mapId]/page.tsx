@@ -1,88 +1,73 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, useEffect, use } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { allMaps } from '@/lib/mapsData';
-import { RoundType, Tactic, TacticType } from '@/types';
+import { MapStrategyCategory, RoundType } from '@/types';
+
+const categoryOrder: MapStrategyCategory[] = [
+  'Default',
+  'Pistol',
+  'Eco',
+  'Force Buy',
+  'Full Buy',
+  'Anti Eco',
+  'Anti Force',
+  'Buy vs Buy',
+  'Retakes',
+  'Protocol',
+  'Reaggression',
+  'Mid Round Calls',
+  'Reacciones CT',
+  'Reacciones T',
+  'Situaciones especiales',
+];
 
 const roundTypeLabels: Record<RoundType, string> = {
   pistol: 'Pistol',
   eco: 'Eco',
   force: 'Forzado',
+  buy: 'Buy',
+  'full-buy': 'Full Buy',
   'anti-eco': 'Anti-Eco',
   'anti-force': 'Anti-Forzado',
-  buy: 'Buy',
+  'buy-vs-buy': 'Buy vs Buy',
+  default: 'Default',
+  retake: 'Retake',
+  protocol: 'Protocol',
+  antiEco: 'Anti Eco',
+  reaggression: 'Reaggression',
+  midRound: 'Mid Round',
+  exec: 'Exec',
+  split: 'Split',
+  rush: 'Rush',
+  contact: 'Contact',
+  'mid-control': 'Mid Control',
+  'late-exec': 'Late Exec',
 };
 
 const roundTypeColors: Record<RoundType, string> = {
   pistol: 'bg-purple-900 hover:bg-purple-800',
   eco: 'bg-yellow-900 hover:bg-yellow-800',
   force: 'bg-orange-900 hover:bg-orange-800',
+  buy: 'bg-blue-800 hover:bg-blue-700',
+  'full-buy': 'bg-blue-900 hover:bg-blue-800',
   'anti-eco': 'bg-green-900 hover:bg-green-800',
+  antiEco: 'bg-emerald-900 hover:bg-emerald-800',
   'anti-force': 'bg-cyan-900 hover:bg-cyan-800',
-  buy: 'bg-blue-900 hover:bg-blue-800',
-};
-
-const sampleTactics: Tactic[] = [
-  {
-    id: 'tac-1',
-    name: 'Rush B rápido con utility',
-    map: 'Dust2',
-    type: 'execute',
-    team: 'T',
-    description: 'Entrada veloz por túnel con humo de puerta, flash de rush y molotov de auto para dejar el postplant limpio.',
-    utility: ['Smoke puerta', 'Flash entry', 'Molotov auto'],
-    createdAt: new Date('2026-05-28T10:00:00'),
-  },
-  {
-    id: 'tac-2',
-    name: 'Split medio-largo',
-    map: 'Dust2',
-    type: 'setup',
-    team: 'T',
-    description: 'Control de medio con dos jugadores y ataque de largo para obligar al CT a rotar.',
-    utility: ['Smoke xbox', 'Flash corto', 'Smoke largo'],
-    createdAt: new Date('2026-05-27T16:30:00'),
-  },
-  {
-    id: 'tac-3',
-    name: 'Hold A con 2-2-1',
-    map: 'Mirage',
-    type: 'setup',
-    team: 'CT',
-    description: 'Un rotador en CT, un ancla en palacio y dos en A para negar cualquier entrada coordinada.',
-    utility: ['Molotov palace', 'Smoke tetris', 'Flash CT'],
-    createdAt: new Date('2026-05-26T18:10:00'),
-  },
-  {
-    id: 'tac-4',
-    name: 'Default de Nuke con información',
-    map: 'Nuke',
-    type: 'setup',
-    team: 'T',
-    description: 'Conseguir control de afuera y rampa para obligar la rotación del CT antes de ejecutar.',
-    utility: ['Smoke squeaky', 'Flash hut', 'Molotov ramp'],
-    createdAt: new Date('2026-05-25T13:45:00'),
-  },
-  {
-    id: 'tac-5',
-    name: 'Retake B organizado',
-    map: 'Vertigo',
-    type: 'execute',
-    team: 'CT',
-    description: 'Controlar late con humo de rafters y molotov de scaffolding para limpiar el site.',
-    utility: ['Smoke rafters', 'Molotov scaffolding', 'Flash site'],
-    createdAt: new Date('2026-05-24T09:20:00'),
-  },
-];
-
-const tacticTypeLabels: Record<TacticType, string> = {
-  smoke: 'Smoke',
-  flash: 'Flash',
-  molotov: 'Molotov',
-  execute: 'Ejecución',
-  setup: 'Setup',
+  'buy-vs-buy': 'bg-fuchsia-900 hover:bg-fuchsia-800',
+  default: 'bg-zinc-700 hover:bg-zinc-600',
+  retake: 'bg-violet-900 hover:bg-violet-800',
+  protocol: 'bg-indigo-700 hover:bg-indigo-600',
+  reaggression: 'bg-rose-900 hover:bg-rose-800',
+  midRound: 'bg-slate-900 hover:bg-slate-800',
+  exec: 'bg-emerald-900 hover:bg-emerald-800',
+  split: 'bg-sky-900 hover:bg-sky-800',
+  rush: 'bg-red-800 hover:bg-red-700',
+  contact: 'bg-amber-900 hover:bg-amber-800',
+  'mid-control': 'bg-indigo-900 hover:bg-indigo-800',
+  'late-exec': 'bg-teal-900 hover:bg-teal-800',
 };
 
 type CalloutMarker = {
@@ -156,6 +141,7 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
   const map = allMaps.find((m) => m.id === mapId);
   const [selectedTeam, setSelectedTeam] = useState<'T' | 'CT'>('T');
   const [selectedRoundType, setSelectedRoundType] = useState<RoundType>('pistol');
+  const [selectedCategory, setSelectedCategory] = useState<MapStrategyCategory>('Default');
   const [activeTab, setActiveTab] = useState<'overview' | 'callouts' | 'utilities' | 'strats'>('overview');
   const [highlightedCallout, setHighlightedCallout] = useState<string | null>(null);
 
@@ -169,8 +155,19 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
     );
   }
 
+  const categories = Array.from(new Set(map.strats.map((strat) => strat.category ?? 'Default'))) as MapStrategyCategory[];
+
+  useEffect(() => {
+    if (categories.length > 0 && !categories.includes(selectedCategory)) {
+      setSelectedCategory(categories[0]);
+    }
+  }, [categories, selectedCategory]);
+
   const filteredStrats = map.strats.filter(
-    (strat) => strat.team === selectedTeam && strat.type === selectedRoundType
+    (strat) =>
+      strat.team === selectedTeam &&
+      strat.type === selectedRoundType &&
+      (strat.category ?? 'Default') === selectedCategory
   );
 
   const availableRoundTypes = Array.from(
@@ -207,7 +204,6 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
               { key: 'callouts', label: 'Callouts' },
               { key: 'utilities', label: 'Utilidades' },
               { key: 'strats', label: 'Estrategias' },
-              { key: 'tactics', label: 'Tácticas' },
             ].map((tab) => (
             <button
               key={tab.key}
@@ -418,6 +414,27 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
                   </div>
                 </div>
               )}
+
+              {categories.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium text-zinc-300 mb-2">Categoría</p>
+                  <div className="flex flex-wrap gap-2">
+                    {categoryOrder.filter((category) => categories.includes(category)).map((category) => (
+                      <button
+                        key={category}
+                        onClick={() => setSelectedCategory(category)}
+                        className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                          selectedCategory === category
+                            ? 'bg-zinc-600 text-white'
+                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                        }`}
+                      >
+                        {category}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {filteredStrats.length > 0 ? (
@@ -487,56 +504,6 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
           </div>
         )}
 
-        {activeTab === 'tactics' && (
-          <div className="space-y-6 mb-8">
-            <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-              <h2 className="text-2xl font-bold text-white mb-4">Tácticas para {map.name}</h2>
-              <p className="text-sm text-zinc-400 mb-4">Tácticas guardadas y ejecutables para este mapa. Filtrado automáticamente por mapa.</p>
-
-              <div className="mb-4">
-                <div className="flex gap-2 flex-wrap">
-                  {(['T', 'CT'] as const).map((team) => (
-                    <button
-                      key={team}
-                      onClick={() => setSelectedTeam(team)}
-                      className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                        selectedTeam === team
-                          ? team === 'T'
-                            ? 'bg-red-600 text-white'
-                            : 'bg-blue-600 text-white'
-                          : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-                      }`}
-                    >
-                      {team === 'T' ? '🔴 Terroristas' : '🔵 Counter-Terrorists'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid gap-4 lg:grid-cols-2">
-                {sampleTactics.filter((t) => t.map === map.name && (selectedTeam ? t.team === selectedTeam : true)).map((tactic) => (
-                  <article key={tactic.id} className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">{tactic.map} • {tactic.team}</p>
-                        <h3 className="text-lg font-semibold text-white mt-1">{tactic.name}</h3>
-                      </div>
-                      <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">{tacticTypeLabels[tactic.type]}</span>
-                    </div>
-                    <p className="text-sm text-zinc-300 mt-3">{tactic.description}</p>
-                    {tactic.utility?.length ? (
-                      <div className="mt-3 flex gap-2 flex-wrap">
-                        {tactic.utility.map((u) => (
-                          <span key={u} className="inline-flex items-center rounded-2xl bg-zinc-900 px-3 py-1 text-xs text-zinc-300">{u}</span>
-                        ))}
-                      </div>
-                    ) : null}
-                  </article>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -1,0 +1,3 @@
+import type { MapPhilosophy } from '../core/types';
+
+export const infernoPhilosophy: MapPhilosophy = {'philosophy': 'Banana es la línea de vida. El CT debe mantenerla bajo presión constante y usar medio como palanca para rotaciones rápidas.', 'tWinCondition': 'Dominar banana y usar medio para crear un split a A o un rush consolidado a B.', 'ctWinCondition': 'Retener banana y estar siempre listos para rotar con información de medio.', 'keyAreas': ['Banana', 'Mid', 'A Site', 'B Site', 'Library'], 'tempo': 'Controlado con ventanas de agresión tras el tiempo 15-20s.', 'rotationComplexity': 'Alta: las decisiones de rotación se toman en función de donde el rival cede el control.'}
