@@ -203,11 +203,12 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
 
         <div className="flex flex-wrap gap-3 mb-10">
           {[
-            { key: 'overview', label: 'Overview' },
-            { key: 'callouts', label: 'Callouts' },
-            { key: 'utilities', label: 'Utilidades' },
-            { key: 'strats', label: 'Estrategias' },
-          ].map((tab) => (
+              { key: 'overview', label: 'Overview' },
+              { key: 'callouts', label: 'Callouts' },
+              { key: 'utilities', label: 'Utilidades' },
+              { key: 'strats', label: 'Estrategias' },
+              { key: 'tactics', label: 'Tácticas' },
+            ].map((tab) => (
             <button
               key={tab.key}
               type="button"
@@ -483,6 +484,57 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
                 <p className="text-sm text-zinc-500">Próximamente se agregarán más estrategias</p>
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'tactics' && (
+          <div className="space-y-6 mb-8">
+            <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
+              <h2 className="text-2xl font-bold text-white mb-4">Tácticas para {map.name}</h2>
+              <p className="text-sm text-zinc-400 mb-4">Tácticas guardadas y ejecutables para este mapa. Filtrado automáticamente por mapa.</p>
+
+              <div className="mb-4">
+                <div className="flex gap-2 flex-wrap">
+                  {(['T', 'CT'] as const).map((team) => (
+                    <button
+                      key={team}
+                      onClick={() => setSelectedTeam(team)}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                        selectedTeam === team
+                          ? team === 'T'
+                            ? 'bg-red-600 text-white'
+                            : 'bg-blue-600 text-white'
+                          : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                      }`}
+                    >
+                      {team === 'T' ? '🔴 Terroristas' : '🔵 Counter-Terrorists'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-2">
+                {sampleTactics.filter((t) => t.map === map.name && (selectedTeam ? t.team === selectedTeam : true)).map((tactic) => (
+                  <article key={tactic.id} className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">{tactic.map} • {tactic.team}</p>
+                        <h3 className="text-lg font-semibold text-white mt-1">{tactic.name}</h3>
+                      </div>
+                      <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">{tacticTypeLabels[tactic.type]}</span>
+                    </div>
+                    <p className="text-sm text-zinc-300 mt-3">{tactic.description}</p>
+                    {tactic.utility?.length ? (
+                      <div className="mt-3 flex gap-2 flex-wrap">
+                        {tactic.utility.map((u) => (
+                          <span key={u} className="inline-flex items-center rounded-2xl bg-zinc-900 px-3 py-1 text-xs text-zinc-300">{u}</span>
+                        ))}
+                      </div>
+                    ) : null}
+                  </article>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
