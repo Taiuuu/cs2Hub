@@ -1,368 +1,542 @@
-Si quieres, puedo también reemplazar las imágenes SVG de placeholder por screenshots oficiales reales cuando tengas los assets disponibles.
+# GENERAR PLAYBOOK COMPETITIVO COMPLETO PARA TODOS LOS MAPAS DE CS2
 
-que las miras se puedan editar, tanto el codigo como descripcion y nombre.
+Necesito expandir TODOS los mapas del sistema competitivo al mismo nivel o MÁS profundo que Dust2/Mirage/Nuke.
 
+IMPORTANTE:
+NO quiero placeholders.
+NO quiero tácticas básicas.
+NO quiero resúmenes.
 
+Quiero un verdadero PLAYBOOK competitivo estilo equipo tier-1.
 
+---
 
+# MAPAS A COMPLETAR
 
-
-
-
-
-Actúa como un coach profesional de Counter-Strike 2 especializado en táctica competitiva avanzada, análisis estratégico, teoría de defaults, mid-rounding, economía y ejecución estructurada de equipos.
-
-Tu objetivo es generar un sistema táctico COMPLETO y PROFESIONAL para una aplicación de estrategias de CS2 organizada por mapas.
-
-La aplicación debe funcionar como un “Strat Book interactivo”, donde el usuario puede:
-
-* Elegir un mapa.
-* Elegir un tipo de ronda.
-* Ver distintas tácticas disponibles.
-* Seleccionar una táctica.
-* Ver todos los roles, posiciones, utilidades, timings, responsabilidades y objetivos de cada jugador.
-
-━━━━━━━━━━━━━━━━━━━
-ESTRUCTURA GENERAL OBLIGATORIA
-━━━━━━━━━━━━━━━━━━━
-
-La información debe separarse SIEMPRE por MAPA.
-
-Ejemplo:
-
-* Mirage
 * Dust2
+* Mirage
 * Inferno
 * Nuke
 * Ancient
 * Anubis
-* Train
-* Overpass
 * Vertigo
+* Train
 
-Cada mapa debe tener sus propias tácticas y nunca mezclar conceptos de otro mapa.
+---
 
-Dentro de cada mapa, organizar las tácticas en categorías:
+# CADA MAPA DEBE TENER
 
-1. Default
-2. Pistol
-3. Eco
-4. Force Buy
-5. Full Buy
-6. Anti Eco
-7. Anti Force
-8. Buy vs Buy
-9. Retakes
-10. Mid Round Calls
-11. Reacciones CT
-12. Reacciones T
-13. Situaciones especiales
+## FUNDAMENTALS
 
-━━━━━━━━━━━━━━━━━━━
-TIPOS DE RONDAS OBLIGATORIOS
-━━━━━━━━━━━━━━━━━━━
+* filosofía del mapa
+* win condition T
+* win condition CT
+* control de tempo
+* zonas críticas
+* protocolos de información
+* protocolos de rotación
+* protocolos de utilidad
+* control de mapa
+* defaults
+* anti-defaults
+* protocolos de retake
+* protocolos anti-rush
+* protocolos de stack
+* protocolos de fake
+* protocolos de lurk
+* control de espacio
+* capas de presión
+* lógica de tradeo
+* protocolos de save
+* protocolos de recuperación
 
-Cada mapa DEBE incluir tácticas para:
+---
 
-* Rondas eco
-* Rondas forzadas
-* Rondas full buy
-* Rondas anti eco
-* Rondas anti force
-* Buy vs Buy
-* Pistols
-* Defaults
-* Retakes
-* Execs
-* Splits
-* Rushes
-* Contact plays
-* Mid control
-* Late executes
+# AJUSTE IMPORTANTE — CALLOUTS EN ESPAÑOL RIOPLATENSE
 
-━━━━━━━━━━━━━━━━━━━
-FORMATO DE CADA TÁCTICA
-━━━━━━━━━━━━━━━━━━━
+IMPORTANTE:
 
-Cada táctica debe tener:
+TODOS los callouts del proyecto deben estar adaptados a español rioplatense competitivo usado en FACEIT/MM/Scrims de LATAM/Argentina.
 
-* Nombre de la táctica
-* Objetivo principal
-* Tipo de ronda
-* Side (T o CT)
-* Dificultad
-* Nivel recomendado
-* Concepto táctico principal
-* Riesgos de la táctica
-* Cuándo usarla
-* Cuándo NO usarla
-* Cómo reaccionar si falla
-* Adaptaciones posibles
+NO usar callouts en inglés salvo que:
 
-Luego explicar:
+* sean universalmente usados así
+* o no exista equivalente real usado en español
 
-1. Setup inicial
-2. Distribución de jugadores
-3. Utilidad necesaria
-4. Timing
-5. Espacios importantes
-6. Punto de contacto
-7. Condición de victoria
-8. Plan de postplant o retake
+---
 
-━━━━━━━━━━━━━━━━━━━
-ROLES DETALLADOS — MUY IMPORTANTE
-━━━━━━━━━━━━━━━━━━━
+# ESTILO DE CALLOUTS
 
-Cada táctica DEBE explicar exactamente qué hace cada jugador.
+Quiero lenguaje:
 
-NO explicar solo “rush B”.
+* argentino
+* FACEIT
+* competitivo
+* corto
+* rápido para comms
+* natural para stack/pug
+* entendible instantáneamente
 
-Explicar:
+NO usar traducciones literales raras.
 
-* Qué hace el entry.
-* Qué hace el lurker.
-* Qué hace el support.
-* Qué hace el jugador de medio.
-* Qué hace el anchor.
-* Qué hace el rotador.
-* Qué hace el AWPer.
-* Qué hace el segundo entry.
-* Qué utilidad tira cada uno.
-* Qué espacio controla cada uno.
-* Qué errores NO debe cometer cada uno.
+---
 
-Cada jugador debe tener:
+# EJEMPLOS CORRECTOS
 
-* Posición inicial.
-* Objetivo.
-* Utilidad.
-* Timing.
-* Responsabilidad.
-* Qué mirar.
-* Qué información comunicar.
-* Cómo reaccionar si muere un compañero.
-* Cómo reaccionar si no hay contacto.
-* Cómo jugar el postplant o retake.
+## Dust2
 
-━━━━━━━━━━━━━━━━━━━
-NIVEL DE DETALLE OBLIGATORIO
-━━━━━━━━━━━━━━━━━━━
+* Fondo
+* Baranda
+* Xbox
+* Oscuro bajo
+* Oscuro alto
+* Caja gorda
+* Corredor
+* Corta
+* Side
+* Auto
+* Altar
 
-Las tácticas deben explicarse como lo haría un coach profesional de tier competitivo.
+NO:
 
-NO dar explicaciones genéricas.
+* Long A
+* Catwalk
+* Lower tunnel
+* Upper tunnel
 
-Ejemplo correcto:
-“En Mirage anti eco, el jugador de tapete debe tirar molotov profunda para cortar el rush rápido de CT. No debe adelantar solo después de tirar la molotov porque el objetivo principal es evitar que los CT ganen un rifle gratis. Su función es mantener control de tapete y escuchar rotaciones mientras el equipo gana medio.”
+---
 
-Ejemplo incorrecto:
-“Uno tira molotov y entra.”
+## Mirage
 
-La IA debe explicar:
+* Liga
+* Buda
+* DL
+* Caverna
+* Sándwich
+* Ticket
+* Jungla
+* Cabeciña
+* Triple
+* Van
+* Bench
 
-* La lógica táctica.
-* El porqué de cada utilidad.
-* Qué espacio se quiere negar.
-* Qué rotación se busca forzar.
-* Qué reacción enemiga se espera.
-* Cómo castigar errores del rival.
-* Qué información se obtiene.
-* Qué timings son importantes.
-* Qué utilidad es obligatoria.
-* Qué utilidad es opcional.
+NO:
 
-━━━━━━━━━━━━━━━━━━━
-DEFAULTS — OBLIGATORIO
-━━━━━━━━━━━━━━━━━━━
+* Connector
+* Underpass
+* Firebox
 
-Cada mapa debe tener un apartado COMPLETO de DEFAULT.
+---
 
-Explicar:
+## Inferno
 
-* Cómo se juega el default T.
-* Cómo se juega el default CT.
-* Qué zonas son prioritarias.
-* Qué jugador controla cada espacio.
-* Qué utilidades iniciales son estándar.
-* Qué información se busca.
-* Cómo reaccionar según la info.
-* Cómo evitar morir solo.
-* Cómo mantener presión en el mapa.
-* Cómo manipular rotaciones.
-* Cómo cerrar rondas desde el default.
+* Banana
+* Arena
+* Coffins
+* Iglesia
+* Pool
+* Apps
+* Larga
+* Moto
+* Biblioteca
+* Balcón
 
-Ejemplo:
-En Mirage:
+---
 
-* Control de medio.
-* Presión en apps B.
-* Lurker palacio.
-* Conector y short como puntos críticos.
-* Window smoke.
-* Top mid molotov.
-* Under control.
-* Rotaciones CT.
+## Nuke
 
-━━━━━━━━━━━━━━━━━━━
-BUY VS BUY — MUY IMPORTANTE
-━━━━━━━━━━━━━━━━━━━
+* Caseta
+* Metal
+* Roja
+* Heaven
+* Taxi
+* Poti
+* Afuera
+* Rampa
+* Secret
+* Ducto
+* Wizard
 
-Las rondas buy vs buy deben sentirse PROFESIONALES y REALISTAS.
+---
 
-Explicar:
+## Ancient
 
-* Cómo se juega el mapa con utilidad completa.
-* Cómo negar información.
-* Cómo tomar espacio.
-* Cómo fakear.
-* Cómo castigar pushes.
-* Cómo hacer defaults lentos.
-* Cómo jugar late rounds.
-* Cómo se estructuran las rotaciones.
-* Cómo se juega el postplant avanzado.
-* Cómo se juega el retake coordinado.
+* Dona
+* Cueva
+* Jaguar
+* Temple
+* Main
+* Lane
+* Agua
 
-━━━━━━━━━━━━━━━━━━━
-ANTI ECO Y ANTI FORCE — MUY IMPORTANTE
-━━━━━━━━━━━━━━━━━━━
+---
 
-Las tácticas anti eco y anti force deben enfocarse en:
+## Anubis
 
-* No regalar rifles.
-* Mantener spacing.
-* No limpiar solo.
-* Revisar stacks.
-* Limpiar corners peligrosos.
-* Jugar anti pushes.
-* Mantener trades.
-* Evitar entradas desordenadas.
-* Utilizar utilidad para negar pistolas cerca.
-* Mantener distancia contra SMGs y shotguns.
+* Agua
+* Canal
+* Heaven
+* Puente
+* Main
+* Cueva
+* Templo
 
-La IA debe explicar:
+---
 
-* Qué posiciones son peligrosas en cada mapa.
-* Qué zonas suelen stackear los enemigos.
-* Cómo entrar correctamente.
-* Qué jugador debe ir primero.
-* Qué jugador debe holdear flancos.
-* Qué jugador no debe morir nunca.
+## Vertigo
 
-━━━━━━━━━━━━━━━━━━━
-RETOMAS Y POSTPLANTS
-━━━━━━━━━━━━━━━━━━━
+* Arena
+* Sandbag
+* Rampa
+* Escalera
+* Headshot
+* Generador
+* Mid
 
-Agregar explicaciones avanzadas de:
+---
 
-* Crossfires.
-* Utilidad de retake.
-* Posiciones de postplant.
-* Uso de humo defensivo.
-* Timing de kit.
-* Retakes coordinados.
-* Contact retakes.
-* Fake defuses.
-* Re-clears.
-* Late lurks.
+## Train
 
-━━━━━━━━━━━━━━━━━━━
-ESTILO DE REDACCIÓN
-━━━━━━━━━━━━━━━━━━━
+* Ivy
+* Pop
+* Escalera
+* Main
+* Hell
+* Verde
+* Azul
+* Connector
+* Tren 5
+* Tren 6
 
-El tono debe sentirse:
+---
 
-* Profesional.
-* Competitivo.
-* Realista.
-* Similar a un coach de equipo tier 1.
-* Claro.
-* Táctico.
-* Directo.
+# REGLAS IMPORTANTES DE CALLOUTS
 
-NO usar:
+## 1. PRIORIZAR COMMS REALES
 
-* Explicaciones casuales.
-* Humor innecesario.
-* Texto genérico.
-* Tácticas irreales.
-* Estrategias troll.
+Usar lenguaje real de:
 
-━━━━━━━━━━━━━━━━━━━
-FORMATO VISUAL
-━━━━━━━━━━━━━━━━━━━
+* FACEIT
+* GC
+* scrims
+* MM alto elo
+* equipos LATAM
 
-La información debe estar extremadamente ordenada.
+---
 
-Usar:
+## 2. CALLOUTS CORTOS
 
-* Títulos claros.
-* Subtítulos.
-* Roles separados.
-* Bullets.
-* Secciones tácticas.
-* Prioridades.
-* Reglas importantes.
-* Alertas tácticas.
-* Errores comunes.
+Máximo 1-2 palabras.
 
-Cada táctica debe poder abrirse individualmente dentro de la aplicación.
+Porque:
 
-Ejemplo:
-Mirage
-→ Anti Eco
-→ “Default anti push A”
-→ Al abrir:
+* se usan en microcomms
+* deben ser rápidos
+* deben sonar naturales
 
-* Roles
-* Utilidades
-* Responsabilidades
-* Timings
-* Objetivos
-* Adaptaciones
-* Reacciones
+---
 
-━━━━━━━━━━━━━━━━━━━
-CONCEPTOS AVANZADOS OBLIGATORIOS
-━━━━━━━━━━━━━━━━━━━
+## 3. CONSISTENCIA
 
-Incluir conceptos como:
+Mantener los mismos nombres en:
 
-* Map control
-* Trading
-* Space creation
-* Info plays
-* Utility conditioning
-* Fake pressure
-* Mid-round calls
-* Rotaciones
-* Reagresiones
-* Timing manipulation
-* Tempo lento vs rápido
-* Presión pasiva
-* Contact plays
-* Conditioning rounds
-* Anti defaults
-* Utility bait
-* Lurks
-* Late executes
-* Double layering utility
-* Re-clear protocols
-* Crossfires
-* Isolations
-* Repositioning
-* Anti flash positioning
+* callouts
+* tácticas
+* defaults
+* postplants
+* roles
+* descriptions
+* timings
+* utility
+* fundamentals
 
-━━━━━━━━━━━━━━━━━━━
-OBJETIVO FINAL
-━━━━━━━━━━━━━━━━━━━
+---
 
-La IA debe generar tácticas completas y utilizables para una aplicación competitiva de CS2 donde:
+## 4. NO TRADUCIR MAL
 
-* Todo esté separado por mapa.
-* Todo esté separado por tipo de ronda.
-* Cada táctica tenga roles detallados.
-* Cada jugador tenga responsabilidades claras.
-* Las estrategias tengan lógica profesional real.
-* Las tácticas parezcan hechas por un coach profesional de Counter-Strike competitivo.
-* Las explicaciones enseñen el “por qué” de las decisiones y no solo los movimientos.
+NO hacer cosas como:
+
+* “Pasarela felina”
+* “Túnel inferior”
+* “Ventana superior”
+* “Caja de fuego”
+
+Eso rompe completamente la naturalidad competitiva.
+
+---
+
+# CALLOUTS COMPLETOS
+
+Separados correctamente por zonas reales del mapa:
+
+* siteA
+* siteB
+* middle
+* outside
+* connector
+* underground
+* heaven
+* lower
+* upper
+* apps
+* banana
+* short
+* long
+* water
+* cave
+* temple
+* donut
+* ramp
+* ladder
+* etc
+
+Cada mapa debe tener categorías coherentes con su layout real.
+
+---
+
+# TÁCTICAS COMPLETAS
+
+Agregar MUCHAS tácticas por mapa:
+
+## Pistol
+
+## Eco
+
+## Force
+
+## Semi Buy
+
+## Full Buy
+
+## Defaults
+
+## MidRound
+
+## Reaggressions
+
+## Retakes
+
+## Protocols
+
+## AntiEco
+
+## AntiRush
+
+## FakeExecs
+
+## ContactPlays
+
+## Splits
+
+## Explodes
+
+## DelayedExecs
+
+## FastPace
+
+## SlowPace
+
+## ConditioningRounds
+
+---
+
+# CANTIDAD MÍNIMA
+
+POR MAPA:
+
+* 8 pistol
+* 6 eco
+* 6 force
+* 10 full buy
+* 8 defaults
+* 6 retakes
+* 6 reagegressions
+* 8 midround protocols
+* 6 anti-eco
+* 5 fake executes
+* 5 anti-rush setups
+
+NO resumir.
+
+---
+
+# CADA STRAT DEBE TENER
+
+* id
+* name
+* category
+* type
+* team
+* description
+* objectivePrincipal
+* difficulty
+* recommendedLevel
+* concept
+* risks
+* whenToUse
+* whenNotToUse
+* failReaction
+* adaptationsPossible
+* setup
+* playerDistribution
+* utilities
+* timing
+* importantSpaces
+* pointOfContact
+* victoryCondition
+* postplant
+* economyLogic
+* tacticalConcepts
+* failureStates
+* commonMistakes
+* recoveryPlan
+* midRoundOptions
+* roles
+* tips
+
+---
+
+# ROLES COMPLETOS
+
+Cada strat debe incluir:
+
+* entry
+* secondEntry
+* lurker
+* support
+* anchor
+* rotator
+* awper
+* mid
+
+---
+
+# CADA ROL DEBE TENER
+
+* position
+* objective
+* utility
+* timing
+* responsibility
+* whatToLook
+* communication
+* onTeammateDeath
+* onNoContact
+* postplantOrRetake
+
+---
+
+# MID ROUND OPTIONS
+
+Agregar arrays completos.
+
+Ejemplos:
+
+* “Si toman banana → split A”
+* “Si pierden ventana → freeze 15s”
+* “Si matan rotador → acelerar”
+* “Si no hay info → default lento”
+* “Si fuerzan retake temprano → fakear presión”
+
+---
+
+# FAILURE STATES
+
+Ejemplos:
+
+* perder lurker temprano
+* perder control de medio
+* mala smoke crítica
+* entry sin trade
+* rotación CT rápida
+* perder utilidad temprano
+
+---
+
+# COMMON MISTAKES
+
+Ejemplos:
+
+* spacing malo
+* utility mal sincronizada
+* sobre-extensión
+* lurker aislado
+* no tradear
+* entrar antes de flashes
+* regalar control de mapa
+
+---
+
+# RECOVERY PLAN
+
+Cómo salvar la ronda si:
+
+* falla la entrada
+* falla la smoke
+* muere el entry
+* pierden control clave
+* pierden lurker
+* se quedan sin utilidad
+* CT stackea correctamente
+
+---
+
+# ECONOMY LOGIC
+
+Agregar:
+
+* minimumUtility
+* buyRequirements
+* dropPriority
+* priorityWeapons
+
+---
+
+# CONCEPTOS TÁCTICOS AVANZADOS
+
+Agregar:
+
+* spacingRules
+* utilityLayering
+* tradeDistance
+* timingWindows
+* reactionTrees
+* fakePressure
+* infoProtocols
+* mapControlStates
+* lurkTiming
+* rotationPunish
+
+---
+
+# ESTILO
+
+Quiero:
+
+* lenguaje competitivo real
+* estilo coach táctico
+* setups profesionales
+* lógica usada en tier 1
+* terminología CS real
+* mentalidad de IGL
+* estructuras modernas de CS2
+* protocolos reales de scrim
+
+---
+
+# IMPORTANTE FINAL
+
+NO resumir.
+NO simplificar.
+NO usar placeholders.
+NO cortar contenido.
+
+Quiero TypeScript REAL completo listo para copiar/pegar.
+
+El proyecto debe sentirse como:
+
+* un playbook real de equipo LATAM
+* un sistema táctico profesional
+* documentación interna de scrims
+* preparación para FACEIT 10 / leagues / equipos
+* un manual competitivo moderno de CS2
