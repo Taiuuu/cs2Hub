@@ -8,7 +8,7 @@ interface Props {
   faceitNickname?: string;
 }
 
-export default function PlayerFetcher({ steamUsername = 'taiuuu', faceitNickname = 'taiuuu' }: Props) {
+export default function PlayerFetcher({ steamUsername = 'taiuuu', faceitNickname = 'Chocko0' }: Props) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<CombinedPlayerStats | null>(null);
   const [error, setError] = useState<string | null>(null);

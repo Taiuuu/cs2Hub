@@ -9,7 +9,7 @@ import { overpassMap } from "./overpass";
 import { vertigoMap } from "./vertigo";
 import { trainMap } from "./train";
 
-// Orden: Pool competitivo primero, luego mapas adicionales
+// Orden: Pool competitivo primero (de la foto), luego otros
 export const allMaps = [
   dust2Map,
   mirageMap,

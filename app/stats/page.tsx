@@ -27,7 +27,7 @@ export default function StatsPage() {
           </div>
         </div>
 
-        <PlayerFetcher steamUsername="taiuuu" faceitNickname="taiuuu" />
+        <PlayerFetcher steamUsername="taiuuu" faceitNickname="Chocko0" />
       </div>
     </div>
   );

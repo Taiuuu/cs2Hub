@@ -210,3 +210,25 @@ Nombre destacado en la parte inferior.
 Diseño limpio y visual.
 Sin estadísticas ni texto adicional.
 Apariencia moderna, profesional y atractiva.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+la pestaña estadisticas sigue sin mostrar las reales, podes fijarte eso o decime que necesitas y yo te lo doy ya sea link de faceit, link de steam etc. Tambien en la lista de mapas agregá Cache y Overpass. La idea es tener como primero los que estan en el pool competitivo que son los de la foto y despues train, vertigo que no estan
+
+Analyzing your answers...
+
+Q: ¿De dónde quieres traer las estadísticas reales?
+A: Steam API - Necesito tu Steam ID o URL del perfil
+quiero traerlas tanto de faceit como de steam api https://steamcommunity.com/id/taiuuu/
+https://www.faceit.com/es/players/Chocko0

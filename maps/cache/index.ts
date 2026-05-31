@@ -3,7 +3,7 @@ import type { MapPlaybook } from '../core/types';
 export const cacheMap: MapPlaybook = {
   id: 'cache',
   name: 'Cache',
-  image: '/maps/callout-bg.svg',
+  image: '/maps/cache-card.svg',
   calloutImage: '/maps/callout-bg.svg',
   sideFavor: 'T-sided',
   description: 'Cache es un mapa de utilidad y control de puntos clave. El equipo que domina Main y el Pozo es el que define la dinámica de la ronda.',
