@@ -155,7 +155,19 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
     );
   }
 
-  const categories = Array.from(new Set(map.strats.map((strat) => strat.category ?? 'Default'))) as MapStrategyCategory[];
+  const allStrats = Object.values(map.strats).flat() as Array<{
+    category?: MapStrategyCategory;
+    type: RoundType;
+    team: 'T' | 'CT';
+    utilities?: string[];
+    id: string;
+    name: string;
+    description: string;
+    setup?: string;
+    tips?: string[];
+  }>;
+
+  const categories = Array.from(new Set(allStrats.map((strat) => strat.category ?? 'Default'))) as MapStrategyCategory[];
 
   useEffect(() => {
     if (categories.length > 0 && !categories.includes(selectedCategory)) {
@@ -163,7 +175,7 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
     }
   }, [categories, selectedCategory]);
 
-  const filteredStrats = map.strats.filter(
+  const filteredStrats = allStrats.filter(
     (strat) =>
       strat.team === selectedTeam &&
       strat.type === selectedRoundType &&
@@ -172,39 +184,45 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
 
   const availableRoundTypes = Array.from(
     new Set(
-      map.strats
+      allStrats
         .filter((s) => s.team === selectedTeam)
         .map((s) => s.type)
     )
   ) as RoundType[];
 
-  const utilities = Array.from(new Set(map.strats.flatMap((s) => s.utilities ?? [])));
+  const utilities = Array.from(new Set(allStrats.flatMap((s) => s.utilities ?? [])));
   const calloutMarkers = mapCalloutMarkers[map.id] ?? [];
 
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-6xl mx-auto p-6 md:p-8">
-        <div className="flex items-center gap-4 mb-8">
-          <Link href="/maps" className="p-2 rounded-lg hover:bg-zinc-900 transition-colors">
-            <ArrowLeft className="w-5 h-5 text-zinc-400 hover:text-white" />
-          </Link>
-          <div>
-            <h1 className="text-4xl font-bold text-white">{map.name}</h1>
-            <p className="text-zinc-400 mt-1">
-              {map.sideFavor === 'T-sided' && '🔴 Favorecido para Terroristas'}
-              {map.sideFavor === 'CT-sided' && '🔵 Favorecido para Counter-Terrorists'}
-              {map.sideFavor === 'Balanced' && '⚖️ Balanceado'}
-            </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Link href="/maps" className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-400 transition hover:border-zinc-700 hover:text-white">
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">Mapa</p>
+              <h1 className="mt-2 text-4xl font-semibold text-white">{map.name}</h1>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="rounded-full border border-zinc-800 bg-zinc-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-zinc-300">
+              {map.sideFavor}
+            </span>
+            <span className="rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-white">
+              {Object.values(map.strats).flat().length} estrategias
+            </span>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-3 mb-10">
           {[
-              { key: 'overview', label: 'Overview' },
-              { key: 'callouts', label: 'Callouts' },
-              { key: 'utilities', label: 'Utilidades' },
-              { key: 'strats', label: 'Estrategias' },
-            ].map((tab) => (
+            { key: 'overview', label: 'Resumen' },
+            { key: 'callouts', label: 'Callouts' },
+            { key: 'utilities', label: 'Utilidades' },
+            { key: 'strats', label: 'Estrategias' },
+          ].map((tab) => (
             <button
               key={tab.key}
               type="button"
@@ -222,14 +240,14 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
 
         {activeTab === 'overview' && (
           <>
-            <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6 mb-8">
-              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-                <h2 className="text-lg font-semibold text-white mb-3">Filosofía del Mapa</h2>
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_360px] mb-8">
+              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900 shadow-lg shadow-black/20">
+                <h2 className="text-lg font-semibold text-white mb-3">Filosofía del mapa</h2>
                 <p className="text-zinc-300 leading-relaxed">{map.description}</p>
               </div>
-              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-                <h2 className="text-lg font-semibold text-white mb-3">Callouts Clave</h2>
-                <div className="space-y-5">
+              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900 shadow-lg shadow-black/10">
+                <h2 className="text-lg font-semibold text-white mb-3">Callouts clave</h2>
+                <div className="space-y-4">
                   <div>
                     <p className="text-sm text-zinc-400 mb-2">Site A</p>
                     <p className="text-xs text-zinc-300 leading-relaxed">{map.callouts.siteA.join(', ')}</p>
@@ -495,7 +513,7 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
               </div>
             )}
 
-            {map.strats.length === 0 && (
+            {allStrats.length === 0 && (
               <div className="border border-zinc-800 rounded-3xl p-8 text-center bg-zinc-900 mt-6">
                 <p className="text-zinc-400 mb-4">No hay strats detalladas para este mapa aún.</p>
                 <p className="text-sm text-zinc-500">Próximamente se agregarán más estrategias</p>

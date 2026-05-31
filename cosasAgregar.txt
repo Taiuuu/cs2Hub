@@ -1,542 +1,212 @@
-# GENERAR PLAYBOOK COMPETITIVO COMPLETO PARA TODOS LOS MAPAS DE CS2
-
-Necesito expandir TODOS los mapas del sistema competitivo al mismo nivel o MÁS profundo que Dust2/Mirage/Nuke.
-
-IMPORTANTE:
-NO quiero placeholders.
-NO quiero tácticas básicas.
-NO quiero resúmenes.
-
-Quiero un verdadero PLAYBOOK competitivo estilo equipo tier-1.
-
----
-
-# MAPAS A COMPLETAR
-
-* Dust2
-* Mirage
-* Inferno
-* Nuke
-* Ancient
-* Anubis
-* Vertigo
-* Train
-
----
-
-# CADA MAPA DEBE TENER
-
-## FUNDAMENTALS
-
-* filosofía del mapa
-* win condition T
-* win condition CT
-* control de tempo
-* zonas críticas
-* protocolos de información
-* protocolos de rotación
-* protocolos de utilidad
-* control de mapa
-* defaults
-* anti-defaults
-* protocolos de retake
-* protocolos anti-rush
-* protocolos de stack
-* protocolos de fake
-* protocolos de lurk
-* control de espacio
-* capas de presión
-* lógica de tradeo
-* protocolos de save
-* protocolos de recuperación
-
----
-
-# AJUSTE IMPORTANTE — CALLOUTS EN ESPAÑOL RIOPLATENSE
-
-IMPORTANTE:
-
-TODOS los callouts del proyecto deben estar adaptados a español rioplatense competitivo usado en FACEIT/MM/Scrims de LATAM/Argentina.
-
-NO usar callouts en inglés salvo que:
-
-* sean universalmente usados así
-* o no exista equivalente real usado en español
-
----
-
-# ESTILO DE CALLOUTS
-
-Quiero lenguaje:
-
-* argentino
-* FACEIT
-* competitivo
-* corto
-* rápido para comms
-* natural para stack/pug
-* entendible instantáneamente
-
-NO usar traducciones literales raras.
-
----
-
-# EJEMPLOS CORRECTOS
-
-## Dust2
-
-* Fondo
-* Baranda
-* Xbox
-* Oscuro bajo
-* Oscuro alto
-* Caja gorda
-* Corredor
-* Corta
-* Side
-* Auto
-* Altar
-
-NO:
-
-* Long A
-* Catwalk
-* Lower tunnel
-* Upper tunnel
-
----
-
-## Mirage
-
-* Liga
-* Buda
-* DL
-* Caverna
-* Sándwich
-* Ticket
-* Jungla
-* Cabeciña
-* Triple
-* Van
-* Bench
-
-NO:
-
-* Connector
-* Underpass
-* Firebox
-
----
-
-## Inferno
-
-* Banana
-* Arena
-* Coffins
-* Iglesia
-* Pool
-* Apps
-* Larga
-* Moto
-* Biblioteca
-* Balcón
-
----
-
-## Nuke
-
-* Caseta
-* Metal
-* Roja
-* Heaven
-* Taxi
-* Poti
-* Afuera
-* Rampa
-* Secret
-* Ducto
-* Wizard
-
----
-
-## Ancient
-
-* Dona
-* Cueva
-* Jaguar
-* Temple
-* Main
-* Lane
-* Agua
-
----
-
-## Anubis
-
-* Agua
-* Canal
-* Heaven
-* Puente
-* Main
-* Cueva
-* Templo
-
----
-
-## Vertigo
-
-* Arena
-* Sandbag
-* Rampa
-* Escalera
-* Headshot
-* Generador
-* Mid
-
----
-
-## Train
-
-* Ivy
-* Pop
-* Escalera
-* Main
-* Hell
-* Verde
-* Azul
-* Connector
-* Tren 5
-* Tren 6
-
----
-
-# REGLAS IMPORTANTES DE CALLOUTS
-
-## 1. PRIORIZAR COMMS REALES
-
-Usar lenguaje real de:
-
-* FACEIT
-* GC
-* scrims
-* MM alto elo
-* equipos LATAM
-
----
-
-## 2. CALLOUTS CORTOS
-
-Máximo 1-2 palabras.
-
-Porque:
-
-* se usan en microcomms
-* deben ser rápidos
-* deben sonar naturales
-
----
-
-## 3. CONSISTENCIA
-
-Mantener los mismos nombres en:
-
-* callouts
-* tácticas
-* defaults
-* postplants
-* roles
-* descriptions
-* timings
-* utility
-* fundamentals
-
----
-
-## 4. NO TRADUCIR MAL
-
-NO hacer cosas como:
-
-* “Pasarela felina”
-* “Túnel inferior”
-* “Ventana superior”
-* “Caja de fuego”
-
-Eso rompe completamente la naturalidad competitiva.
-
----
-
-# CALLOUTS COMPLETOS
-
-Separados correctamente por zonas reales del mapa:
-
-* siteA
-* siteB
-* middle
-* outside
-* connector
-* underground
-* heaven
-* lower
-* upper
-* apps
-* banana
-* short
-* long
-* water
-* cave
-* temple
-* donut
-* ramp
-* ladder
-* etc
-
-Cada mapa debe tener categorías coherentes con su layout real.
-
----
-
-# TÁCTICAS COMPLETAS
-
-Agregar MUCHAS tácticas por mapa:
-
-## Pistol
-
-## Eco
-
-## Force
-
-## Semi Buy
-
-## Full Buy
-
-## Defaults
-
-## MidRound
-
-## Reaggressions
-
-## Retakes
-
-## Protocols
-
-## AntiEco
-
-## AntiRush
-
-## FakeExecs
-
-## ContactPlays
-
-## Splits
-
-## Explodes
-
-## DelayedExecs
-
-## FastPace
-
-## SlowPace
-
-## ConditioningRounds
-
----
-
-# CANTIDAD MÍNIMA
-
-POR MAPA:
-
-* 8 pistol
-* 6 eco
-* 6 force
-* 10 full buy
-* 8 defaults
-* 6 retakes
-* 6 reagegressions
-* 8 midround protocols
-* 6 anti-eco
-* 5 fake executes
-* 5 anti-rush setups
-
-NO resumir.
-
----
-
-# CADA STRAT DEBE TENER
-
-* id
-* name
-* category
-* type
-* team
-* description
-* objectivePrincipal
-* difficulty
-* recommendedLevel
-* concept
-* risks
-* whenToUse
-* whenNotToUse
-* failReaction
-* adaptationsPossible
-* setup
-* playerDistribution
-* utilities
-* timing
-* importantSpaces
-* pointOfContact
-* victoryCondition
-* postplant
-* economyLogic
-* tacticalConcepts
-* failureStates
-* commonMistakes
-* recoveryPlan
-* midRoundOptions
-* roles
-* tips
-
----
-
-# ROLES COMPLETOS
-
-Cada strat debe incluir:
-
-* entry
-* secondEntry
-* lurker
-* support
-* anchor
-* rotator
-* awper
-* mid
-
----
-
-# CADA ROL DEBE TENER
-
-* position
-* objective
-* utility
-* timing
-* responsibility
-* whatToLook
-* communication
-* onTeammateDeath
-* onNoContact
-* postplantOrRetake
-
----
-
-# MID ROUND OPTIONS
-
-Agregar arrays completos.
-
-Ejemplos:
-
-* “Si toman banana → split A”
-* “Si pierden ventana → freeze 15s”
-* “Si matan rotador → acelerar”
-* “Si no hay info → default lento”
-* “Si fuerzan retake temprano → fakear presión”
-
----
-
-# FAILURE STATES
-
-Ejemplos:
-
-* perder lurker temprano
-* perder control de medio
-* mala smoke crítica
-* entry sin trade
-* rotación CT rápida
-* perder utilidad temprano
-
----
-
-# COMMON MISTAKES
-
-Ejemplos:
-
-* spacing malo
-* utility mal sincronizada
-* sobre-extensión
-* lurker aislado
-* no tradear
-* entrar antes de flashes
-* regalar control de mapa
-
----
-
-# RECOVERY PLAN
-
-Cómo salvar la ronda si:
-
-* falla la entrada
-* falla la smoke
-* muere el entry
-* pierden control clave
-* pierden lurker
-* se quedan sin utilidad
-* CT stackea correctamente
-
----
-
-# ECONOMY LOGIC
-
-Agregar:
-
-* minimumUtility
-* buyRequirements
-* dropPriority
-* priorityWeapons
-
----
-
-# CONCEPTOS TÁCTICOS AVANZADOS
-
-Agregar:
-
-* spacingRules
-* utilityLayering
-* tradeDistance
-* timingWindows
-* reactionTrees
-* fakePressure
-* infoProtocols
-* mapControlStates
-* lurkTiming
-* rotationPunish
-
----
-
-# ESTILO
-
-Quiero:
-
-* lenguaje competitivo real
-* estilo coach táctico
-* setups profesionales
-* lógica usada en tier 1
-* terminología CS real
-* mentalidad de IGL
-* estructuras modernas de CS2
-* protocolos reales de scrim
-
----
-
-# IMPORTANTE FINAL
-
-NO resumir.
-NO simplificar.
-NO usar placeholders.
-NO cortar contenido.
-
-Quiero TypeScript REAL completo listo para copiar/pegar.
-
-El proyecto debe sentirse como:
-
-* un playbook real de equipo LATAM
-* un sistema táctico profesional
-* documentación interna de scrims
-* preparación para FACEIT 10 / leagues / equipos
-* un manual competitivo moderno de CS2
+Prompt para Copilot
+
+Crear un componente de catálogo en formato grid inspirado en la selección de mapas de Counter-Strike 2.
+
+Diseño general:
+
+Grid responsive de tarjetas.
+Desktop: 4 columnas.
+Tablet: 2 columnas.
+Mobile: 1 columna.
+Espaciado uniforme entre tarjetas.
+Bordes redondeados de 12px a 16px.
+Fondo oscuro (#121212 o similar).
+
+Cada tarjeta debe contener:
+
+Imagen de portada ocupando todo el fondo de la tarjeta.
+Relación vertical similar a 3:4.
+La imagen debe cubrir completamente el área (object-fit: cover).
+Aplicar overlay oscuro con degradado para mejorar la legibilidad del texto.
+Logo o ícono flotante centrado.
+Ubicado aproximadamente al 35% de la altura de la tarjeta.
+Tamaño entre 80 y 120 px.
+Con sombra suave y efecto de profundidad.
+Nombre principal.
+Centrado horizontalmente.
+Ubicado cerca de la parte inferior.
+Tipografía grande, bold, color blanco.
+Similar al estilo utilizado en juegos competitivos.
+Información secundaria.
+Debajo del título.
+Tamaño menor.
+Color gris claro.
+Ejemplo: cantidad de elementos, usuarios, cursos, productos, etc.
+Badge opcional.
+Posicionado arriba a la derecha.
+Color verde.
+Texto como "Nuevo", "Destacado" o "Actualizado".
+
+Interacciones:
+
+Hover:
+Escalar tarjeta a 1.03.
+Incrementar brillo de la imagen.
+Elevar sombra.
+Animación suave de 250ms.
+Click:
+Navegar al detalle del elemento.
+
+Estética:
+
+Inspiración gaming premium.
+Sombras profundas.
+Contraste alto.
+Diseño moderno tipo launcher o biblioteca visual.
+
+Adaptación a nuestra aplicación:
+
+Reemplazar los mapas por [NOMBRE DE NUESTRA ENTIDAD].
+Reemplazar la imagen del mapa por la imagen representativa de cada elemento.
+Reemplazar el logo del mapa por el logo o icono de la entidad.
+Reemplazar "210 nades" por la métrica principal de nuestra aplicación.
+Mantener exactamente la misma jerarquía visual:
+imagen → logo → nombre → métrica.
+
+Generar el componente completo utilizando [React + Tailwind / Angular + PrimeNG / la tecnología del proyecto], siguiendo buenas prácticas de componentes reutilizables y datos dinámicos.
+
+Si me decís qué aplicación están haciendo (por ejemplo: cursos, vehículos, películas, videojuegos, productos, clientes, etc.), te lo adapto para que Copilot genere algo prácticamente idéntico a la imagen pero con el contexto exacto de tu proyecto.
+
+Podés agregar esta parte al prompt:
+
+Gestión de recursos gráficos
+
+Crear una carpeta llamada assets dentro del proyecto para almacenar todos los recursos visuales.
+
+Estructura sugerida:
+
+assets/
+├── backgrounds/
+│   ├── mapa1.jpg
+│   ├── mapa2.jpg
+│   ├── mapa3.jpg
+│   └── ...
+│
+└── icons/
+    ├── mapa1.png
+    ├── mapa2.png
+    ├── mapa3.png
+    └── ...
+Cada tarjeta debe obtener su imagen de fondo desde assets/backgrounds.
+Cada tarjeta debe obtener su logo o icono desde assets/icons.
+Los datos de cada elemento deben incluir:
+{
+  id: 1,
+  nombre: "Nombre",
+  fondo: "/assets/backgrounds/nombre.jpg",
+  icono: "/assets/icons/nombre.png"
+}
+El componente debe estar preparado para que simplemente agregando nuevas imágenes a la carpeta assets y registrándolas en el array de datos aparezcan automáticamente nuevas tarjetas.
+Utilizar imágenes locales, no URLs externas.
+Si una imagen no existe, mostrar un placeholder por defecto.
+
+Mantener la estética visual idéntica a la selección de mapas de CS2: imagen de fondo, logo centrado y nombre grande en la parte inferior, sin estadísticas ni texto secundario.
+
+hay algunas que son png conviene que sean jpg o png
+
+Depende de qué sea cada imagen:
+
+Fondos de los mapas → JPG/JPEG. Son fotografías o renders grandes y JPG pesa mucho menos manteniendo buena calidad.
+Logos e íconos → PNG. Conservan transparencia y se ven mejor sobre cualquier fondo.
+
+Te recomendaría esta estructura:
+
+assets/
+├── backgrounds/
+│   ├── mirage.jpg
+│   ├── dust2.jpg
+│   ├── inferno.jpg
+│   └── ...
+│
+└── icons/
+    ├── mirage.png
+    ├── dust2.png
+    ├── inferno.png
+    └── ...
+
+Además podés indicarle a Copilot:
+
+Utilizar archivos JPG/JPEG para las imágenes de fondo de las tarjetas y archivos PNG con transparencia para los logos o iconos. El componente debe soportar ambos formatos automáticamente.
+
+Así obtenés la mejor combinación entre calidad visual y rendimiento de carga.
+
+bueno añadi eso al prompt
+Prompt para Copilot
+
+Crear una pantalla de selección visual inspirada en la selección de mapas de Counter-Strike 2, manteniendo la misma estética, distribución y jerarquía visual, pero adaptada a nuestra aplicación.
+
+Diseño general
+Grid responsive de tarjetas.
+4 columnas en desktop.
+2 columnas en tablet.
+1 columna en mobile.
+Espaciado uniforme entre tarjetas.
+Fondo general oscuro.
+Tarjetas con bordes redondeados.
+Sombras suaves y apariencia moderna tipo gaming premium.
+Estructura de cada tarjeta
+
+Cada tarjeta debe contener únicamente:
+
+Imagen de fondo ocupando toda la tarjeta.
+Overlay oscuro con degradado para mejorar la legibilidad.
+Logo o icono centrado sobre la imagen.
+Nombre de la entidad en la parte inferior.
+
+No mostrar estadísticas, contadores, subtítulos ni información secundaria debajo del nombre.
+
+La jerarquía visual debe ser:
+
+Imagen → Logo → Nombre
+
+Interacciones
+Hover con ligero zoom de la imagen.
+Incremento sutil de brillo al pasar el mouse.
+Elevación de la tarjeta mediante sombra.
+Transiciones suaves de aproximadamente 250ms.
+Gestión de recursos gráficos
+
+Cree una carpeta llamada assets para almacenar todas las imágenes utilizadas por las tarjetas. Por favor dale la siguiente estructura
+hay una que es el mapa de mirage llamada mirage game radar guardalo en assets/gameRadar
+Estructura:
+
+assets/
+├── backgrounds/
+│   ├── mirage.jpg
+│   ├── dust2.jpg
+│   ├── inferno.jpg
+│   └── ...
+│
+└── icons/
+    ├── mirage.png
+    ├── dust2.png
+    ├── inferno.png
+    └── ...
+Formatos de imágenes
+Utilizar JPG/JPEG para las imágenes de fondo porque son más livianas y eficientes para fotografías o renders.
+Utilizar PNG con transparencia para los logos e iconos para que se integren correctamente sobre cualquier fondo.
+El componente debe soportar ambos formatos automáticamente.
+Si una imagen no existe, mostrar una imagen placeholder por defecto.
+Modelo de datos
+
+Cada elemento debe estar definido de forma dinámica:
+
+{
+    id: 1,
+    nombre: "Mirage",
+    fondo: "/assets/backgrounds/mirage.jpg",
+    icono: "/assets/icons/mirage.png"
+}
+
+El componente debe generar las tarjetas recorriendo un array de datos y permitir agregar nuevas tarjetas simplemente incorporando nuevas imágenes en la carpeta assets y registrándolas en dicho array.
+
+Resultado esperado
+
+El resultado visual debe ser prácticamente idéntico a la pantalla de selección de mapas de CS2:
+
+Imagen de fondo grande.
+Logo centrado.
+Nombre destacado en la parte inferior.
+Diseño limpio y visual.
+Sin estadísticas ni texto adicional.
+Apariencia moderna, profesional y atractiva.

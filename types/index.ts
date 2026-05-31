@@ -163,5 +163,6 @@ export interface PlayerStats {
   nickname: string;
   rating?: number;
   elo?: number;
+  level?: number;
   lastUpdated: Date;
 }

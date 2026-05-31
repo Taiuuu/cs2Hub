@@ -34,11 +34,6 @@ export function CrosshairList({ crosshairs, onDelete, onCopy }: CrosshairListPro
               <code className="text-xs bg-zinc-900 text-green-400 px-2 py-1 rounded mt-2 block w-fit font-mono break-all">
                 {crosshair.code}
               </code>
-              {crosshair.team && (
-                <span className="text-xs text-zinc-500 mt-2 inline-block">
-                  {crosshair.team === 'Both' ? '🔄 Ambos' : crosshair.team === 'CT' ? '🛡️ CT' : '🔫 T'}
-                </span>
-              )}
             </div>
             <div className="flex gap-2">
               <button

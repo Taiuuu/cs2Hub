@@ -29,8 +29,12 @@ function getInitialCrosshairs(): Crosshair[] {
   const saved = localStorage.getItem('crosshairs');
   if (saved) {
     try {
-      const parsed = JSON.parse(saved);
-      return parsed.length > 0 ? parsed : DEFAULT_CROSSHAIRS;
+      const parsed = JSON.parse(saved) as any[];
+      if (parsed.length === 0) return DEFAULT_CROSSHAIRS;
+      return parsed.map((crosshair) => ({
+        ...crosshair,
+        createdAt: new Date(crosshair.createdAt),
+      }));
     } catch (e) {
       console.error('Error al cargar miras:', e);
       return DEFAULT_CROSSHAIRS;

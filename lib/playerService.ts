@@ -21,6 +21,11 @@ export interface FACEITProfile {
   lastUpdated: Date;
 }
 
+export interface CombinedPlayerStats {
+  steam: SteamProfile | null;
+  faceit: FACEITProfile | null;
+}
+
 /**
  * Obtiene datos públicos del perfil de Steam usando el endpoint JSON público
  * No requiere API key, usa la información pública del perfil
@@ -141,7 +146,7 @@ export async function getFACEITProfile(
 export async function getCombinedPlayerStats(
   steamUsername: string = 'taiuuu',
   faceitNickname: string = 'taiuuu'
-) {
+): Promise<CombinedPlayerStats> {
   const [steam, faceit] = await Promise.all([
     getSteamProfile(steamUsername),
     getFACEITProfile(faceitNickname),
