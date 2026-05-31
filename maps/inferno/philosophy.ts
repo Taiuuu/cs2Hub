@@ -1,3 +1,10 @@
-import type { MapPhilosophy } from '../core/types';
+import type { MapPhilosophy } from "../core/types";
 
-export const infernoPhilosophy: MapPhilosophy = {'philosophy': 'Banana es la línea de vida. El CT debe mantenerla bajo presión constante y usar medio como palanca para rotaciones rápidas.', 'tWinCondition': 'Dominar banana y usar medio para crear un split a A o un rush consolidado a B.', 'ctWinCondition': 'Retener banana y estar siempre listos para rotar con información de medio.', 'keyAreas': ['Banana', 'Mid', 'A Site', 'B Site', 'Library'], 'tempo': 'Controlado con ventanas de agresión tras el tiempo 15-20s.', 'rotationComplexity': 'Alta: las decisiones de rotación se toman en función de donde el rival cede el control.'}
+export const infernoPhilosophy: MapPhilosophy = {
+  philosophy: "Banana define la mayor parte de la ronda. Controlar banana y medio permite dictar dÃ³nde va a pelear el rival.",
+  tWinCondition: "Tomar banana o medio temprano y usar esa palanca para un split a A o un execute B planificado.",
+  ctWinCondition: "Negar banana con nades, retener medio y usar el retake cuando el T planta.",
+  keyAreas: ["Banana", "Mid", "A Site", "B Site", "Library"],
+  tempo: "Controlado con windows de agresiÃ³n tras el tiempo 15-20s.",
+  rotationComplexity: "Alta: rotaciones entre CT y Mid requieren timing y comunicaciÃ³n constantes."
+}

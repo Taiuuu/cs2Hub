@@ -1,0 +1,65 @@
+import type { StratDetail } from "../core/types";
+import { createStrat, fillRole } from "../core/stratTemplates";
+import { sharedRoles } from "../core/sharedRoles";
+
+export const infernoDefaults: StratDetail[] = [
+  createStrat({
+    id: "inferno-default-2-1-2",
+    name: "Default 2-1-2",
+    category: "Default",
+    type: "default",
+    team: "T",
+    description: "Dos en banana, uno en medio y dos en A para leer y decidir.",
+    objectivePrincipal: "Conservar util y decidir site basado en la respuesta CT.",
+    concept: "No comprometerse sin información y aprovechar cualquier hueco en banana o A.",
+    risks: ["Perder banana temprano", "gastar util sin información"],
+    failReaction: "Si banana se pierde, pivotar a A con palace o a B con un rush rápido.",
+    adaptationsPossible: "Rotar un jugador desde A a Short si el CT está fuerte en banana.",
+    midRoundOptions: ["Split A", "Rush B", "Delay en banana"],
+    winCondition: "Llegar a 25s con ventaja numérica o util suficiente para ejecutar.",
+    failureStates: ["Banana perdido y A cerrado", "No hay rifles vivos."],
+    commonMistakes: ["Forzar sin trade", "mirar mucho sin avanzar"],
+    recoveryPlan: "Reagrupar y buscar el sitio que el CT dejó abierto.",
+    economyLogic: "Usar solo util clave para retener el tempo.",
+    minimumUtility: ["Smoke Banana", "Flash Mid"],
+    priorityWeapons: ["Rifle", "AWP en Mid"],
+    spacingRules: "Mantener trade cercano en Banana y A.",
+    utilityLayering: "Smoke Banana -> Flash Mid.",
+    timingWindows: "Decidir sobre el sitio entre 20-24s.",
+    reactionTree: "Banana libre -> B; medio roto -> A; todo contestado -> reset.",
+    rotationPunish: "Si el CT rota lento, explotar el sitio abandonado.",
+    lurkTiming: "El lurker espera 18s y luego corta la rotación.",
+    infoProtocols: "Reportar cuerpo en banana y presencia en Mid.",
+    setup: "2 Banana / 1 Mid / 2 A.",
+    playerDistribution: "Dos banana, uno mid, dos A.",
+    importantSpaces: ["Banana", "Pit", "Mid", "A Site"],
+    pointOfContact: "Banana primero, luego medio.",
+    postplant: "Cubrir bomb desde Pit y Library.",
+    roles: {
+      entry: fillRole({
+        position: "Banana",
+        objective: "Ganar espacio y forzar la rotación de CT.",
+        utility: "Flash de banana y humo de coil.",
+        timing: "Iniciar el avance tras los primeros 10 segundos.",
+        responsibility: "Abrir el contacto y absorber el primer fuego enemigo.",
+        whatToLook: "Ángulos de banana, segundo oranges y coil.",
+        communication: "\"Banana limpia / contacto banana\"",
+        onTeammateDeath: "Avanzar con trade cercano y mantener la presión.",
+        onNoContact: "Empujar un paso más y buscar información en medio.",
+        postplant: "Cubrir plataforma y oranges desde banana."
+      }, sharedRoles.entry),
+      support: fillRole({
+        position: "Mid",
+        objective: "Cubrir el avance de banana y asegurar que la CT no rote limpia.",
+        utility: "Flash corto y smoke de mid.",
+        timing: "Entrar tras el contacto inicial en banana.",
+        responsibility: "Proveer trade y negar rotaciones desde CT.",
+        whatToLook: "Movimiento en mid, CT en librería, rotación hacia B.",
+        communication: "\"Mid control / rotación en camino\"",
+        onTeammateDeath: "Cerrar mid y actuar como segundo trade.",
+        onNoContact: "Avanzar hasta el banco para negar rotaciones.",
+        postplant: "Cubrir árbol y librería desde mid."
+      }, sharedRoles.support),
+    },
+  }),
+];
