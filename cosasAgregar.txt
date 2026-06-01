@@ -1,234 +1,301 @@
-Prompt para Copilot
 
-Crear un componente de catálogo en formato grid inspirado en la selección de mapas de Counter-Strike 2.
+<!doctype html>
+<html lang="en" data-theme="dark">
 
-Diseño general:
+<head>
+    <link href="/assets/main.css" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <title>Csstat</title>
 
-Grid responsive de tarjetas.
-Desktop: 4 columnas.
-Tablet: 2 columnas.
-Mobile: 1 columna.
-Espaciado uniforme entre tarjetas.
-Bordes redondeados de 12px a 16px.
-Fondo oscuro (#121212 o similar).
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Compare CS2 player stats from multiple sources in one place.">
 
-Cada tarjeta debe contener:
+    
 
-Imagen de portada ocupando todo el fondo de la tarjeta.
-Relación vertical similar a 3:4.
-La imagen debe cubrir completamente el área (object-fit: cover).
-Aplicar overlay oscuro con degradado para mejorar la legibilidad del texto.
-Logo o ícono flotante centrado.
-Ubicado aproximadamente al 35% de la altura de la tarjeta.
-Tamaño entre 80 y 120 px.
-Con sombra suave y efecto de profundidad.
-Nombre principal.
-Centrado horizontalmente.
-Ubicado cerca de la parte inferior.
-Tipografía grande, bold, color blanco.
-Similar al estilo utilizado en juegos competitivos.
-Información secundaria.
-Debajo del título.
-Tamaño menor.
-Color gris claro.
-Ejemplo: cantidad de elementos, usuarios, cursos, productos, etc.
-Badge opcional.
-Posicionado arriba a la derecha.
-Color verde.
-Texto como "Nuevo", "Destacado" o "Actualizado".
-
-Interacciones:
-
-Hover:
-Escalar tarjeta a 1.03.
-Incrementar brillo de la imagen.
-Elevar sombra.
-Animación suave de 250ms.
-Click:
-Navegar al detalle del elemento.
-
-Estética:
-
-Inspiración gaming premium.
-Sombras profundas.
-Contraste alto.
-Diseño moderno tipo launcher o biblioteca visual.
-
-Adaptación a nuestra aplicación:
-
-Reemplazar los mapas por [NOMBRE DE NUESTRA ENTIDAD].
-Reemplazar la imagen del mapa por la imagen representativa de cada elemento.
-Reemplazar el logo del mapa por el logo o icono de la entidad.
-Reemplazar "210 nades" por la métrica principal de nuestra aplicación.
-Mantener exactamente la misma jerarquía visual:
-imagen → logo → nombre → métrica.
-
-Generar el componente completo utilizando [React + Tailwind / Angular + PrimeNG / la tecnología del proyecto], siguiendo buenas prácticas de componentes reutilizables y datos dinámicos.
-
-Si me decís qué aplicación están haciendo (por ejemplo: cursos, vehículos, películas, videojuegos, productos, clientes, etc.), te lo adapto para que Copilot genere algo prácticamente idéntico a la imagen pero con el contexto exacto de tu proyecto.
-
-Podés agregar esta parte al prompt:
-
-Gestión de recursos gráficos
-
-Crear una carpeta llamada assets dentro del proyecto para almacenar todos los recursos visuales.
-
-Estructura sugerida:
-
-assets/
-├── backgrounds/
-│   ├── mapa1.jpg
-│   ├── mapa2.jpg
-│   ├── mapa3.jpg
-│   └── ...
-│
-└── icons/
-    ├── mapa1.png
-    ├── mapa2.png
-    ├── mapa3.png
-    └── ...
-Cada tarjeta debe obtener su imagen de fondo desde assets/backgrounds.
-Cada tarjeta debe obtener su logo o icono desde assets/icons.
-Los datos de cada elemento deben incluir:
-{
-  id: 1,
-  nombre: "Nombre",
-  fondo: "/assets/backgrounds/nombre.jpg",
-  icono: "/assets/icons/nombre.png"
-}
-El componente debe estar preparado para que simplemente agregando nuevas imágenes a la carpeta assets y registrándolas en el array de datos aparezcan automáticamente nuevas tarjetas.
-Utilizar imágenes locales, no URLs externas.
-Si una imagen no existe, mostrar un placeholder por defecto.
-
-Mantener la estética visual idéntica a la selección de mapas de CS2: imagen de fondo, logo centrado y nombre grande en la parte inferior, sin estadísticas ni texto secundario.
-
-hay algunas que son png conviene que sean jpg o png
-
-Depende de qué sea cada imagen:
-
-Fondos de los mapas → JPG/JPEG. Son fotografías o renders grandes y JPG pesa mucho menos manteniendo buena calidad.
-Logos e íconos → PNG. Conservan transparencia y se ven mejor sobre cualquier fondo.
-
-Te recomendaría esta estructura:
-
-assets/
-├── backgrounds/
-│   ├── mirage.jpg
-│   ├── dust2.jpg
-│   ├── inferno.jpg
-│   └── ...
-│
-└── icons/
-    ├── mirage.png
-    ├── dust2.png
-    ├── inferno.png
-    └── ...
-
-Además podés indicarle a Copilot:
-
-Utilizar archivos JPG/JPEG para las imágenes de fondo de las tarjetas y archivos PNG con transparencia para los logos o iconos. El componente debe soportar ambos formatos automáticamente.
-
-Así obtenés la mejor combinación entre calidad visual y rendimiento de carga.
-
-bueno añadi eso al prompt
-Prompt para Copilot
-
-Crear una pantalla de selección visual inspirada en la selección de mapas de Counter-Strike 2, manteniendo la misma estética, distribución y jerarquía visual, pero adaptada a nuestra aplicación.
-
-Diseño general
-Grid responsive de tarjetas.
-4 columnas en desktop.
-2 columnas en tablet.
-1 columna en mobile.
-Espaciado uniforme entre tarjetas.
-Fondo general oscuro.
-Tarjetas con bordes redondeados.
-Sombras suaves y apariencia moderna tipo gaming premium.
-Estructura de cada tarjeta
-
-Cada tarjeta debe contener únicamente:
-
-Imagen de fondo ocupando toda la tarjeta.
-Overlay oscuro con degradado para mejorar la legibilidad.
-Logo o icono centrado sobre la imagen.
-Nombre de la entidad en la parte inferior.
-
-No mostrar estadísticas, contadores, subtítulos ni información secundaria debajo del nombre.
-
-La jerarquía visual debe ser:
-
-Imagen → Logo → Nombre
-
-Interacciones
-Hover con ligero zoom de la imagen.
-Incremento sutil de brillo al pasar el mouse.
-Elevación de la tarjeta mediante sombra.
-Transiciones suaves de aproximadamente 250ms.
-Gestión de recursos gráficos
-
-Cree una carpeta llamada assets para almacenar todas las imágenes utilizadas por las tarjetas. Por favor dale la siguiente estructura
-hay una que es el mapa de mirage llamada mirage game radar guardalo en assets/gameRadar
-Estructura:
-
-assets/
-├── backgrounds/
-│   ├── mirage.jpg
-│   ├── dust2.jpg
-│   ├── inferno.jpg
-│   └── ...
-│
-└── icons/
-    ├── mirage.png
-    ├── dust2.png
-    ├── inferno.png
-    └── ...
-Formatos de imágenes
-Utilizar JPG/JPEG para las imágenes de fondo porque son más livianas y eficientes para fotografías o renders.
-Utilizar PNG con transparencia para los logos e iconos para que se integren correctamente sobre cualquier fondo.
-El componente debe soportar ambos formatos automáticamente.
-Si una imagen no existe, mostrar una imagen placeholder por defecto.
-Modelo de datos
-
-Cada elemento debe estar definido de forma dinámica:
-
-{
-    id: 1,
-    nombre: "Mirage",
-    fondo: "/assets/backgrounds/mirage.jpg",
-    icono: "/assets/icons/mirage.png"
-}
-
-El componente debe generar las tarjetas recorriendo un array de datos y permitir agregar nuevas tarjetas simplemente incorporando nuevas imágenes en la carpeta assets y registrándolas en dicho array.
-
-Resultado esperado
-
-El resultado visual debe ser prácticamente idéntico a la pantalla de selección de mapas de CS2:
-
-Imagen de fondo grande.
-Logo centrado.
-Nombre destacado en la parte inferior.
-Diseño limpio y visual.
-Sin estadísticas ni texto adicional.
-Apariencia moderna, profesional y atractiva.
+<meta property="og:title" content="csst.at — CS2 player stats">
+<meta property="og:description" content="Compare CS2 player stats from Steam, Faceit, Leetify, csstats.gg on one page.">
+<meta property="og:type" content="profile">
+<meta property="og:image" content="https://csst.at/og/taiuuu">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://csst.at/og/taiuuu">
 
 
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+
+    
+<script type="text/javascript" src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+
+</head>
+
+<body>
+    <div id="content">
+<div class="min-h-[calc(100vh-4rem)] w-screen flex flex-col items-center">
+    
+    
+    <div class="flex flex-col gap-6 max-w-6xl px-4 py-10 my-auto">
+        <div class="flex flex-row gap-6 justify-center items-start">
+            <aside class="flex flex-col gap-6 max-w-64 shrink-0 min-w-0">
+                <div class="flex flex-col gap-2 items-center pt-2.5 p-2 rounded-lg border border-base-300/40 bg-base-200 w-full mx-auto">
+                    <div class="carousel w-40 aspect-square" id="avatars-taiuuu">
+                        <div id="avatar-taiuuu-steam" class="steam"></div>
+                        <div id="avatar-taiuuu-faceit" class="faceit"></div>
+                        <div id="avatar-taiuuu-leetify" class="leetify"></div>
+                        <div id="avatar-taiuuu-csstatsgg" class="csstatsgg"></div>
+                    </div>
+                    <div class="w-40 mx-auto flex flex-row justify-between px-2 align-middle">
+                        <div id="avatar-taiuuu-steam-button" class="hidden steam"></div>
+                        <div id="avatar-taiuuu-faceit-button" class="hidden faceit"></div>
+                        <div id="avatar-taiuuu-leetify-button" class="hidden leetify"></div>
+                        <div id="avatar-taiuuu-csstatsgg-button" class="hidden csstatsgg"></div>
+                    </div>
+                </div>
+
+                <div hx-get="/taiuuu/links" hx-trigger="load" hx-swap="outerHTML" class="mx-auto">
+                    <p class="loading loading-spinner loading-lg"></p>
+                </div>
+
+                <div class="w-full">
+                    <a href="https://pirateswap.com/?ref=csstat" target="_blank" class="block w-full">
+                        <img src="/assets/images/ps-200x200-en.png" alt="Pirateswap banner" class="w-full h-auto block rounded-lg">
+                    </a>
+                </div>
+
+                <div id="csxp-taiuuu" class="hidden"></div>
+
+                <div class="mx-auto hidden" id="rank-csstatsgg-taiuuu">
+                    <p class="loading loading-spinner loading-lg"></p>
+                </div>
+
+                <div id="rank-leetify-taiuuu" class="p-3 text-xs text-neutral-400 leetify">
+                    <p class="loading loading-spinner loading-lg"></p>
+                </div>
+            </aside>
+
+            <main class="flex flex-col gap-6 min-w-0">
+                <div class="flex flex-row gap-6 justify-between">
+                    <div id="section-steam-taiuuu" hx-get="/taiuuu/steam" hx-trigger="preferences once" hx-swap="outerHTML" class="flex justify-center py-10 grow">
+                        <span class="loading loading-spinner loading-lg steam"></span>
+                    </div>
+                    <div id="section-leetify-taiuuu" hx-get="/taiuuu/leetify" hx-trigger="preferences once" hx-swap="outerHTML" class="flex justify-center py-10 grow">
+                        <span class="loading loading-spinner loading-lg leetify"></span>
+                    </div>
+                </div>
+
+                <div class="flex flex-row gap-6 justify-between">
+                    <div id="section-faceit-taiuuu" hx-get="/taiuuu/faceit" hx-trigger="preferences once" hx-swap="outerHTML" class="flex justify-center py-10" style="flex-grow: 4;">
+                        <span class="loading loading-spinner loading-lg faceit"></span>
+                    </div>
+                    <div id="section-csstatsgg-taiuuu" hx-get="/taiuuu/csstatsgg" hx-trigger="preferences once" hx-swap="outerHTML" class="flex justify-center py-10" style="flex-grow: 1;">
+                        <span class="loading loading-spinner loading-lg csstatsgg"></span>
+                    </div>
+                </div>
+
+                <div class="flex flex-row gap-6 justify-between">
+                    <div id="section-scopegg-taiuuu" hx-get="/taiuuu/scopegg" hx-trigger="preferences once" hx-swap="outerHTML" class="flex justify-center py-10 grow">
+                        <span class="loading loading-spinner loading-lg scopegg_official"></span>
+                    </div>
+                </div>
+
+                <div id="medals" class="steam rounded-lg border border-base-300/40 bg-base-200 p-4 steam">
+                    <span class="loading loading-spinner loading-lg"></span>
+                </div>
+
+                <div class="flex justify-center">
+                    <div class="max-h-48 w-full">
+                        <a href="https://trk.clash.gg/click?o=2&a=493&c=33">
+                            <img src="/assets/images/1080x200-Banner.png" alt="Clash.gg banner" class="rounded-lg">
+                        </a>
+                        </div>
+                </div>
 
 
+                <div id="weapons-steam" class="steam hidden">
+                </div>
+
+                <div id="weapons-csstatsgg" class="csstatsgg hidden">
+                </div>
+
+                <div id="leetify-highlights-taiuuu" class="leetify"></div>
+
+                <div class="flex justify-center">
+                    <div class="max-h-48 w-full">
+                        <a href="https://pirateswap.com/?ref=csstat" target="_blank">
+                            <img src="/assets/images/ps-1000x160-en.png" alt="Pirateswap banner" class="rounded-lg">
+                        </a>
+                    </div>
+                </div>
 
 
+                <div id="inventory-grid" class="inventory hidden">
+                </div>
+            </main>
+        </div>
+    </div>
+    
+</div>
+</div>
 
+    <footer class="footer footer-center">
+        <aside>
+            <nav class="grid grid-flow-col gap-4">
+                <a class="link link-hover" href="/">Home</a>
+                <button class="link link-hover" onclick="contact.showModal()">Contact</button>
+                <dialog id="contact" class="modal">
+                    <div class="modal-box w-fit">
+                        <table class="table">
+                            <tr>
+                                <td>Discord</td>
+                                <td>snek239</td>
+                            </tr>
+                            <tr>
+                                <td>X</td>
+                                <td><a href="https://x.com/snek239" class="link">@snek239</a></td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td><a href="/cdn-cgi/l/email-protection#f796939a9e99b794848483d99683" class="link"><span class="__cf_email__" data-cfemail="3150555c585f71524242451f5045">[email&#160;protected]</span></a>, <a href="/cdn-cgi/l/email-protection#b6c6c4dfc0d7d5cff6d5c5c5c298d7c2" class="link"><span class="__cf_email__" data-cfemail="ed9d9f849b8c8e94ad8e9e9e99c38c99">[email&#160;protected]</span></a></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <form method="dialog" class="modal-backdrop">
+                        <button>close</button>
+                    </form>
+                </dialog>
+                <a class="link link-hover" href="/faq">FAQ</a>
 
+                <button class="link link-hover" onclick="preferences.showModal()">
+                    Settings
+                    <span class="indicator-item badge badge-primary ml-1 px-1 h-4 leading-3">New</span>
+                </button>
+                <dialog id="preferences" class="modal">
+                    <div class="modal-box w-fit overflow-hidden">
+                        <div class="form-control preferences">
+                          <label class="label cursor-pointer justify-normal">
+                            <input type="checkbox" class="checkbox" data-class="steam"/>
+                            <span class="label-text pl-2 text-base">Steam</span>
+                          </label>
+                        </div>
+                        <div class="form-control preferences">
+                          <label class="label cursor-pointer justify-normal">
+                            <input type="checkbox" class="checkbox" data-class="faceit"/>
+                            <span class="label-text pl-2 text-base">Faceit</span>
+                          </label>
+                        </div>
+                        <div class="form-control preferences">
+                          <label class="label cursor-pointer justify-normal">
+                            <input type="checkbox" class="checkbox" data-class="leetify"/>
+                            <span class="label-text pl-2 text-base">Leetify</span>
+                          </label>
+                        </div>
+                        <div class="form-control preferences">
+                          <label class="label cursor-pointer justify-normal">
+                            <input type="checkbox" class="checkbox" data-class="csstatsgg"/>
+                            <span class="label-text pl-2 text-base">csstats.gg</span>
+                          </label>
+                        </div>
+                        <div class="form-control preferences">
+                          <label class="label cursor-pointer justify-normal">
+                            <input type="checkbox" class="checkbox" data-class="scopegg_official"/>
+                            <span class="label-text pl-2 text-base">scope.gg</span>
+                            <span class="indicator-item badge badge-primary ml-1 px-1 h-4 leading-3">New</span>
+                          </label>
+                        </div>
+                        <div class="form-control preferences">
+                          <label class="label cursor-pointer justify-normal">
+                            <input type="checkbox" class="checkbox" data-class="inventory"/>
+                            <span class="label-text pl-2 text-base">Inventory</span>
+                          </label>
+                        </div>
+                    </div>
+                    <form method="dialog" class="modal-backdrop">
+                        <button>close</button>
+                    </form>
+                </dialog>
 
+                <div class="dropdown dropdown-top dropdown-hover dropdown-end">
+                  <label tabindex="0" class="link link-hover">Glossary</label>
+                  <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-28 bg-[var(--fallback-b2,oklch(var(--b2)/1))]">
+                    <li><a class="link link-hover" href="/blog/glossary-steam">Steam</a></li>
+                    <li><a class="link link-hover" href="/blog/glossary-faceit">Faceit</a></li>
+                    <li><a class="link link-hover" href="/blog/glossary-leetify">Leetify</a></li>
+                    <li><a class="link link-hover" href="/blog/glossary-csstatsgg">csstats.gg</a></li>
+                  </ul>
+                </div>
 
+                <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+                  const STORAGE_KEY  = 'preferences';
+                  const DEFAULT_STATE = { steam: true, faceit: true, leetify: true, csstatsgg: false, inventory: false, scopegg_official: true };
 
+                  /* ---------- helpers ---------- */
+                  const checkboxes = document.querySelectorAll('.preferences input[type="checkbox"]');
 
+                  function loadState() {
+                    try {
+                      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                      return saved ? { ...DEFAULT_STATE, ...saved } : { ...DEFAULT_STATE };
+                    } catch {
+                      return { ...DEFAULT_STATE };
+                    }
+                  }
 
-la pestaña estadisticas sigue sin mostrar las reales, podes fijarte eso o decime que necesitas y yo te lo doy ya sea link de faceit, link de steam etc. Tambien en la lista de mapas agregá Cache y Overpass. La idea es tener como primero los que estan en el pool competitivo que son los de la foto y despues train, vertigo que no estan
+                  /* Persist current state */
+                  function saveState(state) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                  }
 
-Analyzing your answers...
+                  function updateVisibility(state) {
+                    Object.entries(state).forEach(([cls, visible]) => {
+                      document.querySelectorAll('.' + cls).forEach(el => {
+                        el.style.display = visible ? '' : 'none';
+                        if (visible) {
+                          const loader = el.parentElement;
+                          if (loader.hasAttribute('hx-get') && window.htmx) {
+                            htmx.trigger(loader, 'preferences');
+                          }
+                        }
+                      });
+                    });
+                  }
 
-Q: ¿De dónde quieres traer las estadísticas reales?
-A: Steam API - Necesito tu Steam ID o URL del perfil
-quiero traerlas tanto de faceit como de steam api https://steamcommunity.com/id/taiuuu/
-https://www.faceit.com/es/players/Chocko0
+                  const state = loadState();
+
+                  checkboxes.forEach(cb => {
+                    const cls = cb.dataset.class;
+                    cb.checked = state[cls] ?? true;
+                    cb.addEventListener('change', () => {
+                      state[cls] = cb.checked;
+                      saveState(state);
+                      updateVisibility(state);
+                    });
+                  });
+
+                  document.body.addEventListener('htmx:load', function onHtmxLoad(e) {
+                    updateVisibility(state);
+                  });
+                </script>
+            </nav>
+            <p>
+                Built with 💜 and <a class="link link-hover" href="https://htmx.org/" rel="noopener noreferrer">HTMX</a>
+                in 🇨🇭 by <a class="link link-hover" href="https://steamcommunity.com/id/luapaster" rel="noopener noreferrer">snek</a>
+                <img src="//ipv4.games/claim?name=snek" loading="lazy">
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    fetch("https://ipv4.quest/claim?name=snek")
+                  });
+                </script>
+            </p>
+            <div id="modals-root"></div>
+        </aside>
+    </footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"c35a1d6e9fca4d06b44d5ac5ba12bbd8","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a04a8bfee9c1b64d',t:'MTc4MDI3ODQxMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+</html>

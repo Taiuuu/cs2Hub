@@ -2,6 +2,8 @@
 
 import { Crosshair } from '@/types';
 import { FormEvent, useState } from 'react';
+import { CrosshairPreview } from './CrosshairPreview';
+import { Copy, Eye, EyeOff } from 'lucide-react';
 
 interface CrosshairFormProps {
   onAdd: (crosshair: Omit<Crosshair, 'id' | 'createdAt'>) => void;
@@ -9,11 +11,11 @@ interface CrosshairFormProps {
 
 export function CrosshairForm({ onAdd }: CrosshairFormProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     code: '',
     description: '',
-    team: 'Both' as 'CT' | 'T' | 'Both',
   });
 
   const handleSubmit = (e: FormEvent) => {
@@ -27,77 +29,123 @@ export function CrosshairForm({ onAdd }: CrosshairFormProps) {
       name: formData.name,
       code: formData.code,
       description: formData.description || undefined,
-      team: formData.team,
     });
 
-    setFormData({ name: '', code: '', description: '', team: 'Both' });
+    setFormData({ name: '', code: '', description: '' });
     setIsOpen(false);
   };
 
+  const copyCode = () => {
+    navigator.clipboard.writeText(formData.code);
+  };
+
   return (
-    <div>
+    <div className="space-y-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium transition-colors mb-6"
+        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-6 py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-blue-500/50 text-white"
       >
-        {isOpen ? 'Cancelar' : '+ Nueva Mira'}
+        {isOpen ? '✕ Cancelar' : '+ Nueva Mira'}
       </button>
 
       {isOpen && (
-        <form onSubmit={handleSubmit} className="border border-zinc-800 rounded-lg p-6 mb-6 bg-zinc-900">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Nombre</label>
-              <input
-                type="text"
-                placeholder="ej: Mira Competitiva"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="border border-zinc-700 rounded-xl p-8 bg-gradient-to-br from-zinc-900 to-zinc-950 space-y-6 shadow-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Lado izquierdo: Formulario */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                Detalles de la Mira
+              </h3>
 
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Código</label>
-              <textarea
-                placeholder="Pega el código de la mira aquí"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 font-mono text-sm"
-                rows={3}
-              />
-            </div>
+              {/* Nombre */}
+              <div>
+                <label className="block text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wider">
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  placeholder="ej: Mira Competitiva Standard"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Descripción (opcional)</label>
-              <input
-                type="text"
-                placeholder="ej: Para retakes"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
-              />
-            </div>
+              {/* Código */}
+              <div>
+                <label className="block text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wider">
+                  Código de Mira
+                </label>
+                <div className="relative">
+                  <textarea
+                    placeholder="Pega el código aquí (CSGO-XXXXX-XXXXX-XXXXX-XXXXX-XXXXX)"
+                    value={formData.code}
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                    className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-mono text-sm"
+                    rows={4}
+                  />
+                  {formData.code && (
+                    <button
+                      type="button"
+                      onClick={copyCode}
+                      className="absolute top-3 right-3 p-2 hover:bg-zinc-700 rounded-lg transition-colors text-zinc-400 hover:text-blue-400"
+                      title="Copiar código"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Equipo</label>
-              <select
-                value={formData.team}
-                onChange={(e) => setFormData({ ...formData, team: e.target.value as 'CT' | 'T' | 'Both' })}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+              {/* Descripción */}
+              <div>
+                <label className="block text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wider">
+                  Descripción (opcional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="ej: Para retakes, baja sensibilidad"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                />
+              </div>
+
+              {/* Botón Submit */}
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 px-6 py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-green-500/50 text-white mt-6"
               >
-                <option value="Both">Ambos</option>
-                <option value="CT">CT</option>
-                <option value="T">T</option>
-              </select>
+                ✓ Guardar Mira
+              </button>
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              Guardar Mira
-            </button>
+            {/* Lado derecho: Preview */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-2 w-full justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowPreview(!showPreview)}
+                  className="flex items-center gap-2 text-sm text-zinc-400 hover:text-blue-400 transition-colors"
+                >
+                  {showPreview ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                  {showPreview ? 'Ocultar' : 'Mostrar'} Preview
+                </button>
+              </div>
+
+              {showPreview && formData.code && (
+                <div className="w-full max-w-xs">
+                  <CrosshairPreview code={formData.code} name={formData.name || 'Vista Previa'} />
+                </div>
+              )}
+
+              {showPreview && !formData.code && (
+                <div className="w-full max-w-xs p-6 border-2 border-dashed border-zinc-700 rounded-lg text-center text-zinc-500">
+                  <p className="text-sm">Pega un código para ver la preview</p>
+                </div>
+              )}
+            </div>
           </div>
         </form>
       )}

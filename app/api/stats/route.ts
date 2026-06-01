@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 
 interface SteamPlayerSummary {
   steamid: string;
@@ -7,234 +7,263 @@ interface SteamPlayerSummary {
   avatar?: string;
   avatarmedium?: string;
   avatarfull?: string;
-  player_level?: number;
-}
-
-interface SteamStatsResponse {
-  response: {
-    players: SteamPlayerSummary[];
-  };
+  personastate?: number;
+  communityvisibilitystate?: number;
+  timecreated?: number;
+  loccountrycode?: string;
 }
 
 interface FaceitPlayerResponse {
   player_id: string;
   nickname: string;
   avatar?: string;
-  level?: number;
-  elo?: number;
-  status?: string;
+  country?: string;
+  activated_at?: string;
+  games?: {
+    cs2?: {
+      faceit_elo?: number;
+      skill_level?: number;
+    };
+  };
 }
 
-/**
- * Extrae el Steam ID de una vanity URL
- */
+interface FaceitStats {
+  lifetime?: Record<string, string>;
+  segments?: Array<{
+    label: string;
+    stats: Record<string, string>;
+  }>;
+}
+
 function extractSteamIdentifier(urlOrId: string): string {
-  const vanityMatch = /\/id\/([^/]+)/;
-  const profileMatch = /\/profiles\/(\d+)/;
-
-  const vanityResult = urlOrId.match(vanityMatch);
-  if (vanityResult) return vanityResult[1];
-
-  const profileResult = urlOrId.match(profileMatch);
-  if (profileResult) return profileResult[1];
-
+  const vanityMatch = urlOrId.match(/\/id\/([^/]+)/);
+  if (vanityMatch) return vanityMatch[1];
+  const profileMatch = urlOrId.match(/\/profiles\/(\d+)/);
+  if (profileMatch) return profileMatch[1];
   return urlOrId;
 }
 
-/**
- * Resuelve vanity URL a Steam ID
- */
 async function resolveSteamVanity(vanityUrl: string): Promise<string | null> {
+  const apiKey = process.env.STEAM_API_KEY;
+  if (!apiKey) return null;
   try {
-    const apiKey = process.env.STEAM_API_KEY;
-    if (!apiKey) {
-      console.warn('STEAM_API_KEY no configurada');
-      return null;
-    }
-
-    const response = await fetch(
+    const res = await fetch(
       `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${apiKey}&vanityurl=${vanityUrl}`,
       { next: { revalidate: 3600 } }
     );
-
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    return data.response?.steamid || null;
-  } catch (error) {
-    console.error('Error resolviendo vanity URL:', error);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.response?.steamid ?? null;
+  } catch {
     return null;
   }
 }
 
-/**
- * Obtiene perfil Steam
- */
-async function getSteamProfile(urlOrId: string) {
+function steamIdToFriendCode(steamId64: string): string {
   try {
-    const apiKey = process.env.STEAM_API_KEY;
-    if (!apiKey) {
-      console.warn('STEAM_API_KEY no configurada');
-      return null;
+    const id = BigInt(steamId64);
+    const accountId = id & BigInt('0xFFFFFFFF');
+    const h = BigInt('0x4C07FCA8');
+    const DICTIONARY = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let val = accountId ^ h;
+    const chars: string[] = [];
+    for (let i = 0; i < 8; i++) {
+      const rem = Number(val % BigInt(DICTIONARY.length));
+      chars.push(DICTIONARY[rem]);
+      val = val / BigInt(DICTIONARY.length);
     }
+    const raw = chars.join('');
+    return `${raw.slice(0, 4)}-${raw.slice(4, 9)}-${raw.slice(9)}`;
+  } catch {
+    return 'N/A';
+  }
+}
 
+async function getSteamProfile(urlOrId: string) {
+  const apiKey = process.env.STEAM_API_KEY;
+  if (!apiKey) return null;
+  try {
     let steamId = extractSteamIdentifier(urlOrId);
-
-    // Si es vanity URL, resolver
+    let vanity: string | null = null;
     if (!/^\d+$/.test(steamId)) {
+      vanity = steamId;
       const resolved = await resolveSteamVanity(steamId);
-      if (!resolved) {
-        console.warn('No se pudo resolver Steam vanity URL:', steamId);
-        return null;
-      }
+      if (!resolved) return null;
       steamId = resolved;
     }
-
-    const response = await fetch(
-      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId}`,
-      { next: { revalidate: 3600 } }
-    );
-
-    if (!response.ok) {
-      console.error('Error Steam API:', response.status);
-      return null;
+    const [summaryRes, levelRes, friendsRes] = await Promise.all([
+      fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId}`, { next: { revalidate: 3600 } }),
+      fetch(`https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=${apiKey}&steamid=${steamId}`, { next: { revalidate: 3600 } }),
+      fetch(`https://api.steampowered.com/ISteamUser/GetFriendList/v1/?key=${apiKey}&steamid=${steamId}&relationship=friend`, { next: { revalidate: 3600 } }),
+    ]);
+    const summaryData = summaryRes.ok ? await summaryRes.json() : null;
+    const levelData = levelRes.ok ? await levelRes.json() : null;
+    const friendsData = friendsRes.ok ? await friendsRes.json() : null;
+    const profile: SteamPlayerSummary = summaryData?.response?.players?.[0];
+    if (!profile) return null;
+    const xpLevel: number = levelData?.response?.player_level ?? 0;
+    const friendCount: number = friendsData?.friendslist?.friends?.length ?? null;
+    const registered = profile.timecreated ? new Date(profile.timecreated * 1000).toISOString() : null;
+    if (!vanity && profile.profileurl) {
+      const m = profile.profileurl.match(/\/id\/([^/]+)/);
+      if (m) vanity = m[1];
     }
-
-    const data: SteamStatsResponse = await response.json();
-    const profile = data.response?.players?.[0];
-
-    if (!profile) {
-      console.warn('No Steam profile found for:', steamId);
-      return null;
-    }
-
     return {
-      id: profile.steamid,
-      nickname: profile.personaname,
+      name: profile.personaname,
+      steamId64: profile.steamid,
+      vanity: vanity ?? null,
+      friendCode: steamIdToFriendCode(profile.steamid),
+      registered,
+      country: profile.loccountrycode ?? null,
+      xpLevel,
+      friends: friendCount,
+      commendations: { friendly: null, leader: null, teacher: null },
+      avatar: profile.avatarfull ?? profile.avatarmedium ?? profile.avatar ?? null,
       profileUrl: profile.profileurl,
-      avatar: profile.avatarmedium,
-      level: profile.player_level || 0,
-      lastUpdated: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error obteniendo Steam profile:', error);
+    console.error('Steam profile error:', error);
     return null;
   }
 }
 
-/**
- * Obtiene stats de FACEIT
- */
-async function getFaceitProfile(nickname: string) {
+async function getCS2Stats(steamId64: string) {
+  const apiKey = process.env.STEAM_API_KEY;
+  if (!apiKey) return null;
   try {
-    const apiKey = process.env.FACEIT_API_KEY;
-    if (!apiKey) {
-      console.warn('FACEIT_API_KEY no configurada');
-      return null;
-    }
-
-    // Obtener info del jugador
-    const playerResponse = await fetch(
-      `https://open.faceit.com/api/v4/players?nickname=${encodeURIComponent(nickname)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-        next: { revalidate: 3600 },
-      }
+    const res = await fetch(
+      `https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=${apiKey}&steamid=${steamId64}`,
+      { next: { revalidate: 3600 } }
     );
-
-    if (!playerResponse.ok) {
-      if (playerResponse.status === 404) {
-        console.warn('FACEIT player not found:', nickname);
-      } else {
-        console.error('FACEIT API error:', playerResponse.status);
-      }
-      return null;
-    }
-
-    const playerData: FaceitPlayerResponse = await playerResponse.json();
-
-    if (!playerData.player_id) {
-      console.warn('No FACEIT player ID found');
-      return null;
-    }
-
-    // Obtener stats de CS2
-    const statsResponse = await fetch(
-      `https://open.faceit.com/api/v4/players/${playerData.player_id}/stats?game=cs2`,
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-        next: { revalidate: 3600 },
-      }
-    );
-
-    let lifetime: any = {};
-    if (statsResponse.ok) {
-      const statsData = await statsResponse.json();
-      lifetime = statsData.lifetime || {};
-    }
-
-    // Calcular win rate
-    const wlData = lifetime['W/L']?.split('/') || [];
-    const wins = parseInt(wlData[0] || '0');
-    const losses = parseInt(wlData[1] || '0');
-    const totalGames = wins + losses;
-    const winRate = totalGames > 0 ? Math.round((wins / totalGames) * 100) : 0;
-
+    if (!res.ok) return null;
+    const data = await res.json();
+    const stats: Array<{ name: string; value: number }> = data?.playerstats?.stats ?? [];
+    const get = (key: string) => stats.find((s) => s.name === key)?.value ?? null;
     return {
-      id: playerData.player_id,
-      nickname: playerData.nickname,
-      avatar: playerData.avatar,
-      level: playerData.level || 0,
-      elo: playerData.elo || 0,
-      games: parseInt(lifetime.Matches || '0'),
-      gamesWon: wins,
-      gamesLost: losses,
-      winRate,
-      headshots: lifetime['Headshots %'] || '0%',
-      kd: lifetime['Average K/D Ratio'] || '0.0',
-      lastUpdated: new Date().toISOString(),
+      aim: get('cs2_perf_aim'),
+      utility: get('cs2_perf_utility'),
+      position: get('cs2_perf_positioning'),
+      clutch: get('cs2_perf_clutch'),
+      opening: get('cs2_perf_opening'),
+      kd: get('cs2_perf_kd'),
+      rating: get('cs2_perf_rating'),
+      party: get('cs2_perf_team_play'),
+      peakRating: get('cs2_perf_peak_rating'),
     };
   } catch (error) {
-    console.error('Error obteniendo FACEIT profile:', error);
+    console.error('CS2 stats error:', error);
+    return null;
+  }
+}
+
+async function getFaceitProfile(nickname: string) {
+  const apiKey = process.env.FACEIT_API_KEY;
+  if (!apiKey) return null;
+  const headers = { Authorization: `Bearer ${apiKey}` };
+  const cache = { next: { revalidate: 3600 } };
+  try {
+    const playerRes = await fetch(
+      `https://open.faceit.com/api/v4/players?nickname=${encodeURIComponent(nickname)}`,
+      { headers, ...cache }
+    );
+    if (!playerRes.ok) return null;
+    const player: FaceitPlayerResponse = await playerRes.json();
+    if (!player.player_id) return null;
+    const cs2 = player.games?.cs2;
+    const elo = cs2?.faceit_elo ?? 0;
+    const level = cs2?.skill_level ?? 0;
+    const [statsRes, historyRes] = await Promise.all([
+      fetch(`https://open.faceit.com/api/v4/players/${player.player_id}/stats?game=cs2`, { headers, ...cache }),
+      fetch(`https://open.faceit.com/api/v4/players/${player.player_id}/history?game=cs2&limit=5`, { headers, ...cache }),
+    ]);
+    let stats = {
+      matches: 0, wins: 0, winrate: 0, hs: 0, kd: 0,
+      adr: null as number | null, udr: null as number | null,
+      clutch1v1: null as number | null, clutch1v2: null as number | null,
+    };
+    if (statsRes.ok) {
+      const statsData: FaceitStats = await statsRes.json();
+      const lt = statsData.lifetime ?? {};
+      const wl = (lt['W/L'] ?? '0/0').split('/');
+      const wins = parseInt(wl[0] ?? '0');
+      const losses = parseInt(wl[1] ?? '0');
+      const total = wins + losses;
+      let totalAdr = 0, totalUdr = 0, totalClutch1v1 = 0, totalClutch1v2 = 0, segCount = 0;
+      if (statsData.segments?.length) {
+        for (const seg of statsData.segments) {
+          const s = seg.stats;
+          if (s['Average Damage per Round']) { totalAdr += parseFloat(s['Average Damage per Round']); segCount++; }
+          if (s['Average Utility Damage per Round']) totalUdr += parseFloat(s['Average Utility Damage per Round']);
+          if (s['1v1 Win Rate']) totalClutch1v1 += parseFloat(s['1v1 Win Rate']);
+          if (s['1v2 Win Rate']) totalClutch1v2 += parseFloat(s['1v2 Win Rate']);
+        }
+      }
+      stats = {
+        matches: parseInt(lt['Matches'] ?? '0') || total,
+        wins,
+        winrate: total > 0 ? Math.round((wins / total) * 100) : 0,
+        hs: parseFloat((lt['Headshots %'] ?? '0').replace('%', '')),
+        kd: parseFloat(lt['Average K/D Ratio'] ?? '0'),
+        adr: segCount > 0 ? parseFloat((totalAdr / segCount).toFixed(1)) : null,
+        udr: segCount > 0 ? parseFloat((totalUdr / segCount).toFixed(1)) : null,
+        clutch1v1: segCount > 0 ? parseFloat((totalClutch1v1 / segCount).toFixed(2)) : null,
+        clutch1v2: segCount > 0 ? parseFloat((totalClutch1v2 / segCount).toFixed(2)) : null,
+      };
+    }
+    let recent: ('W' | 'L')[] = [];
+    let lastMatch: string | null = null;
+    if (historyRes.ok) {
+      const historyData = await historyRes.json();
+      const items: Array<{
+        finished_at: number;
+        results?: { winner?: string };
+        teams?: { faction1?: { players?: Array<{ player_id: string }> }; faction2?: { players?: Array<{ player_id: string }> } };
+      }> = historyData.items ?? [];
+      recent = items.map((match) => {
+        const faction1Players = match.teams?.faction1?.players ?? [];
+        const playerInFaction1 = faction1Players.some((p) => p.player_id === player.player_id);
+        const winner = match.results?.winner;
+        const myFaction = playerInFaction1 ? 'faction1' : 'faction2';
+        return winner === myFaction ? 'W' : 'L';
+      });
+      if (items[0]?.finished_at) lastMatch = new Date(items[0].finished_at * 1000).toISOString();
+    }
+    return {
+      nickname: player.nickname,
+      faceitId: player.player_id,
+      country: player.country ?? null,
+      registered: player.activated_at ?? null,
+      elo,
+      peakElo: null,
+      level,
+      ...stats,
+      lastMatch,
+      recent,
+    };
+  } catch (error) {
+    console.error('FACEIT profile error:', error);
     return null;
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const steamUsername = searchParams.get('steamUsername') || 'taiuuu';
-    const faceitNickname = searchParams.get('faceitNickname') || 'Chocko0';
-
-    if (!steamUsername || !faceitNickname) {
-      return NextResponse.json(
-        { error: 'Faltan parámetros: steamUsername y faceitNickname' },
-        { status: 400 }
-      );
-    }
-
-    // Obtener datos en paralelo
+    const params = request.nextUrl.searchParams;
+    const steamUsername = params.get('steamUsername') || 'taiuuu';
+    const faceitNickname = params.get('faceitNickname') || 'Chocko0';
+    const defaultSteamId = '76561198169332338';
     const [steam, faceit] = await Promise.all([
       getSteamProfile(steamUsername),
       getFaceitProfile(faceitNickname),
     ]);
-
+    const steamId64 = steam?.steamId64 ?? defaultSteamId;
+    const cs2 = await getCS2Stats(steamId64);
     return NextResponse.json(
-      {
-        steam,
-        faceit,
-      },
-      { status: 200 }
+      { steam, cs2, faceit },
+      { status: 200, headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' } }
     );
   } catch (error) {
     console.error('API error:', error);
-    return NextResponse.json(
-      { error: 'Error obteniendo estadísticas' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Error obteniendo estadisticas' }, { status: 500 });
   }
 }
