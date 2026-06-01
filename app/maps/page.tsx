@@ -8,7 +8,7 @@ export default function MapsPage() {
   const mapData = allMaps.map((map) => ({
     id: map.id,
     nombre: map.name,
-    fondo: map.image ?? '/maps/callout-bg.svg',
+    fondo: `/maps/backgrounds/${map.id}.jpg`,
     icono: `/maps/icons/${map.id}.png`,
   }));
 
