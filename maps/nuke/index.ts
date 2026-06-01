@@ -1,42 +1,39 @@
-import type { MapPlaybook } from "../core/types";
-import { nukePhilosophy } from "./philosophy";
-import { nukeCallouts } from "./callouts";
-import { nukeFundamentals } from "./fundamentals";
-import { nukeDefaults } from "./defaults";
-import { nukeProtocols } from "./protocols";
-import { nukeRetakes } from "./retakes";
-import { nukeReaggressions } from "./reaggressions";
-import { nukeAntiEco } from "./antiEco";
-import { nukePistolStrats } from "./strats/pistol";
-import { nukeEcoStrats } from "./strats/eco";
-import { nukeForceStrats } from "./strats/force";
-import { nukeBuyStrats } from "./strats/buy";
-import { nukeMidRoundStrats } from "./strats/midRound";
+import { MapData } from "@/types";
+import { philosophy } from "./philosophy";
+import { callouts } from "./callouts";
+import { fundamentals } from "./fundamentals";
+import { tacticDefault1 } from "./defaults";
+import { tacticProtocol1, tacticProtocol2 } from "./protocols";
+import { tacticRetake1, tacticRetake2 } from "./retakes";
+import { tacticPistol1, tacticPistol2 } from "./strats/pistol";
+import { tacticEco1 } from "./strats/eco";
+import { tacticForce1 } from "./strats/force";
+import { tacticBuy1 } from "./strats/buy";
+import { tacticAntiEco1 } from "./antiEco";
+import { tacticMidRound1 } from "./strats/midRound";
 
-export const nukeMap: MapPlaybook = {
-  id: 'nuke',
-  name: 'Nuke',
-  image: '/maps/nuke-card.svg',
-  calloutImage: '/maps/callout-bg.svg',
-  sideFavor: 'CT-sided',
-  description: 'Nuke premia control vertical. La CT debe maximizar sus ángulos y minimizar la información que pierde en ramps.',
-  philosophy: nukePhilosophy,
-  callouts: nukeCallouts,
-  fundamentals: nukeFundamentals,
-  defaults: nukeDefaults,
-  protocols: nukeProtocols,
-  retakes: nukeRetakes,
-  reaggressions: nukeReaggressions,
-  antiEco: nukeAntiEco,
-  strats: {
-    pistol: nukePistolStrats,
-    eco: nukeEcoStrats,
-    force: nukeForceStrats,
-    buy: nukeBuyStrats,
-    midRound: nukeMidRoundStrats,
-    default: nukeDefaults,
-    protocol: nukeProtocols,
-    antiEco: nukeAntiEco,
-    reaggression: nukeReaggressions,
-  },
+export const nukeData: MapData = {
+  id: "nuke",
+  name: "Nuke",
+  sideFavor: "CT-sided",
+  description: "Nuke es el mapa más favorecedor para la CT del pool. El T debe crear presión vertical (ramp + vent simultáneo) para dividir la defensa.",
+  philosophy,
+  callouts,
+  fundamentals,
+  tactics: [
+    tacticDefault1,
+    tacticProtocol1,
+    tacticProtocol2,
+    tacticRetake1,
+    tacticRetake2,
+    tacticPistol1,
+    tacticPistol2,
+    tacticEco1,
+    tacticForce1,
+    tacticBuy1,
+    tacticAntiEco1,
+    tacticMidRound1
+  ],
 };
+
+export default nukeData;

@@ -1,14 +1,16 @@
-import type { MapFundamentals } from '../core/types';
+import { MapFundamentals } from "@/types";
 
-export const dust2Fundamentals: MapFundamentals = {
-  t: [
-    'El default debe llegar vivo a 30s con un jugador en punto medio para leer rotaciones.',
-    'Fondo abierta crea la principal palanca de A; siempre buscar el trade y no perder fondo.',
-    'Rush B solo debe hacerse con humo de puerta y trade cercano; un B rush fallido mata la economía.',
+export const fundamentals: MapFundamentals = {
+  T: [
+  "Largo no se debe pushear sin smoke de corner y flash; el AWP CT destruye cualquier entrada descubierta.",
+  "Mid con dos jugadores permite el split A más rápido del mapa.",
+  "B tunnels es la ruta más fácil de ejecutar pero CT lo sabe; mezclar con fakes a A genera rotaciones.",
+  "El lurker de largo debe quedarse en corner hasta ~18s antes de avanzar.",
   ],
-  ct: [
-    'Controlar fondo A y Xbox evita que la T tome el sitio sin costo.',
-    'B es complicado de retakear: un ancla fuerte en Upper y un rotador informado son indispensables.',
-    'La información de medio define la ronda; el CT con util debe poder frenar un split a A o B.',
+  CT: [
+  "El AWP en largo es la posición más rentable del mapa; si el AWP muere temprano la CT pierde la ronda en la mayoría de los casos.",
+  "Ventanas es el mejor callout del mapa; un jugador ahí observa mid, corto y puede rotarse a A o B.",
+  "Dos molotovs en auto y tunnels al inicio frenan cualquier rush B.",
+  "El CT de B nunca debe pushear tunnels sin información clara.",
   ],
 };

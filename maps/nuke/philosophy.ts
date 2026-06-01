@@ -1,10 +1,9 @@
-import type { MapPhilosophy } from "../core/types";
+import { MapPhilosophy } from "@/types";
 
-export const nukePhilosophy: MapPhilosophy = {
-  philosophy: "Controlar ramp, squeaky y vent es la columna vertebral CT. El T debe forzar rotaciones y aislar los sitios.",
-  tWinCondition: "Crear una secundaria presencia en ramp o vent para dividir la defensa.",
-  ctWinCondition: "Mantener las escaleras y castigar cualquier push rápido con AWPs y smokes de rotación.",
-  keyAreas: ["Ramp", "Squeaky", "Heaven", "Hut", "Yard"],
-  tempo: "Ritmo rápido en ataque, paciente en defensa.",
-  rotationComplexity: "Alta: múltiples alturas y líneas de visión simultáneas."
-}
+export const philosophy: MapPhilosophy = {
+  tWinCondition: "Crear presión vertical simultánea en ramp y squeaky para dividir la CT, o ejecutar B por secret cuando A está sobredefendido.",
+  ctWinCondition: "Mantener el control de outside y ramp para negar el acceso T; el AWP en heaven es la posición más dominante del mapa.",
+  keyAreas: ["Ramp", "Squeaky", "Heaven", "Outside", "Secret", "Yard", "Hut"],
+  tempo: "La CT impone el ritmo por su ventaja estructural; el T necesita utility perfecta.",
+  rotationComplexity: "Alta — las rotaciones internas de A a B requieren bajar por ramp o vent.",
+};

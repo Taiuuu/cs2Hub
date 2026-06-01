@@ -1,43 +1,39 @@
-import type { MapPlaybook } from '../core/types';
+import { MapData } from "@/types";
+import { philosophy } from "./philosophy";
+import { callouts } from "./callouts";
+import { fundamentals } from "./fundamentals";
+import { tacticDefault1 } from "./defaults";
+import { tacticProtocol1, tacticProtocol2 } from "./protocols";
+import { tacticRetake1, tacticRetake2 } from "./retakes";
+import { tacticPistol1, tacticPistol2 } from "./strats/pistol";
+import { tacticEco1 } from "./strats/eco";
+import { tacticForce1 } from "./strats/force";
+import { tacticBuy1 } from "./strats/buy";
+import { tacticAntiEco1 } from "./antiEco";
+import { tacticMidRound1 } from "./strats/midRound";
 
-export const vertigoMap: MapPlaybook = {
-  id: 'vertigo',
-  name: 'Vertigo',
-  image: '/maps/vertigo-card.svg',
-  calloutImage: '/maps/callout-bg.svg',
-  sideFavor: 'Balanced',
-  description: 'Vertigo es un mapa de alturas y espacio. El control de rampas y arena define el ritmo; quien juega mejor las verticales gana las peleas clave.',
-  philosophy: {
-    philosophy: 'Vertigo gira en torno a dominar niveles y cortes de rotación. La T debe saber cuándo subir por A o B, mientras el CT usa niveles altos para cortar avances.',
-    tWinCondition: 'Forzar rotaciones y ganar altura en el sitio elegido antes de cerrar la postplant.',
-    ctWinCondition: 'Negar el nivel alto y frenar split mediante utility coordinada.',
-    keyAreas: ['Arena', 'Rampa', 'Headshot', 'Sandbag'],
-    tempo: 'Variable: puede ser rápido en split o lento esperando errores en defensa.',
-    rotationComplexity: 'Alta: rotaciones verticales entre A y B deben ser precisas.',
-  },
-  callouts: {
-    siteA: ['Arena', 'Headshot', 'Rampa'],
-    siteB: ['Sandbag', 'Escalera', 'Generador'],
-    middle: ['Mid', 'Connect', 'Plataforma'],
-  },
-  fundamentals: {
-    t: ['Controlar altura', 'No dejar que el CT pelee sin utility', 'Cuidar los ángulos pre-aimed'],
-    ct: ['Jugar los cortes de rotación', 'Usar niveles altos para castigar avances', 'Tener smokes listos para splits'],
-  },
-  defaults: [],
-  protocols: [],
-  retakes: [],
-  reaggressions: [],
-  antiEco: [],
-  strats: {
-    pistol: [],
-    eco: [],
-    force: [],
-    buy: [],
-    midRound: [],
-    default: [],
-    protocol: [],
-    antiEco: [],
-    reaggression: [],
-  },
+export const vertigoData: MapData = {
+  id: "vertigo",
+  name: "Vertigo",
+  sideFavor: "CT-sided",
+  description: "Vertigo es el mapa más vertical del pool. El control de mid es decisivo; quien domina mid puede atacar A por ramp o B por scaffolding.",
+  philosophy,
+  callouts,
+  fundamentals,
+  tactics: [
+    tacticDefault1,
+    tacticProtocol1,
+    tacticProtocol2,
+    tacticRetake1,
+    tacticRetake2,
+    tacticPistol1,
+    tacticPistol2,
+    tacticEco1,
+    tacticForce1,
+    tacticBuy1,
+    tacticAntiEco1,
+    tacticMidRound1
+  ],
 };
+
+export default vertigoData;

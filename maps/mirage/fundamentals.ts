@@ -1,14 +1,16 @@
-import type { MapFundamentals } from '../core/types';
+import { MapFundamentals } from "@/types";
 
-export const mirageFundamentals: MapFundamentals = {
-  t: [
-    'Tomar mid temprano es crítico para decidir A o B. Sin mid, la T queda a merced de rotaciones.',
-    'El split A debe ejecutarse con Jungle y Palace apoyando un push de Short o CT.',
-    'B se gana con presión constante de Apps y control de Van/Market.',
+export const fundamentals: MapFundamentals = {
+  T: [
+  "Ramp sin información es suicidio; siempre flashear antes de entrar.",
+  "El split A necesita un jugador en CT y otro en jungle/stairs para ser efectivo.",
+  "B Apps con dos jugadores y utility completa es el execute más seguro del mapa.",
+  "Mid connector es el callout más importante; un lurker ahí puede cortar cualquier rotación CT.",
   ],
-  ct: [
-    'Jugar mid con dos jugadores: uno en Window/Connector y otro en Cat/Short.',
-    'Los anchors A y B deben tener util para retrasar antes de que la T pueda plant.',
-    'Las rotaciones de Jungle y CT deben ser claras para no ceder sitios gratuitos.',
+  CT: [
+  "El AWP en mid es la posición más rentable; perderla cambia la dinámica de la ronda.",
+  "Molotov de ramp al inicio niega el control T antes de que puedan flashear.",
+  "Un CT en jungle puede ganar el duelo de stairs y salvar el site A.",
+  "B nunca se debe sobre-aggresive; dos CTs en van y bench es suficiente.",
   ],
 };

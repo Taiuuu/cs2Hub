@@ -1,43 +1,41 @@
-import type { MapPlaybook } from '../core/types';
+import { MapData } from "@/types";
+import { philosophy } from "./philosophy";
+import { callouts } from "./callouts";
+import { fundamentals } from "./fundamentals";
+import { tacticDefault1 } from "./defaults";
+import { tacticProtocol1, tacticProtocol2 } from "./protocols";
+import { tacticRetake1, tacticRetake2 } from "./retakes";
+import { tacticPistol1, tacticPistol2 } from "./strats/pistol";
+import { tacticEco1 } from "./strats/eco";
+import { tacticForce1 } from "./strats/force";
+import { tacticBuy1 } from "./strats/buy";
+import { tacticAntiEco1 } from "./antiEco";
+import { tacticReaggression1 } from "./reaggressions";
+import { tacticMidRound1 } from "./strats/midRound";
 
-export const trainMap: MapPlaybook = {
-  id: 'train',
-  name: 'Train',
-  image: '/maps/train-card.svg',
-  calloutImage: '/maps/callout-bg.svg',
-  sideFavor: 'CT-sided',
-  description: 'Train es un mapa de líneas y rotaciones rápidas. El control de Ivy y pop define las bombas L y el timing en Main.',
-  philosophy: {
-    philosophy: 'Train es un mapa de espacio y trades. El CT busca castigar entradas con ángulos cerrados, mientras que la T busca rotaciones limpias y control de trenes.',
-    tWinCondition: 'Abrir líneas en Ivy o Main y forzar al CT a rotar fuera de posición.',
-    ctWinCondition: 'Mantener velocidad de rotación alta y usar utility para cerrar las rutas principales.',
-    keyAreas: ['Ivy', 'Pop', 'Main', 'Hell'],
-    tempo: 'Rentable: buscar trades y no exponerse en trenes sin util.',
-    rotationComplexity: 'Media-alta: las rotaciones deben ser rápidas entre A y B.',
-  },
-  callouts: {
-    siteA: ['Ivy', 'Hell', 'Main'],
-    siteB: ['Pop', 'Verde', 'Azul'],
-    middle: ['Connector', 'Túnel', 'Escalera'],
-  },
-  fundamentals: {
-    t: ['Tomar líneas con utilidad', 'Forzar trades en Main', 'No entrar a pop sin apoyo'],
-    ct: ['Jugar con ángulos de tren', 'Formar líneas en Ivy y Hell', 'Rotar rápido tras primer contacto'],
-  },
-  defaults: [],
-  protocols: [],
-  retakes: [],
-  reaggressions: [],
-  antiEco: [],
-  strats: {
-    pistol: [],
-    eco: [],
-    force: [],
-    buy: [],
-    midRound: [],
-    default: [],
-    protocol: [],
-    antiEco: [],
-    reaggression: [],
-  },
+export const trainData: MapData = {
+  id: "train",
+  name: "Train",
+  sideFavor: "CT-sided",
+  description: "Train es un mapa de vagones con dos sitios complejos. A site tiene múltiples ángulos difíciles de limpiar; B site es más compacto pero con rutas de rotación cortas para la CT.",
+  philosophy,
+  callouts,
+  fundamentals,
+  tactics: [
+    tacticDefault1,
+    tacticProtocol1,
+    tacticProtocol2,
+    tacticRetake1,
+    tacticRetake2,
+    tacticPistol1,
+    tacticPistol2,
+    tacticEco1,
+    tacticForce1,
+    tacticBuy1,
+    tacticAntiEco1,
+    tacticReaggression1,
+    tacticMidRound1
+  ],
 };
+
+export default trainData;

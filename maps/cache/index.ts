@@ -1,43 +1,41 @@
-import type { MapPlaybook } from '../core/types';
+import { MapData } from "@/types";
+import { philosophy } from "./philosophy";
+import { callouts } from "./callouts";
+import { fundamentals } from "./fundamentals";
+import { tacticDefault1 } from "./defaults";
+import { tacticProtocol1, tacticProtocol2 } from "./protocols";
+import { tacticRetake1, tacticRetake2 } from "./retakes";
+import { tacticPistol1, tacticPistol2 } from "./strats/pistol";
+import { tacticEco1 } from "./strats/eco";
+import { tacticForce1 } from "./strats/force";
+import { tacticBuy1 } from "./strats/buy";
+import { tacticAntiEco1 } from "./antiEco";
+import { tacticReaggression1 } from "./reaggressions";
+import { tacticMidRound1 } from "./strats/midRound";
 
-export const cacheMap: MapPlaybook = {
-  id: 'cache',
-  name: 'Cache',
-  image: '/maps/cache-card.svg',
-  calloutImage: '/maps/callout-bg.svg',
-  sideFavor: 'T-sided',
-  description: 'Cache es un mapa de utilidad y control de puntos clave. El equipo que domina Main y el Pozo es el que define la dinámica de la ronda.',
-  philosophy: {
-    philosophy: 'Cache depende del control temprano de Main y del Pozo. La T presiona para conseguir información y generar trades; el CT debe mantener su control defensivo sin perder posiciones.',
-    tWinCondition: 'Ganar Main, controlar el Pozo y ejecutar rápido en A o B con utilidad limpia.',
-    ctWinCondition: 'Contener Main, mantener el Pozo y frenar la ejecución antes de la postplant.',
-    keyAreas: ['Main', 'Pozo', 'A', 'B'],
-    tempo: 'Variable: puede ser rápido si la T consigue ventaja en Main o lento esperando errores.',
-    rotationComplexity: 'Media-alta: rotaciones rápidas entre A y B, con atención al control de Main.',
-  },
-  callouts: {
-    siteA: ['Main', 'Pozo', 'Esquina A'],
-    siteB: ['Patio', 'Conecta', 'Estrecho'],
-    middle: ['Main', 'Pasillo', 'Lobby'],
-  },
-  fundamentals: {
-    t: ['Presionar Main con utilidad', 'Forzar rotaciones rápidas', 'No ejecutar sin ventaja clara'],
-    ct: ['Jugar posiciones de reacción', 'Mantener Main lo máximo posible', 'Rotar rápido tras primer contacto'],
-  },
-  defaults: [],
-  protocols: [],
-  retakes: [],
-  reaggressions: [],
-  antiEco: [],
-  strats: {
-    pistol: [],
-    eco: [],
-    force: [],
-    buy: [],
-    midRound: [],
-    default: [],
-    protocol: [],
-    antiEco: [],
-    reaggression: [],
-  },
+export const cacheData: MapData = {
+  id: "cache",
+  name: "Cache",
+  sideFavor: "CT-sided",
+  description: "Cache es un mapa simétrico con mid muy relevante. El control de mid (highway + squeaky) determina qué sitio es más fácil de ejecutar. La CT tiene ventaja en A por los ángulos de main y heaven.",
+  philosophy,
+  callouts,
+  fundamentals,
+  tactics: [
+    tacticDefault1,
+    tacticProtocol1,
+    tacticProtocol2,
+    tacticRetake1,
+    tacticRetake2,
+    tacticPistol1,
+    tacticPistol2,
+    tacticEco1,
+    tacticForce1,
+    tacticBuy1,
+    tacticAntiEco1,
+    tacticReaggression1,
+    tacticMidRound1
+  ],
 };
+
+export default cacheData;

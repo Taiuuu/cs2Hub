@@ -1,10 +1,9 @@
-import type { MapPhilosophy } from "../core/types";
+import { MapPhilosophy } from "@/types";
 
-export const infernoPhilosophy: MapPhilosophy = {
-  philosophy: "Banana define la mayor parte de la ronda. Controlar banana y medio permite dictar dónde va a pelear el rival.",
-  tWinCondition: "Tomar banana o medio temprano y usar esa palanca para un split a A o un execute B planificado.",
-  ctWinCondition: "Negar banana con nades, retener medio y usar el retake cuando el T planta.",
-  keyAreas: ["Banana", "Mid", "A Site", "B Site", "Library"],
-  tempo: "Controlado con windows de agresión tras el tiempo 15-20s.",
-  rotationComplexity: "Alta: rotaciones entre CT y Mid requieren timing y comunicación constantes."
-}
+export const philosophy: MapPhilosophy = {
+  tWinCondition: "Ganar el control de banana para ejecutar B o crear el fake a A con presión simultánea.",
+  ctWinCondition: "Negar banana con nades y mantener mid para las rotaciones rápidas de A a B.",
+  keyAreas: ["Banana", "Mid", "A Site", "B Site", "Palace", "Short (Arch)", "Pit"],
+  tempo: "El control de banana determina el ritmo de la ronda.",
+  rotationComplexity: "Media — CT puede rotar por CT o por mid con tiempos similares.",
+};

@@ -1,42 +1,41 @@
-import type { MapPlaybook } from "../core/types";
-import { infernoPhilosophy } from "./philosophy";
-import { infernoCallouts } from "./callouts";
-import { infernoFundamentals } from "./fundamentals";
-import { infernoDefaults } from "./defaults";
-import { infernoProtocols } from "./protocols";
-import { infernoRetakes } from "./retakes";
-import { infernoReaggressions } from "./reaggressions";
-import { infernoAntiEco } from "./antiEco";
-import { infernoPistolStrats } from "./strats/pistol";
-import { infernoEcoStrats } from "./strats/eco";
-import { infernoForceStrats } from "./strats/force";
-import { infernoBuyStrats } from "./strats/buy";
-import { infernoMidRoundStrats } from "./strats/midRound";
+import { MapData } from "@/types";
+import { philosophy } from "./philosophy";
+import { callouts } from "./callouts";
+import { fundamentals } from "./fundamentals";
+import { tacticDefault1 } from "./defaults";
+import { tacticProtocol1, tacticProtocol2 } from "./protocols";
+import { tacticRetake1, tacticRetake2 } from "./retakes";
+import { tacticPistol1, tacticPistol2 } from "./strats/pistol";
+import { tacticEco1 } from "./strats/eco";
+import { tacticForce1 } from "./strats/force";
+import { tacticBuy1 } from "./strats/buy";
+import { tacticAntiEco1 } from "./antiEco";
+import { tacticReaggression1 } from "./reaggressions";
+import { tacticMidRound1 } from "./strats/midRound";
 
-export const infernoMap: MapPlaybook = {
-  id: 'inferno',
-  name: 'Inferno',
-  image: '/maps/inferno-card.svg',
-  calloutImage: '/maps/callout-bg.svg',
-  sideFavor: 'Balanced',
-  description: 'Inferno exige control de banana y medio. La CT debe frenar avances tempranos y estar lista para retakes con smokes precisas.',
-  philosophy: infernoPhilosophy,
-  callouts: infernoCallouts,
-  fundamentals: infernoFundamentals,
-  defaults: infernoDefaults,
-  protocols: infernoProtocols,
-  retakes: infernoRetakes,
-  reaggressions: infernoReaggressions,
-  antiEco: infernoAntiEco,
-  strats: {
-    pistol: infernoPistolStrats,
-    eco: infernoEcoStrats,
-    force: infernoForceStrats,
-    buy: infernoBuyStrats,
-    midRound: infernoMidRoundStrats,
-    default: infernoDefaults,
-    protocol: infernoProtocols,
-    antiEco: infernoAntiEco,
-    reaggression: infernoReaggressions,
-  },
+export const infernoData: MapData = {
+  id: "inferno",
+  name: "Inferno",
+  sideFavor: "Balanced",
+  description: "Inferno gira en torno al control de banana. Si los T toman banana libre, tienen la presión suficiente para ejecutar B o crear el fake para A.",
+  philosophy,
+  callouts,
+  fundamentals,
+  tactics: [
+    tacticDefault1,
+    tacticProtocol1,
+    tacticProtocol2,
+    tacticRetake1,
+    tacticRetake2,
+    tacticPistol1,
+    tacticPistol2,
+    tacticEco1,
+    tacticForce1,
+    tacticBuy1,
+    tacticAntiEco1,
+    tacticReaggression1,
+    tacticMidRound1
+  ],
 };
+
+export default infernoData;

@@ -1,43 +1,41 @@
-import type { MapPlaybook } from '../core/types';
+import { MapData } from "@/types";
+import { philosophy } from "./philosophy";
+import { callouts } from "./callouts";
+import { fundamentals } from "./fundamentals";
+import { tacticDefault1 } from "./defaults";
+import { tacticProtocol1, tacticProtocol2 } from "./protocols";
+import { tacticRetake1, tacticRetake2 } from "./retakes";
+import { tacticPistol1, tacticPistol2 } from "./strats/pistol";
+import { tacticEco1 } from "./strats/eco";
+import { tacticForce1 } from "./strats/force";
+import { tacticBuy1 } from "./strats/buy";
+import { tacticAntiEco1 } from "./antiEco";
+import { tacticReaggression1 } from "./reaggressions";
+import { tacticMidRound1 } from "./strats/midRound";
 
-export const overpassMap: MapPlaybook = {
-  id: 'overpass',
-  name: 'Overpass',
-  image: '/maps/callout-bg.svg',
-  calloutImage: '/maps/callout-bg.svg',
-  sideFavor: 'T-sided',
-  description: 'Overpass es un mapa de rotaciones largas y control de altura. El equipo que domina el puente aéreo y los espacios elevados tiene ventaja decisiva.',
-  philosophy: {
-    philosophy: 'Overpass gira en torno a las alturas y las rotaciones por puente. La T busca controlar el cielo y forzar al CT a jugar posiciones comprometidas; el CT usa níeles altos para frenar avances.',
-    tWinCondition: 'Conseguir control del puente, forzar rotaciones y ejecutar en A o B con superioridad.',
-    ctWinCondition: 'Negar el puente, mantener altura y frenar splits mediante utility coordinada.',
-    keyAreas: ['Puente', 'Cielo', 'Agua', 'Plaza'],
-    tempo: 'Flexible: puede ser rápido con presión de puente o lento esperando errores en altura.',
-    rotationComplexity: 'Alta: rotaciones por puente y terreno requieren timing preciso.',
-  },
-  callouts: {
-    siteA: ['Plaza', 'Escalera', 'Agua'],
-    siteB: ['Puente', 'Rampa', 'Cielo'],
-    middle: ['Puente', 'Generador', 'Calle'],
-  },
-  fundamentals: {
-    t: ['Controlar el puente temprano', 'Forzar rotaciones con altura', 'No exponerse sin util'],
-    ct: ['Mantener cielo y plaza', 'Cortar puente con smokes', 'Rotar rápido desde agua'],
-  },
-  defaults: [],
-  protocols: [],
-  retakes: [],
-  reaggressions: [],
-  antiEco: [],
-  strats: {
-    pistol: [],
-    eco: [],
-    force: [],
-    buy: [],
-    midRound: [],
-    default: [],
-    protocol: [],
-    antiEco: [],
-    reaggression: [],
-  },
+export const overpassData: MapData = {
+  id: "overpass",
+  name: "Overpass",
+  sideFavor: "CT-sided",
+  description: "Overpass es un mapa grande con rutas largas. El control de agua (B) es clave para el T; quien domina agua puede ejecutar B o presionar mid. La CT tiene ventaja por los múltiples ángulos en A y el control de monster.",
+  philosophy,
+  callouts,
+  fundamentals,
+  tactics: [
+    tacticDefault1,
+    tacticProtocol1,
+    tacticProtocol2,
+    tacticRetake1,
+    tacticRetake2,
+    tacticPistol1,
+    tacticPistol2,
+    tacticEco1,
+    tacticForce1,
+    tacticBuy1,
+    tacticAntiEco1,
+    tacticReaggression1,
+    tacticMidRound1
+  ],
 };
+
+export default overpassData;

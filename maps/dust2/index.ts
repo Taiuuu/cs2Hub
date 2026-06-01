@@ -1,43 +1,38 @@
-import type { MapPlaybook } from '../core/types';
-import { dust2Philosophy } from './philosophy';
-import { dust2Callouts } from './callouts';
-import { dust2Fundamentals } from './fundamentals';
-import { dust2Defaults } from './defaults';
-import { dust2Protocols } from './protocols';
-import { dust2Retakes } from './retakes';
-import { dust2Reaggressions } from './reaggressions';
-import { dust2AntiEco } from './antiEco';
-import { dust2PistolStrats } from './strats/pistol';
-import { dust2EcoStrats } from './strats/eco';
-import { dust2ForceStrats } from './strats/force';
-import { dust2BuyStrats } from './strats/buy';
-import { dust2MidRoundStrats } from './strats/midRound';
+import { MapData } from "@/types";
+import { philosophy } from "./philosophy";
+import { callouts } from "./callouts";
+import { fundamentals } from "./fundamentals";
+import { tacticDefault1 } from "./defaults";
+import { tacticProtocol1 } from "./protocols";
+import { tacticRetake1, tacticRetake2 } from "./retakes";
+import { tacticPistol1, tacticPistol2 } from "./strats/pistol";
+import { tacticEco1 } from "./strats/eco";
+import { tacticForce1 } from "./strats/force";
+import { tacticBuy1 } from "./strats/buy";
+import { tacticAntiEco1 } from "./antiEco";
+import { tacticMidRound1 } from "./strats/midRound";
 
-export const dust2Map: MapPlaybook = {
-  id: 'dust2',
-  name: 'Dust2',
-  image: '/maps/dust2-card.svg',
-  calloutImage: '/maps/callout-bg.svg',
-  sideFavor: 'Balanced',
-  description:
-    'Dust2 es un mapa de presión coordinada y trade timing. El control de puertas y medio define las rondas y obliga a tomar decisiones tempranas.',
-  philosophy: dust2Philosophy,
-  callouts: dust2Callouts,
-  fundamentals: dust2Fundamentals,
-  defaults: dust2Defaults,
-  protocols: dust2Protocols,
-  retakes: dust2Retakes,
-  reaggressions: dust2Reaggressions,
-  antiEco: dust2AntiEco,
-  strats: {
-    pistol: dust2PistolStrats,
-    eco: dust2EcoStrats,
-    force: dust2ForceStrats,
-    buy: dust2BuyStrats,
-    midRound: dust2MidRoundStrats,
-    default: dust2Defaults,
-    protocol: dust2Protocols,
-    antiEco: dust2AntiEco,
-    reaggression: dust2Reaggressions,
-  },
+export const dust2Data: MapData = {
+  id: "dust2",
+  name: "Dust 2",
+  sideFavor: "CT-sided",
+  description: "Dust 2 es el mapa más icónico de CS. La CT tiene ventaja estructural por el control de largo y el mid. El T debe coordinar presión simultánea para no quedar aislado.",
+  philosophy,
+  callouts,
+  fundamentals,
+  tactics: [
+    tacticDefault1,
+    tacticProtocol1,
+    tacticRetake1,
+    tacticRetake2,
+    tacticPistol1,
+    tacticPistol2,
+    tacticEco1,
+    tacticForce1,
+    tacticBuy1,
+    tacticAntiEco1,
+    tacticMidRound1
+  ],
 };
+
+export default dust2Data;
