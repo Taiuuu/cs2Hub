@@ -134,15 +134,27 @@ export interface MapDetail {
   strats: RoundStrat[];
 }
 
+// Alias para compatibilidad con archivos generados
 export interface Tactic {
   id: string;
   name: string;
-  map: MapName;
-  type: TacticType;
-  team: 'CT' | 'T';
+  category: string;
+  team: "T" | "CT";
+  setup?: string;
   description?: string;
-  utility?: string[]; // referencias a grenadas/utilidades
-  createdAt: Date;
+  objectivePrincipal?: string;
+  concept?: string;
+  winCondition?: string;
+  failureStates?: string[];
+  commonMistakes?: string[];
+  minimumUtility?: string[];
+  priorityWeapons?: string[];
+  timingWindows?: string;
+  utilityLayering?: string;
+  reactionTree?: string;
+  lurkTiming?: string;
+  postplant?: string;
+  roles: TacticRole[];
 }
 
 // Notas y documentos
@@ -164,4 +176,80 @@ export interface PlayerStats {
   rating?: number;
   elo?: number;
   lastUpdated: Date;
+}
+
+// ============================================================
+// Tipos para los archivos generados de mapas
+// ============================================================
+
+export interface MapPhilosophy {
+  tWinCondition: string;
+  ctWinCondition: string;
+  keyAreas: string[];
+  tempo: string;
+  rotationComplexity: string;
+}
+
+export interface MapCalloutZone {
+  name: string;
+  description: string;
+}
+
+export interface MapCallouts {
+  siteA: MapCalloutZone[];
+  siteB: MapCalloutZone[];
+  middle: MapCalloutZone[];
+}
+
+export interface MapFundamentals {
+  T: string[];
+  CT: string[];
+}
+
+export interface TacticRole {
+  name: string;
+  label: string;
+  position: string;
+  objective: string;
+  utility: string;
+  timing: string;
+  responsibility: string;
+  whatToLook: string;
+  communication: string;
+  onTeammateDeath: string;
+  onNoContact: string;
+  postplant: string;
+}
+
+export interface MapTactic {
+  id: string;
+  name: string;
+  category: string;
+  team: "T" | "CT";
+  setup?: string;
+  description?: string;
+  objectivePrincipal?: string;
+  concept?: string;
+  winCondition?: string;
+  failureStates?: string[];
+  commonMistakes?: string[];
+  minimumUtility?: string[];
+  priorityWeapons?: string[];
+  timingWindows?: string;
+  utilityLayering?: string;
+  reactionTree?: string;
+  lurkTiming?: string;
+  postplant?: string;
+  roles: TacticRole[];
+}
+
+export interface MapData {
+  id: string;
+  name: string;
+  sideFavor: string;
+  description: string;
+  philosophy: MapPhilosophy;
+  callouts: MapCallouts;
+  fundamentals: MapFundamentals;
+  tactics: MapTactic[];
 }

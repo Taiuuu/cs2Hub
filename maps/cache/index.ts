@@ -5,19 +5,19 @@ import { fundamentals } from "./fundamentals";
 import { tacticDefault1 } from "./defaults";
 import { tacticProtocol1, tacticProtocol2 } from "./protocols";
 import { tacticRetake1, tacticRetake2 } from "./retakes";
+import { tacticReaggression1 } from "./reaggressions";
+import { tacticAntiEco1 } from "./antiEco";
 import { tacticPistol1, tacticPistol2 } from "./strats/pistol";
 import { tacticEco1 } from "./strats/eco";
 import { tacticForce1 } from "./strats/force";
 import { tacticBuy1 } from "./strats/buy";
-import { tacticAntiEco1 } from "./antiEco";
-import { tacticReaggression1 } from "./reaggressions";
 import { tacticMidRound1 } from "./strats/midRound";
 
 export const cacheData: MapData = {
   id: "cache",
   name: "Cache",
   sideFavor: "CT-sided",
-  description: "Cache es un mapa simétrico con mid muy relevante. El control de mid (highway + squeaky) determina qué sitio es más fácil de ejecutar. La CT tiene ventaja en A por los ángulos de main y heaven.",
+  description: "Cache es un mapa simétrico con mid muy relevante. El control de mid determina qué sitio es más fácil de ejecutar.",
   philosophy,
   callouts,
   fundamentals,
@@ -34,7 +34,7 @@ export const cacheData: MapData = {
     tacticBuy1,
     tacticAntiEco1,
     tacticReaggression1,
-    tacticMidRound1
+    tacticMidRound1,
   ],
 };
 
