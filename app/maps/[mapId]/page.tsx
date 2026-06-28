@@ -240,9 +240,8 @@ function SidePanel({ map, side }: { map: MapData; side: 'T' | 'CT' }) {
 }
 
 // ─── Page ───────────────────────────────────────────────────────────────────
-
-export default function MapDetailPage({ params }: { params: Promise<{ map: string }> }) {
-  const { map: mapId } = use(params);
+export default function MapDetailPage({ params }: { params: Promise<{ mapId: string }> }) {
+  const { mapId } = use(params);
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'T' | 'CT'>('T');
   const [calloutSite, setCalloutSite] = useState<'siteA' | 'siteB' | 'middle'>('siteA');
