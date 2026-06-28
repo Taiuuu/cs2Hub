@@ -1,14 +1,61 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { CrosshairCvars } from '@/types';
 
 interface CrosshairPreviewProps {
-  code: string;
-  name?: string;
-  size?: number; // px, default 200
+  code?: string;
+  cvars?: CrosshairCvars;
+  size?: number;
 }
 
-export function CrosshairPreview({ code, name, size = 200 }: CrosshairPreviewProps) {
+// Colores estándar de CS2 (cl_crosshaircolor 0-5)
+const CS2_COLORS: Record<number, [number, number, number]> = {
+  0: [255, 0,   0],   // rojo
+  1: [0,   255, 0],   // verde
+  2: [255, 255, 0],   // amarillo
+  3: [0,   0,   255], // azul
+  4: [0,   255, 255], // cyan
+  5: [255, 255, 255], // blanco (custom rgb)
+};
+
+function cvarsToParams(cvars: CrosshairCvars) {
+  const colorIndex = cvars.cl_crosshaircolor ?? 1;
+  let [r, g, b] = CS2_COLORS[colorIndex] ?? CS2_COLORS[1];
+
+  // Si es color 5 (custom) y tiene RGB, usarlos
+  if (colorIndex === 5 && cvars.cl_crosshaircolor_r !== undefined) {
+    r = cvars.cl_crosshaircolor_r ?? 255;
+    g = cvars.cl_crosshaircolor_g ?? 255;
+    b = cvars.cl_crosshaircolor_b ?? 255;
+  }
+
+  const alpha = ((cvars.cl_crosshairalpha ?? 255) / 255);
+  const color = `rgba(${r},${g},${b},${alpha})`;
+
+  return {
+    size:      cvars.cl_crosshairsize      ?? 5,
+    gap:       cvars.cl_crosshairgap       ?? 1,
+    thickness: cvars.cl_crosshairthickness ?? 0.5,
+    dot:       cvars.cl_crosshairdot       ?? false,
+    outline:   cvars.cl_crosshair_drawoutline ?? false,
+    outlineThickness: cvars.cl_crosshair_outlinethickness ?? 1,
+    tStyle:    cvars.cl_crosshair_t        ?? false,
+    color,
+    outlineColor: `rgba(0,0,0,${alpha})`,
+  };
+}
+
+function defaultParams() {
+  return {
+    size: 5, gap: 1, thickness: 1,
+    dot: false, outline: false, outlineThickness: 1,
+    tStyle: false,
+    color: '#00ff00', outlineColor: 'rgba(0,0,0,0.8)',
+  };
+}
+
+export function CrosshairPreview({ code, cvars, size = 200 }: CrosshairPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -17,40 +64,38 @@ export function CrosshairPreview({ code, name, size = 200 }: CrosshairPreviewPro
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const W = size;
-    const H = size;
-    canvas.width = W;
-    canvas.height = H;
+    canvas.width = size;
+    canvas.height = size;
 
-    // Fondo oscuro estilo CS2
+    // Fondo oscuro con grid sutil
     ctx.fillStyle = '#111111';
-    ctx.fillRect(0, 0, W, H);
-
-    // Grid sutil
-    ctx.strokeStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, size, size);
+    ctx.strokeStyle = '#1c1c1c';
     ctx.lineWidth = 0.5;
-    const step = W / 8;
-    for (let x = 0; x <= W; x += step) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    const step = size / 8;
+    for (let x = 0; x <= size; x += step) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, size); ctx.stroke();
     }
-    for (let y = 0; y <= H; y += step) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    for (let y = 0; y <= size; y += step) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(size, y); ctx.stroke();
     }
 
-    const cx = W / 2;
-    const cy = H / 2;
-    const scale = W / 200;
+    const cx = size / 2;
+    const cy = size / 2;
 
-    const params = parseCode(code);
-    const color = params.color;
-    const outlineColor = '#000000';
+    // Escala: CS2 usa unidades de pixel a 1080p aprox.
+    // Referencia: size=5, gap=1, thickness=0.5 → mira típica de pro
+    const UNIT = size / 40; // factor de escala
 
-    const len = params.length * scale;
-    const gap = params.gap * scale;
-    const thick = params.thickness * scale;
-    const outline = Math.max(1, thick * 0.6);
+    const p = cvars ? cvarsToParams(cvars) : defaultParams();
+
+    const len   = p.size * UNIT;
+    const gap   = p.gap  * UNIT;
+    const thick = Math.max(1, p.thickness * UNIT * 2);
+    const outW  = thick + p.outlineThickness * UNIT * 2;
 
     const drawLine = (x1: number, y1: number, x2: number, y2: number, lw: number, style: string) => {
+      ctx.save();
       ctx.strokeStyle = style;
       ctx.lineWidth = lw;
       ctx.lineCap = 'square';
@@ -58,37 +103,42 @@ export function CrosshairPreview({ code, name, size = 200 }: CrosshairPreviewPro
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.stroke();
+      ctx.restore();
     };
 
-    // Outline primero
-    if (params.outline) {
-      drawLine(cx, cy - gap - len, cx, cy - gap, thick + outline * 2, outlineColor);
-      drawLine(cx, cy + gap, cx, cy + gap + len, thick + outline * 2, outlineColor);
-      drawLine(cx - gap - len, cy, cx - gap, cy, thick + outline * 2, outlineColor);
-      drawLine(cx + gap, cy, cx + gap + len, cy, thick + outline * 2, outlineColor);
+    const lines: [number, number, number, number][] = [
+      [cx,       cy - gap - len, cx,       cy - gap      ], // top
+      [cx,       cy + gap,       cx,       cy + gap + len ], // bottom
+      [cx - gap - len, cy,       cx - gap, cy             ], // left
+      [cx + gap, cy,             cx + gap + len, cy       ], // right
+    ];
+
+    // Si es T-style, omitir línea de arriba
+    const activeLines = p.tStyle ? lines.slice(1) : lines;
+
+    // Outline
+    if (p.outline) {
+      activeLines.forEach(([x1, y1, x2, y2]) => drawLine(x1, y1, x2, y2, outW, p.outlineColor));
     }
 
-    // Líneas de la mira
-    drawLine(cx, cy - gap - len, cx, cy - gap, thick, color);
-    drawLine(cx, cy + gap, cx, cy + gap + len, thick, color);
-    drawLine(cx - gap - len, cy, cx - gap, cy, thick, color);
-    drawLine(cx + gap, cy, cx + gap + len, cy, thick, color);
+    // Líneas principales
+    activeLines.forEach(([x1, y1, x2, y2]) => drawLine(x1, y1, x2, y2, thick, p.color));
 
-    // Dot central
-    if (params.dot) {
-      const dotR = params.dotSize * scale;
-      if (params.outline) {
-        ctx.fillStyle = outlineColor;
+    // Dot
+    if (p.dot) {
+      const dotR = Math.max(1, thick / 2);
+      if (p.outline) {
+        ctx.fillStyle = p.outlineColor;
         ctx.beginPath();
-        ctx.arc(cx, cy, dotR + outline, 0, Math.PI * 2);
+        ctx.arc(cx, cy, dotR + p.outlineThickness * UNIT, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.fillStyle = color;
+      ctx.fillStyle = p.color;
       ctx.beginPath();
       ctx.arc(cx, cy, dotR, 0, Math.PI * 2);
       ctx.fill();
     }
-  }, [code, size]);
+  }, [cvars, code, size]);
 
   return (
     <canvas
@@ -98,45 +148,4 @@ export function CrosshairPreview({ code, name, size = 200 }: CrosshairPreviewPro
       style={{ display: 'block', borderRadius: 6 }}
     />
   );
-}
-
-// Colores basados en el código
-const COLOR_MAP: Record<string, string> = {
-  '0': '#00ff00',
-  '1': '#00ff00',
-  '2': '#ffff00',
-  '3': '#0000ff',
-  '4': '#00ffff',
-  '5': '#ffffff',
-  '6': '#ff5500',
-  '7': '#ff0000',
-  '8': '#ff00ff',
-};
-
-function parseCode(code: string) {
-  const defaults = {
-    length: 8, gap: 3, thickness: 2,
-    dot: false, dotSize: 2,
-    outline: true, color: '#00ff00',
-  };
-
-  if (!code || code.trim() === '') return defaults;
-
-  try {
-    const nums = code.replace(/CSGO-/i, '').match(/\d+/g) || [];
-    const colorKey = nums[3] || '1';
-    const color = COLOR_MAP[colorKey] || '#00ff00';
-
-    return {
-      length: Math.min(Math.max(parseInt(nums[0]) || 8, 2), 22),
-      gap: Math.min(Math.max(parseInt(nums[1]) || 3, 0), 12),
-      thickness: Math.min(Math.max(parseInt(nums[2]) || 2, 1), 5),
-      dot: parseInt(nums[4]) === 1,
-      dotSize: Math.min(Math.max(parseInt(nums[5]) || 2, 1), 4),
-      outline: parseInt(nums[6]) !== 0,
-      color,
-    };
-  } catch {
-    return defaults;
-  }
 }
