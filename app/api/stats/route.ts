@@ -168,7 +168,6 @@ async function getCS2Stats(steamId64: string) {
 
 export async function getFACEITProfile(nickname: string): Promise<FACEITProfile | null> {
   try {
-    // 1. Buscar jugador por nickname
     const playerRes = await fetch(
       `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(nickname)}`,
       {
@@ -179,15 +178,18 @@ export async function getFACEITProfile(nickname: string): Promise<FACEITProfile 
       }
     );
 
-    if (!playerRes.ok) return null;
+    if (!playerRes.ok) {
+      const errorText = await playerRes.text();
+      console.error('FACEIT player error:', playerRes.status, errorText);
+      return null;
+    }
 
     const player = await playerRes.json();
     const playerId = player.player_id;
     if (!playerId) return null;
 
-    // 2. Obtener stats con el player_id
     const statsRes = await fetch(
-      `https://open.faceit.com/data/v4/players/${player.player_id}/stats/cs2`,
+      `https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`,
       {
         headers: {
           Authorization: `Bearer ${process.env.FACEIT_API_KEY}`,
@@ -196,7 +198,11 @@ export async function getFACEITProfile(nickname: string): Promise<FACEITProfile 
       }
     );
 
-    if (!statsRes.ok) return null;
+    if (!statsRes.ok) {
+      const errorText = await statsRes.text();
+      console.error('FACEIT stats error:', statsRes.status, errorText);
+      return null;
+    }
 
     const statsData = await statsRes.json();
     const lt = statsData.lifetime ?? {};

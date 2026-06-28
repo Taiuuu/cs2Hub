@@ -258,8 +258,8 @@ function FaceitSection({ faceit }: { faceit: FaceitData }) {
           )}
         </div>
         <div className="flex gap-2">
-          {faceit.recent.length > 0 ? (
-            faceit.recent.map((r, i) => (
+          {(faceit.recent ?? []).length > 0 ? (
+            (faceit.recent ?? []).map((r, i) => (
               <span
                 key={i}
                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold border ${
