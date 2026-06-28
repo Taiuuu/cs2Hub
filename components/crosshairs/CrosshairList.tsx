@@ -1,7 +1,9 @@
 'use client';
 
 import { Crosshair } from '@/types';
-import { Copy, Trash2 } from 'lucide-react';
+import { Copy, Trash2, Check } from 'lucide-react';
+import { useState } from 'react';
+import { CrosshairPreview } from './CrosshairPreview';
 
 interface CrosshairListProps {
   crosshairs: Crosshair[];
@@ -10,42 +12,101 @@ interface CrosshairListProps {
 }
 
 export function CrosshairList({ crosshairs, onDelete, onCopy }: CrosshairListProps) {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopy = async (id: string, code: string) => {
+    onCopy(code);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
   if (crosshairs.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-zinc-400">No hay miras guardadas. Crea una nueva para empezar.</p>
+      <div
+        className="text-center py-16 rounded-xl border"
+        style={{ borderColor: '#1e1e1e', background: '#0d0d0d' }}
+      >
+        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#1a1a1a' }}>
+          <span style={{ color: '#ff5500', fontSize: 22 }}>+</span>
+        </div>
+        <p className="font-medium mb-1" style={{ color: '#ffffff' }}>No tenés miras guardadas</p>
+        <p className="text-sm" style={{ color: '#444444' }}>Creá una nueva con el botón de arriba</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       {crosshairs.map((crosshair) => (
         <div
           key={crosshair.id}
-          className="border border-zinc-800 rounded-lg p-4 hover:bg-zinc-900 transition-colors"
+          className="rounded-xl flex flex-col overflow-hidden transition-all duration-150"
+          style={{
+            background: '#0d0d0d',
+            border: '1px solid #1e1e1e',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.borderColor = '#2a2a2a')}
+          onMouseLeave={e => (e.currentTarget.style.borderColor = '#1e1e1e')}
         >
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <h3 className="font-semibold text-white">{crosshair.name}</h3>
+          {/* Preview area */}
+          <div
+            className="flex items-center justify-center"
+            style={{ background: '#111111', height: 140, borderBottom: '1px solid #1a1a1a' }}
+          >
+            <CrosshairPreview code={crosshair.code} size={120} />
+          </div>
+
+          {/* Info */}
+          <div className="p-4 flex flex-col gap-3 flex-1">
+            <div>
+              <h3 className="font-semibold text-sm leading-tight mb-1" style={{ color: '#ffffff' }}>
+                {crosshair.name}
+              </h3>
               {crosshair.description && (
-                <p className="text-sm text-zinc-400 mt-1">{crosshair.description}</p>
+                <p className="text-xs leading-relaxed" style={{ color: '#555555' }}>
+                  {crosshair.description}
+                </p>
               )}
-              <code className="text-xs bg-zinc-900 text-green-400 px-2 py-1 rounded mt-2 block w-fit font-mono break-all">
-                {crosshair.code}
-              </code>
             </div>
-            <div className="flex gap-2">
+
+            {/* Code */}
+            <div
+              className="rounded-lg px-3 py-2 font-mono text-xs break-all"
+              style={{ background: '#0a0a0a', border: '1px solid #1a1a1a', color: '#ff5500' }}
+            >
+              {crosshair.code}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2 mt-auto">
               <button
-                onClick={() => onCopy(crosshair.code)}
-                className="p-2 rounded-lg bg-blue-900 hover:bg-blue-800 text-blue-300 transition-colors"
-                title="Copiar código"
+                onClick={() => handleCopy(crosshair.id, crosshair.code)}
+                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium transition-all"
+                style={{
+                  background: copiedId === crosshair.id ? 'rgba(34,197,94,0.1)' : 'rgba(255,85,0,0.08)',
+                  border: `1px solid ${copiedId === crosshair.id ? '#16a34a' : '#ff5500'}`,
+                  color: copiedId === crosshair.id ? '#16a34a' : '#ff5500',
+                }}
               >
-                <Copy className="w-4 h-4" />
+                {copiedId === crosshair.id
+                  ? <><Check className="w-3.5 h-3.5" /> Copiado</>
+                  : <><Copy className="w-3.5 h-3.5" /> Copiar código</>
+                }
               </button>
               <button
                 onClick={() => onDelete(crosshair.id)}
-                className="p-2 rounded-lg bg-red-900 hover:bg-red-800 text-red-300 transition-colors"
+                className="p-2 rounded-lg transition-all"
+                style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#444444' }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#7f1d1d';
+                  (e.currentTarget as HTMLElement).style.color = '#ef4444';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(239,68,68,0.08)';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#2a2a2a';
+                  (e.currentTarget as HTMLElement).style.color = '#444444';
+                  (e.currentTarget as HTMLElement).style.background = '#1a1a1a';
+                }}
                 title="Eliminar"
               >
                 <Trash2 className="w-4 h-4" />

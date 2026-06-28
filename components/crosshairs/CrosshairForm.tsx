@@ -3,7 +3,7 @@
 import { Crosshair } from '@/types';
 import { FormEvent, useState } from 'react';
 import { CrosshairPreview } from './CrosshairPreview';
-import { Copy, Eye, EyeOff } from 'lucide-react';
+import { Copy, Plus, X } from 'lucide-react';
 
 interface CrosshairFormProps {
   onAdd: (crosshair: Omit<Crosshair, 'id' | 'createdAt'>) => void;
@@ -11,143 +11,185 @@ interface CrosshairFormProps {
 
 export function CrosshairForm({ onAdd }: CrosshairFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [showPreview, setShowPreview] = useState(true);
-  const [formData, setFormData] = useState({
-    name: '',
-    code: '',
-    description: '',
-  });
+  const [formData, setFormData] = useState({ name: '', code: '', description: '' });
+  const [copied, setCopied] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.code.trim()) {
-      alert('Por favor completa nombre y código');
-      return;
-    }
-
+    if (!formData.name.trim() || !formData.code.trim()) return;
     onAdd({
       name: formData.name,
       code: formData.code,
       description: formData.description || undefined,
     });
-
     setFormData({ name: '', code: '', description: '' });
     setIsOpen(false);
   };
 
-  const copyCode = () => {
-    navigator.clipboard.writeText(formData.code);
+  const handleCopy = async () => {
+    if (!formData.code) return;
+    await navigator.clipboard.writeText(formData.code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const inputStyle = {
+    background: '#0a0a0a',
+    border: '1px solid #2a2a2a',
+    borderRadius: 8,
+    color: '#ffffff',
+    padding: '10px 14px',
+    width: '100%',
+    fontSize: 13,
+    outline: 'none',
+    boxSizing: 'border-box' as const,
+  };
+
+  const labelStyle = {
+    display: 'block',
+    fontSize: 11,
+    fontWeight: 600,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase' as const,
+    color: '#444444',
+    marginBottom: 6,
   };
 
   return (
-    <div className="space-y-4">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-6 py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-blue-500/50 text-white"
-      >
-        {isOpen ? '✕ Cancelar' : '+ Nueva Mira'}
-      </button>
+    <div className="mb-6">
+      {!isOpen ? (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all"
+          style={{
+            background: 'rgba(255,85,0,0.08)',
+            border: '1px solid #ff5500',
+            color: '#ff5500',
+          }}
+        >
+          <Plus className="w-4 h-4" />
+          Nueva mira
+        </button>
+      ) : (
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{ background: '#0d0d0d', border: '1px solid #1e1e1e' }}
+        >
+          {/* Header del form */}
+          <div
+            className="flex items-center justify-between px-5 py-3"
+            style={{ borderBottom: '1px solid #1a1a1a' }}
+          >
+            <span className="text-sm font-semibold" style={{ color: '#ffffff' }}>
+              Nueva mira
+            </span>
+            <button
+              type="button"
+              onClick={() => { setIsOpen(false); setFormData({ name: '', code: '', description: '' }); }}
+              className="p-1 rounded transition-colors"
+              style={{ color: '#444444' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#444444')}
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
 
-      {isOpen && (
-        <form onSubmit={handleSubmit} className="border border-zinc-700 rounded-xl p-8 bg-gradient-to-br from-zinc-900 to-zinc-950 space-y-6 shadow-2xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Lado izquierdo: Formulario */}
-            <div className="space-y-6">
-              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                Detalles de la Mira
-              </h3>
-
-              {/* Nombre */}
-              <div>
-                <label className="block text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wider">
-                  Nombre
-                </label>
-                <input
-                  type="text"
-                  placeholder="ej: Mira Competitiva Standard"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                />
-              </div>
-
-              {/* Código */}
-              <div>
-                <label className="block text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wider">
-                  Código de Mira
-                </label>
-                <div className="relative">
-                  <textarea
-                    placeholder="Pega el código aquí (CSGO-XXXXX-XXXXX-XXXXX-XXXXX-XXXXX)"
-                    value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                    className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-mono text-sm"
-                    rows={4}
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              {/* Formulario izquierdo */}
+              <div className="p-5 space-y-4" style={{ borderRight: '1px solid #1a1a1a' }}>
+                <div>
+                  <label style={labelStyle}>Nombre</label>
+                  <input
+                    type="text"
+                    placeholder="ej: Mira competitiva standard"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    style={inputStyle}
+                    onFocus={e => (e.target.style.borderColor = '#ff5500')}
+                    onBlur={e => (e.target.style.borderColor = '#2a2a2a')}
                   />
-                  {formData.code && (
-                    <button
-                      type="button"
-                      onClick={copyCode}
-                      className="absolute top-3 right-3 p-2 hover:bg-zinc-700 rounded-lg transition-colors text-zinc-400 hover:text-blue-400"
-                      title="Copiar código"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
-                  )}
                 </div>
-              </div>
 
-              {/* Descripción */}
-              <div>
-                <label className="block text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wider">
-                  Descripción (opcional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="ej: Para retakes, baja sensibilidad"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                />
-              </div>
+                <div>
+                  <label style={labelStyle}>Código</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="text"
+                      placeholder="CSGO-XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+                      value={formData.code}
+                      onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                      style={{ ...inputStyle, fontFamily: 'monospace', paddingRight: 40, color: '#ff5500' }}
+                      onFocus={e => (e.target.style.borderColor = '#ff5500')}
+                      onBlur={e => (e.target.style.borderColor = '#2a2a2a')}
+                    />
+                    {formData.code && (
+                      <button
+                        type="button"
+                        onClick={handleCopy}
+                        style={{
+                          position: 'absolute', right: 10, top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none', border: 'none', cursor: 'pointer',
+                          color: copied ? '#22c55e' : '#444444', padding: 0,
+                        }}
+                        title="Copiar código"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-              {/* Botón Submit */}
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 px-6 py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-green-500/50 text-white mt-6"
-              >
-                ✓ Guardar Mira
-              </button>
-            </div>
+                <div>
+                  <label style={labelStyle}>Descripción <span style={{ color: '#2a2a2a', textTransform: 'none', letterSpacing: 0 }}>— opcional</span></label>
+                  <input
+                    type="text"
+                    placeholder="ej: Para retakes, baja sensibilidad"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    style={inputStyle}
+                    onFocus={e => (e.target.style.borderColor = '#ff5500')}
+                    onBlur={e => (e.target.style.borderColor = '#2a2a2a')}
+                  />
+                </div>
 
-            {/* Lado derecho: Preview */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="flex items-center gap-2 w-full justify-center">
                 <button
-                  type="button"
-                  onClick={() => setShowPreview(!showPreview)}
-                  className="flex items-center gap-2 text-sm text-zinc-400 hover:text-blue-400 transition-colors"
+                  type="submit"
+                  disabled={!formData.name.trim() || !formData.code.trim()}
+                  className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all"
+                  style={{
+                    background: formData.name && formData.code ? '#ff5500' : '#1a1a1a',
+                    color: formData.name && formData.code ? '#ffffff' : '#333333',
+                    border: 'none',
+                    cursor: formData.name && formData.code ? 'pointer' : 'not-allowed',
+                  }}
                 >
-                  {showPreview ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                  {showPreview ? 'Ocultar' : 'Mostrar'} Preview
+                  Guardar mira
                 </button>
               </div>
 
-              {showPreview && formData.code && (
-                <div className="w-full max-w-xs">
-                  <CrosshairPreview code={formData.code} name={formData.name || 'Vista Previa'} />
+              {/* Preview derecho — siempre visible */}
+              <div
+                className="flex flex-col items-center justify-center p-6 gap-4"
+                style={{ background: '#0a0a0a' }}
+              >
+                <CrosshairPreview code={formData.code} size={160} />
+                <div style={{ textAlign: 'center' }}>
+                  <p className="text-xs" style={{ color: '#333333' }}>
+                    {formData.code ? 'Preview en tiempo real' : 'Pegá un código para ver la mira'}
+                  </p>
+                  {formData.name && (
+                    <p className="text-xs mt-1 font-medium" style={{ color: '#555555' }}>
+                      {formData.name}
+                    </p>
+                  )}
                 </div>
-              )}
-
-              {showPreview && !formData.code && (
-                <div className="w-full max-w-xs p-6 border-2 border-dashed border-zinc-700 rounded-lg text-center text-zinc-500">
-                  <p className="text-sm">Pega un código para ver la preview</p>
-                </div>
-              )}
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       )}
     </div>
   );
