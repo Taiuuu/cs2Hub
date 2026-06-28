@@ -1,74 +1,9 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, use } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { allMaps } from '@/lib/mapsData';
-import { MapStrategyCategory, RoundType } from '@/types';
-
-const categoryOrder: MapStrategyCategory[] = [
-  'Default',
-  'Pistol',
-  'Eco',
-  'Force Buy',
-  'Full Buy',
-  'Anti Eco',
-  'Anti Force',
-  'Buy vs Buy',
-  'Retakes',
-  'Protocol',
-  'Reaggression',
-  'Mid Round Calls',
-  'Reacciones CT',
-  'Reacciones T',
-  'Situaciones especiales',
-];
-
-const roundTypeLabels: Record<RoundType, string> = {
-  pistol: 'Pistol',
-  eco: 'Eco',
-  force: 'Forzado',
-  buy: 'Buy',
-  'full-buy': 'Full Buy',
-  'anti-eco': 'Anti-Eco',
-  'anti-force': 'Anti-Forzado',
-  'buy-vs-buy': 'Buy vs Buy',
-  default: 'Default',
-  retake: 'Retake',
-  protocol: 'Protocol',
-  antiEco: 'Anti Eco',
-  reaggression: 'Reaggression',
-  midRound: 'Mid Round',
-  exec: 'Exec',
-  split: 'Split',
-  rush: 'Rush',
-  contact: 'Contact',
-  'mid-control': 'Mid Control',
-  'late-exec': 'Late Exec',
-};
-
-const roundTypeColors: Record<RoundType, string> = {
-  pistol: 'bg-purple-900 hover:bg-purple-800',
-  eco: 'bg-yellow-900 hover:bg-yellow-800',
-  force: 'bg-orange-900 hover:bg-orange-800',
-  buy: 'bg-blue-800 hover:bg-blue-700',
-  'full-buy': 'bg-blue-900 hover:bg-blue-800',
-  'anti-eco': 'bg-green-900 hover:bg-green-800',
-  antiEco: 'bg-emerald-900 hover:bg-emerald-800',
-  'anti-force': 'bg-cyan-900 hover:bg-cyan-800',
-  'buy-vs-buy': 'bg-fuchsia-900 hover:bg-fuchsia-800',
-  default: 'bg-zinc-700 hover:bg-zinc-600',
-  retake: 'bg-violet-900 hover:bg-violet-800',
-  protocol: 'bg-indigo-700 hover:bg-indigo-600',
-  reaggression: 'bg-rose-900 hover:bg-rose-800',
-  midRound: 'bg-slate-900 hover:bg-slate-800',
-  exec: 'bg-emerald-900 hover:bg-emerald-800',
-  split: 'bg-sky-900 hover:bg-sky-800',
-  rush: 'bg-red-800 hover:bg-red-700',
-  contact: 'bg-amber-900 hover:bg-amber-800',
-  'mid-control': 'bg-indigo-900 hover:bg-indigo-800',
-  'late-exec': 'bg-teal-900 hover:bg-teal-800',
-};
 
 type CalloutMarker = {
   id: string;
@@ -84,65 +19,75 @@ const mapCalloutMarkers: Record<string, CalloutMarker[]> = {
     { id: 'mid', label: 'Mid', left: '50%', top: '39%' },
     { id: 'b-tuneles', label: 'B túneles', left: '78%', top: '58%' },
     { id: 'b-planta', label: 'B planta', left: '80%', top: '72%' },
-    { id: 'puerta', label: 'Puerta', left: '46%', top: '55%' },
-    { id: 'xbox', label: 'Xbox', left: '52%', top: '26%' },
-    { id: 'ventana', label: 'Ventana', left: '62%', top: '22%' },
-    { id: 'garita', label: 'Garita', left: '26%', top: '52%' },
   ],
   mirage: [
     { id: 'short', label: 'Short', left: '24%', top: '63%' },
     { id: 'connector', label: 'Connector', left: '48%', top: '46%' },
     { id: 'palacio', label: 'Palacio', left: '16%', top: '40%' },
-    { id: 'jungle', label: 'Jungla', left: '29%', top: '53%' },
     { id: 'window', label: 'Ventana', left: '56%', top: '34%' },
     { id: 'apps', label: 'Apps', left: '78%', top: '72%' },
-    { id: 'van', label: 'Van', left: '74%', top: '82%' },
-  ],
-  nuke: [
-    { id: 'caseta', label: 'Caseta', left: '29%', top: '32%' },
-    { id: 'metal', label: 'Metal', left: '37%', top: '48%' },
-    { id: 'rafters', label: 'Rafters', left: '61%', top: '22%' },
-    { id: 'rampa', label: 'Rampa', left: '72%', top: '64%' },
-    { id: 'secret', label: 'Secret', left: '84%', top: '56%' },
-    { id: 'afuera', label: 'Afuera', left: '38%', top: '74%' },
-    { id: 'ducto', label: 'Ducto', left: '68%', top: '74%' },
   ],
   inferno: [
-    { id: 'apps', label: 'Apps', left: '22%', top: '70%' },
     { id: 'banana', label: 'Banana', left: '34%', top: '48%' },
     { id: 'mid', label: 'Mid', left: '56%', top: '36%' },
     { id: 'palacio', label: 'Palacio', left: '16%', top: '26%' },
-    { id: 'site-a', label: 'Site A', left: '18%', top: '18%' },
-    { id: 'site-b', label: 'Site B', left: '80%', top: '66%' },
+  ],
+  nuke: [
+    { id: 'rampa', label: 'Rampa', left: '72%', top: '64%' },
+    { id: 'secret', label: 'Secret', left: '84%', top: '56%' },
+    { id: 'afuera', label: 'Afuera', left: '38%', top: '74%' },
   ],
   vertigo: [
     { id: 'a-site', label: 'Site A', left: '24%', top: '20%' },
     { id: 'mid', label: 'Mid', left: '50%', top: '44%' },
     { id: 'b-site', label: 'Site B', left: '76%', top: '72%' },
-    { id: 'rafters', label: 'Rafters', left: '52%', top: '24%' },
   ],
   ancient: [
     { id: 'mid', label: 'Mid', left: '48%', top: '42%' },
     { id: 'a-site', label: 'Site A', left: '26%', top: '20%' },
     { id: 'b-site', label: 'Site B', left: '78%', top: '72%' },
-    { id: 'water', label: 'Water', left: '63%', top: '58%' },
   ],
   anubis: [
-    { id: 'main', label: 'Main', left: '26%', top: '34%' },
-    { id: 'temple', label: 'Temple', left: '18%', top: '22%' },
     { id: 'mid', label: 'Mid', left: '50%', top: '44%' },
     { id: 'site-a', label: 'Site A', left: '26%', top: '18%' },
     { id: 'site-b', label: 'Site B', left: '78%', top: '72%' },
   ],
+  cache: [
+    { id: 'mid', label: 'Mid', left: '50%', top: '40%' },
+    { id: 'a-site', label: 'Site A', left: '24%', top: '20%' },
+    { id: 'b-site', label: 'Site B', left: '76%', top: '70%' },
+  ],
+  overpass: [
+    { id: 'agua', label: 'Agua', left: '30%', top: '60%' },
+    { id: 'monster', label: 'Monster', left: '50%', top: '40%' },
+    { id: 'a-site', label: 'Site A', left: '22%', top: '20%' },
+  ],
+  train: [
+    { id: 'ivy', label: 'Ivy', left: '28%', top: '35%' },
+    { id: 'a-site', label: 'Site A', left: '24%', top: '20%' },
+    { id: 'b-site', label: 'Site B', left: '76%', top: '70%' },
+  ],
+};
+
+const categoryColors: Record<string, string> = {
+  Default: 'bg-zinc-700',
+  Protocol: 'bg-indigo-700',
+  Retake: 'bg-violet-800',
+  Reaggression: 'bg-rose-800',
+  AntiEco: 'bg-green-800',
+  Pistol: 'bg-purple-800',
+  Eco: 'bg-yellow-800',
+  Force: 'bg-orange-800',
+  Buy: 'bg-blue-800',
+  MidRound: 'bg-slate-700',
 };
 
 export default function MapDetailPage({ params }: { params: Promise<{ mapId: string }> }) {
   const { mapId } = use(params);
   const map = allMaps.find((m) => m.id === mapId);
   const [selectedTeam, setSelectedTeam] = useState<'T' | 'CT'>('T');
-  const [selectedRoundType, setSelectedRoundType] = useState<RoundType>('pistol');
-  const [selectedCategory, setSelectedCategory] = useState<MapStrategyCategory>('Default');
-  const [activeTab, setActiveTab] = useState<'overview' | 'callouts' | 'utilities' | 'strats'>('overview');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Default');
+  const [activeTab, setActiveTab] = useState<'overview' | 'callouts' | 'strats'>('overview');
   const [highlightedCallout, setHighlightedCallout] = useState<string | null>(null);
 
   if (!map) {
@@ -155,47 +100,30 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
     );
   }
 
-  const allStrats = Object.values(map.strats).flat() as Array<{
-    category?: MapStrategyCategory;
-    type: RoundType;
-    team: 'T' | 'CT';
-    utilities?: string[];
-    id: string;
-    name: string;
-    description: string;
-    setup?: string;
-    tips?: string[];
-  }>;
-
-  const categories = Array.from(new Set(allStrats.map((strat) => strat.category ?? 'Default'))) as MapStrategyCategory[];
-
-  useEffect(() => {
-    if (categories.length > 0 && !categories.includes(selectedCategory)) {
-      setSelectedCategory(categories[0]);
-    }
-  }, [categories, selectedCategory]);
-
-  const filteredStrats = allStrats.filter(
-    (strat) =>
-      strat.team === selectedTeam &&
-      strat.type === selectedRoundType &&
-      (strat.category ?? 'Default') === selectedCategory
+  const tactics = map.tactics ?? [];
+  const categories = Array.from(new Set(tactics.map((t) => t.category)));
+  const filteredTactics = tactics.filter(
+    (t) => t.team === selectedTeam && t.category === selectedCategory
   );
-
-  const availableRoundTypes = Array.from(
-    new Set(
-      allStrats
-        .filter((s) => s.team === selectedTeam)
-        .map((s) => s.type)
-    )
-  ) as RoundType[];
-
-  const utilities = Array.from(new Set(allStrats.flatMap((s) => s.utilities ?? [])));
   const calloutMarkers = mapCalloutMarkers[map.id] ?? [];
+
+  // Callouts: soporta tanto string[] como {name, description}[]
+  const toStringArray = (arr: Array<string | { name: string; description?: string }>) =>
+    arr.map((x) => (typeof x === 'string' ? x : x.name));
+
+  const siteA = toStringArray(map.callouts?.siteA ?? []);
+  const siteB = toStringArray(map.callouts?.siteB ?? []);
+  const middle = toStringArray(map.callouts?.middle ?? []);
+
+  // Fundamentals: soporta {T, CT} y {t, ct}
+  const fundamentalsT: string[] = (map.fundamentals as any)?.T ?? (map.fundamentals as any)?.t ?? [];
+  const fundamentalsCT: string[] = (map.fundamentals as any)?.CT ?? (map.fundamentals as any)?.ct ?? [];
 
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-6xl mx-auto p-6 md:p-8">
+
+        {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
           <div className="flex items-center gap-3">
             <Link href="/maps" className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-400 transition hover:border-zinc-700 hover:text-white">
@@ -211,22 +139,22 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
               {map.sideFavor}
             </span>
             <span className="rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-white">
-              {Object.values(map.strats).flat().length} estrategias
+              {tactics.length} estrategias
             </span>
           </div>
         </div>
 
+        {/* Tabs */}
         <div className="flex flex-wrap gap-3 mb-10">
           {[
             { key: 'overview', label: 'Resumen' },
             { key: 'callouts', label: 'Callouts' },
-            { key: 'utilities', label: 'Utilidades' },
             { key: 'strats', label: 'Estrategias' },
           ].map((tab) => (
             <button
               key={tab.key}
               type="button"
-              onClick={() => setActiveTab(tab.key as 'overview' | 'callouts' | 'utilities' | 'strats')}
+              onClick={() => setActiveTab(tab.key as any)}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                 activeTab === tab.key
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
@@ -238,39 +166,48 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
           ))}
         </div>
 
+        {/* OVERVIEW */}
         {activeTab === 'overview' && (
           <>
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_360px] mb-8">
-              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900 shadow-lg shadow-black/20">
+              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
                 <h2 className="text-lg font-semibold text-white mb-3">Filosofía del mapa</h2>
                 <p className="text-zinc-300 leading-relaxed">{map.description}</p>
+                {map.philosophy && (
+                  <div className="mt-4 space-y-2 text-sm text-zinc-400">
+                    <p><span className="text-red-400 font-medium">T:</span> {map.philosophy.tWinCondition}</p>
+                    <p><span className="text-blue-400 font-medium">CT:</span> {map.philosophy.ctWinCondition}</p>
+                    <p><span className="text-zinc-300 font-medium">Tempo:</span> {map.philosophy.tempo}</p>
+                    <p><span className="text-zinc-300 font-medium">Rotaciones:</span> {map.philosophy.rotationComplexity}</p>
+                  </div>
+                )}
               </div>
-              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900 shadow-lg shadow-black/10">
+              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
                 <h2 className="text-lg font-semibold text-white mb-3">Callouts clave</h2>
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-zinc-400 mb-2">Site A</p>
-                    <p className="text-xs text-zinc-300 leading-relaxed">{map.callouts.siteA.join(', ')}</p>
+                    <p className="text-sm text-zinc-400 mb-1">Site A</p>
+                    <p className="text-xs text-zinc-300 leading-relaxed">{siteA.join(', ')}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-zinc-400 mb-2">Medio</p>
-                    <p className="text-xs text-zinc-300 leading-relaxed">{map.callouts.middle.join(', ')}</p>
+                    <p className="text-sm text-zinc-400 mb-1">Medio</p>
+                    <p className="text-xs text-zinc-300 leading-relaxed">{middle.join(', ')}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-zinc-400 mb-2">Site B</p>
-                    <p className="text-xs text-zinc-300 leading-relaxed">{map.callouts.siteB.join(', ')}</p>
+                    <p className="text-sm text-zinc-400 mb-1">Site B</p>
+                    <p className="text-xs text-zinc-300 leading-relaxed">{siteB.join(', ')}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {(map.fundamentals.t.length > 0 || map.fundamentals.ct.length > 0) && (
+            {(fundamentalsT.length > 0 || fundamentalsCT.length > 0) && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                {map.fundamentals.t.length > 0 && (
+                {fundamentalsT.length > 0 && (
                   <div className="border border-red-900 rounded-3xl p-6 bg-zinc-900">
                     <h3 className="text-lg font-semibold text-red-400 mb-3">Fundamentos T</h3>
                     <ul className="space-y-3">
-                      {map.fundamentals.t.map((tip, idx) => (
+                      {fundamentalsT.map((tip, idx) => (
                         <li key={idx} className="text-sm text-zinc-300 flex gap-2">
                           <span className="text-red-400 mt-1">▪</span>
                           <span>{tip}</span>
@@ -279,11 +216,11 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
                     </ul>
                   </div>
                 )}
-                {map.fundamentals.ct.length > 0 && (
+                {fundamentalsCT.length > 0 && (
                   <div className="border border-blue-900 rounded-3xl p-6 bg-zinc-900">
                     <h3 className="text-lg font-semibold text-blue-400 mb-3">Fundamentos CT</h3>
                     <ul className="space-y-3">
-                      {map.fundamentals.ct.map((tip, idx) => (
+                      {fundamentalsCT.map((tip, idx) => (
                         <li key={idx} className="text-sm text-zinc-300 flex gap-2">
                           <span className="text-blue-400 mt-1">▪</span>
                           <span>{tip}</span>
@@ -297,14 +234,16 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
           </>
         )}
 
+        {/* CALLOUTS */}
         {activeTab === 'callouts' && (
           <div className="space-y-8 mb-8">
             <div className="border border-zinc-800 rounded-3xl overflow-hidden bg-zinc-950">
               <div className="relative aspect-[4/3] min-h-[440px] bg-zinc-950">
                 <img
-                  src={map.calloutImage ?? '/maps/callout-bg.svg'}
-                  alt={`Minimap de callouts de ${map.name}`}
+                  src={`/maps/callouts/${map.id}.jpg`}
+                  alt={`Minimap de ${map.name}`}
                   className="h-full w-full object-cover brightness-90"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
                 {calloutMarkers.map((marker) => (
                   <button
@@ -312,85 +251,39 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
                     type="button"
                     onMouseEnter={() => setHighlightedCallout(marker.label)}
                     onMouseLeave={() => setHighlightedCallout(null)}
-                    onFocus={() => setHighlightedCallout(marker.label)}
-                    onBlur={() => setHighlightedCallout(null)}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-blue-500/90 p-3 shadow-lg shadow-black/30 transition hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-blue-500/90 p-3 shadow-lg transition hover:scale-110"
                     style={{ left: marker.left, top: marker.top }}
-                    aria-label={marker.label}
-                  >
-                    <span className="sr-only">{marker.label}</span>
-                  </button>
+                  />
                 ))}
-                <div className="absolute left-4 bottom-4 rounded-3xl bg-black/80 px-4 py-3 text-sm text-white shadow-xl shadow-black/40">
-                  {highlightedCallout ?? 'Pasa el cursor sobre una zona para ver el callout'}
+                <div className="absolute left-4 bottom-4 rounded-3xl bg-black/80 px-4 py-3 text-sm text-white">
+                  {highlightedCallout ?? 'Pasá el cursor sobre una zona'}
                 </div>
               </div>
             </div>
-
             <div className="grid gap-4 sm:grid-cols-3">
-              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-                <h3 className="text-sm font-semibold text-zinc-200 uppercase tracking-[0.2em] mb-4">Site A</h3>
-                <ul className="space-y-2 text-sm text-zinc-300">
-                  {map.callouts.siteA.map((callout) => (
-                    <li key={callout} className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-blue-400" />
-                      {callout}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-                <h3 className="text-sm font-semibold text-zinc-200 uppercase tracking-[0.2em] mb-4">Medio</h3>
-                <ul className="space-y-2 text-sm text-zinc-300">
-                  {map.callouts.middle.map((callout) => (
-                    <li key={callout} className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-blue-400" />
-                      {callout}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-                <h3 className="text-sm font-semibold text-zinc-200 uppercase tracking-[0.2em] mb-4">Site B</h3>
-                <ul className="space-y-2 text-sm text-zinc-300">
-                  {map.callouts.siteB.map((callout) => (
-                    <li key={callout} className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-blue-400" />
-                      {callout}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'utilities' && (
-          <div className="space-y-8 mb-8">
-            <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-              <h2 className="text-2xl font-bold text-white mb-4">Utilidades clave</h2>
-              <p className="text-sm text-zinc-400 mb-6">Resumen de utilidades más frecuentes en este mapa, extraídas de las estrategias clave.</p>
-              {utilities.length > 0 ? (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {utilities.map((util) => (
-                    <div key={util} className="rounded-3xl border border-zinc-800 bg-zinc-950 p-4">
-                      <p className="text-sm font-semibold text-white mb-2">{util}</p>
-                      <p className="text-xs text-zinc-400">Útil en varias rondas del mapa para controlar ángulos y ganar espacios.</p>
-                    </div>
-                  ))}
+              {[{ label: 'Site A', items: siteA }, { label: 'Medio', items: middle }, { label: 'Site B', items: siteB }].map(({ label, items }) => (
+                <div key={label} className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
+                  <h3 className="text-sm font-semibold text-zinc-200 uppercase tracking-[0.2em] mb-4">{label}</h3>
+                  <ul className="space-y-2 text-sm text-zinc-300">
+                    {items.map((c) => (
+                      <li key={c} className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-blue-400" />{c}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              ) : (
-                <p className="text-zinc-400">No hay utilidades registradas para este mapa aún.</p>
-              )}
+              ))}
             </div>
           </div>
         )}
 
+        {/* STRATS */}
         {activeTab === 'strats' && (
           <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
             <h2 className="text-2xl font-bold text-white mb-6">Estrategias</h2>
 
-            <div className="mb-8 space-y-4">
+            {/* Filtro equipo */}
+            <div className="mb-6 space-y-4">
               <div>
                 <p className="text-sm font-medium text-zinc-300 mb-2">Lado</p>
                 <div className="flex gap-2 flex-wrap">
@@ -400,9 +293,7 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
                       onClick={() => setSelectedTeam(team)}
                       className={`px-4 py-2 rounded-full font-medium transition-colors ${
                         selectedTeam === team
-                          ? team === 'T'
-                            ? 'bg-red-600 text-white'
-                            : 'bg-blue-600 text-white'
+                          ? team === 'T' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'
                           : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                       }`}
                     >
@@ -412,42 +303,22 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
                 </div>
               </div>
 
-              {availableRoundTypes.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium text-zinc-300 mb-2">Tipo de Ronda</p>
-                  <div className="flex flex-wrap gap-2">
-                    {availableRoundTypes.map((type) => (
-                      <button
-                        key={type}
-                        onClick={() => setSelectedRoundType(type)}
-                        className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                          selectedRoundType === type
-                            ? `${roundTypeColors[type]} text-white`
-                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-                        }`}
-                      >
-                        {roundTypeLabels[type]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
+              {/* Filtro categoría */}
               {categories.length > 0 && (
                 <div>
                   <p className="text-sm font-medium text-zinc-300 mb-2">Categoría</p>
                   <div className="flex flex-wrap gap-2">
-                    {categoryOrder.filter((category) => categories.includes(category)).map((category) => (
+                    {categories.map((cat) => (
                       <button
-                        key={category}
-                        onClick={() => setSelectedCategory(category)}
+                        key={cat}
+                        onClick={() => setSelectedCategory(cat)}
                         className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                          selectedCategory === category
-                            ? 'bg-zinc-600 text-white'
+                          selectedCategory === cat
+                            ? `${categoryColors[cat] ?? 'bg-zinc-600'} text-white`
                             : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                         }`}
                       >
-                        {category}
+                        {cat}
                       </button>
                     ))}
                   </div>
@@ -455,50 +326,50 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
               )}
             </div>
 
-            {filteredStrats.length > 0 ? (
+            {/* Lista de tácticas */}
+            {filteredTactics.length > 0 ? (
               <div className="space-y-4">
-                {filteredStrats.map((strat) => (
-                  <div key={strat.id} className="border border-zinc-700 rounded-3xl p-5 hover:bg-zinc-800 transition-colors">
+                {filteredTactics.map((tactic) => (
+                  <div key={tactic.id} className="border border-zinc-700 rounded-3xl p-5 hover:bg-zinc-800 transition-colors">
                     <div className="flex items-start justify-between mb-3 gap-3">
-                      <h3 className="text-xl font-semibold text-white">{strat.name}</h3>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${roundTypeColors[strat.type]}`}>
-                        {roundTypeLabels[strat.type]}
+                      <h3 className="text-xl font-semibold text-white">{tactic.name}</h3>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${categoryColors[tactic.category] ?? 'bg-zinc-600'}`}>
+                        {tactic.category}
                       </span>
                     </div>
-
-                    <p className="text-sm text-zinc-300 mb-4">{strat.description}</p>
-
-                    {strat.setup && (
-                      <div className="mb-4">
-                        <p className="text-xs font-medium text-zinc-400 mb-1">Setup</p>
-                        <p className="text-sm text-zinc-300">{strat.setup}</p>
-                      </div>
+                    {tactic.setup && (
+                      <p className="text-xs text-zinc-400 mb-2">Setup: <span className="text-zinc-300">{tactic.setup}</span></p>
                     )}
-
-                    {strat.utilities && strat.utilities.length > 0 && (
-                      <div className="mb-4">
-                        <p className="text-xs font-medium text-zinc-400 mb-2">Utilidades</p>
+                    <p className="text-sm text-zinc-300 mb-3">{tactic.description}</p>
+                    {tactic.winCondition && (
+                      <p className="text-xs text-green-400 mb-2">✓ {tactic.winCondition}</p>
+                    )}
+                    {tactic.minimumUtility && tactic.minimumUtility.length > 0 && (
+                      <div className="mb-3">
+                        <p className="text-xs font-medium text-zinc-400 mb-2">Utilidades mínimas</p>
                         <div className="flex flex-wrap gap-2">
-                          {strat.utilities.map((util, idx) => (
-                            <span key={idx} className="bg-zinc-800 text-zinc-300 px-3 py-1 rounded-full text-xs">
-                              {util}
-                            </span>
+                          {tactic.minimumUtility.map((u, i) => (
+                            <span key={i} className="bg-zinc-800 text-zinc-300 px-3 py-1 rounded-full text-xs">{u}</span>
                           ))}
                         </div>
                       </div>
                     )}
-
-                    {strat.tips && strat.tips.length > 0 && (
-                      <div>
-                        <p className="text-xs font-medium text-zinc-400 mb-2">Tips</p>
-                        <ul className="space-y-2">
-                          {strat.tips.map((tip, idx) => (
-                            <li key={idx} className="text-sm text-zinc-300 flex gap-2">
-                              <span className="text-yellow-400">→</span>
-                              <span>{tip}</span>
-                            </li>
+                    {tactic.reactionTree && (
+                      <div className="mt-3 p-3 rounded-2xl bg-zinc-950 border border-zinc-800">
+                        <p className="text-xs font-medium text-zinc-400 mb-1">Árbol de reacción</p>
+                        <p className="text-xs text-zinc-300 leading-relaxed">{tactic.reactionTree}</p>
+                      </div>
+                    )}
+                    {tactic.roles && tactic.roles.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-xs font-medium text-zinc-400 mb-2">Roles</p>
+                        <div className="flex flex-wrap gap-2">
+                          {tactic.roles.map((role, i) => (
+                            <span key={i} className="bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-1 rounded-full text-xs">
+                              {role.label ?? role.name}
+                            </span>
                           ))}
-                        </ul>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -506,17 +377,7 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
               </div>
             ) : (
               <div className="text-center py-10">
-                <p className="text-zinc-400">
-                  No hay strats disponibles para {selectedTeam === 'T' ? 'Terroristas' : 'Counter-Terrorists'} en{' '}
-                  {roundTypeLabels[selectedRoundType]}
-                </p>
-              </div>
-            )}
-
-            {allStrats.length === 0 && (
-              <div className="border border-zinc-800 rounded-3xl p-8 text-center bg-zinc-900 mt-6">
-                <p className="text-zinc-400 mb-4">No hay strats detalladas para este mapa aún.</p>
-                <p className="text-sm text-zinc-500">Próximamente se agregarán más estrategias</p>
+                <p className="text-zinc-400">No hay estrategias para {selectedTeam === 'T' ? 'Terroristas' : 'Counter-Terrorists'} en {selectedCategory}</p>
               </div>
             )}
           </div>
