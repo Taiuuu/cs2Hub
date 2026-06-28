@@ -1,11 +1,9 @@
 # CS2 Hub - Context
-**Última actualización:** 01 Junio 2026
+**Última actualización:** 27 Junio 2026
 
 ---
 
 # 📌 Estado General
-
-## ✅ Proyecto
 
 CS2 Hub es una aplicación web desarrollada con:
 
@@ -23,155 +21,93 @@ El proyecto se encuentra funcional y listo para desplegar.
 
 ## 🗺️ Mapas
 
-- 10 mapas competitivos
-  - Dust2
-  - Mirage
-  - Nuke
-  - Ancient
-  - Inferno
-  - Overpass
-  - Anubis
-  - Cache
-  - Train
-  - Vertigo
+- 10 mapas competitivos:
+  - Dust2, Mirage, Nuke, Ancient, Inferno, Overpass, Anubis, Cache, Train, Vertigo
 
-Características:
-
-- Grid responsive
-    - Desktop: 4 columnas
-    - Tablet: 2 columnas
-    - Mobile: 1 columna
-
-- Backgrounds JPG
-- Logos/Iconos
-- Hover animations
-- Smooth transitions
+- Grid responsive: 4 columnas desktop / 2 tablet / 1 mobile
+- Backgrounds JPG en `/public/maps/backgrounds/`
+- Iconos/logos para cada mapa
+- MapCard con hover effects y transiciones smooth
 
 ---
 
 ## 🎯 Crosshair Manager
 
-Permite:
+✅ Completamente rediseñado e implementado.
 
+Permite:
 - Crear miras
 - Buscar miras
 - Guardar automáticamente
-- Copiar código
+- Copiar código con un clic
 - Persistencia mediante LocalStorage
 
-### Mejoras implementadas
-
+Diseño:
 - Layout de dos columnas
-- Formulario simplificado
+- Formulario simplificado (Nombre, Código, Descripción)
 - Eliminado campo Equipo (CT/T/Both)
-- Campo Nombre
-- Campo Código
-- Campo Descripción
-- Botón Copiar Código
-- Validaciones
-- Mejor diseño visual
+- Mejor organización visual de cards
+- Búsqueda rápida
 
-### Preview
-
-Incluye preview en Canvas.
-
-Características:
-
-- Renderizado en tiempo real
+Preview:
+- Canvas grande con renderizado en tiempo real
 - Parseo del código de la mira
 - Fondo estilo CS2
 - Toggle mostrar/ocultar
 - Responsive
 
-Componente:
-
-```
-CrosshairPreview.tsx
-```
+Componente: `CrosshairPreview.tsx`
 
 ---
 
 ## 📊 Stats
 
-Permite buscar jugadores utilizando:
-
-- Steam
-- FACEIT
-
 ### Steam
-
-Funciona correctamente.
+✅ Funcionando correctamente.
 
 Información mostrada:
-
-- Avatar
-- Nombre
-- Perfil
-- Nivel
-- Última actualización
-
-Componente:
-
-```
-SteamCard.tsx
-```
-
----
+- Avatar, Nombre, Perfil URL
+- SteamID64, Vanity URL, Friend Code
+- Nivel XP, País, Fecha de registro
+- Amigos, Commendations
 
 ### FACEIT
+✅ Integración completa y funcionando.
 
-Información disponible:
+Correcciones realizadas (27 Jun 2026):
+- URL base corregida: `/api/v4/` → `/data/v4/`
+- Endpoint de stats corregido: `?game=cs2` → `/cs2` (path param)
+- Flujo corregido: nickname → player_id → stats
+- Campos del response alineados con los que espera el componente
+- `Recent Results` mapeado correctamente de `"1"/"0"` a `W/L`
+- Header de autenticación: `Authorization: Bearer ${process.env.FACEIT_API_KEY}`
 
-- Avatar
-- Nickname
-- Level
-- ELO
-- Matches
-- Wins
-- Losses
-- Win Rate
-- KD Ratio
-- Headshot %
-- Última actualización
+Información mostrada:
+- Nickname, País, Fecha de registro
+- ELO, Nivel, Peak ELO
+- Partidas, Winrate, HS%, K/D
+- ADR, UDR, Clutch 1v1, Clutch 1v2
+- Últimas partidas (W/L)
 
-Componente:
+Componentes: `FaceitCard.tsx`, `SteamCard.tsx`, `PlayerFetcher.tsx`
 
-```
-FaceitCard.tsx
-```
-
----
-
-### PlayerFetcher
-
-Incluye:
-
-- Formulario de búsqueda
-- Botón Buscar
-- Botón Refresh
-- Loading
-- Manejo de errores
-- Cards responsive
+### CS2 Performance
+- Requiere perfil público con estadísticas habilitadas en Steam
+- Muestra: Aim, Utility, Position, Clutch, Opening, Party, K/D, Rating, Peak Rating
 
 ---
 
 ## ⚙️ Config Manager
 
-Permite:
-
-- Crear configuraciones
-- Guardar JSON
-- Editar
+- Crear configuraciones con JSON settings
+- Guardar y editar
 - Persistencia LocalStorage
 
 ---
 
 ## 📝 Notes
 
-Permite:
-
-- Crear notas
-- Guardarlas automáticamente
+- Crear notas y guardarlas automáticamente
 - LocalStorage
 
 ---
@@ -179,562 +115,172 @@ Permite:
 # 🔧 API
 
 ## Steam API
-
-Estado:
-
 ✅ Funcionando
 
----
+Endpoints utilizados:
+- `GetPlayerSummaries` — perfil
+- `GetSteamLevel` — nivel XP
+- `GetFriendList` — amigos
+- `ResolveVanityURL` — resolver vanity
+- `GetUserStatsForGame` — stats CS2
 
 ## FACEIT API
+✅ Funcionando (corregido el 27 Jun 2026)
 
-Estado:
+Flujo correcto:
+1. `GET https://open.faceit.com/data/v4/players?nickname={nickname}` → obtener `player_id`
+2. `GET https://open.faceit.com/data/v4/players/{player_id}/stats/cs2` → estadísticas
+3. `GET https://open.faceit.com/data/v4/players/{player_id}/history?game=cs2&limit=5` → historial
 
-⚠️ Parcialmente funcionando.
-
-Problema actual:
-
+Variables de entorno requeridas:
 ```
-GET /players/{nickname}/stats?game=cs2
-```
-
-retorna errores 400.
-
-Pendiente:
-
-- Revisar autenticación
-- Revisar endpoint
-- Verificar si debe utilizar Player ID
-- Mejorar manejo de errores
-
-Actualmente existe fallback cuando falla la API.
-
----
-
-# 📁 Componentes
-
-```
-CrosshairPreview.tsx
-FaceitCard.tsx
-SteamCard.tsx
-MapCard.tsx
-PlayerFetcher.tsx
+STEAM_API_KEY=
+FACEIT_API_KEY=
 ```
 
 ---
 
-# 📁 Estructura
+# 📁 Estructura del Proyecto
 
 ```
 cs2-hub/
-
-app/
-components/
-public/
-    maps/
-        backgrounds/
-        icons/
-
-lib/
-types/
-
-.github/
-    workflows/
-
-next.config.ts
-package.json
+├── app/
+│   ├── api/
+│   │   └── stats/
+│   │       └── route.ts        ← API route principal (Steam + FACEIT)
+│   ├── stats/
+│   │   └── page.tsx
+│   ├── crosshairs/
+│   ├── configs/
+│   ├── notes/
+│   └── maps/
+├── components/
+│   ├── stats/
+│   │   ├── PlayerFetcher.tsx
+│   │   ├── FaceitCard.tsx
+│   │   └── SteamCard.tsx
+│   ├── crosshairs/
+│   ├── layout/
+│   ├── maps/
+│   └── ui/
+├── public/
+│   └── maps/
+│       ├── backgrounds/        ← 10 JPGs
+│       └── icons/
+├── lib/
+├── types/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml
+├── .env.local
+├── next.config.ts
+└── package.json
 ```
 
 ---
 
 # 💾 Persistencia
 
-Actualmente toda la información se guarda mediante:
-
-- LocalStorage
-
-No existe backend ni base de datos.
+Toda la información se guarda mediante LocalStorage. No existe backend ni base de datos.
 
 ---
 
 # 🚀 Deployment
 
-Configurado para:
+Configurado para GitHub Pages y Vercel.
 
-- GitHub Pages
-- Vercel
-
-## Build
-
-```
-npm run build
+```bash
+npm run dev      # Desarrollo (http://localhost:3000)
+npm run build    # Build para producción
+npm start        # Ejecutar build local
+npm run lint     # Verificar código
 ```
 
-## Desarrollo
-
-```
-npm run dev
-```
-
-## Producción local
-
-```
-npm start
-```
-
-## Lint
-
-```
-npm run lint
-```
+Build produce carpeta `/out` lista para hosting.
+GitHub Actions automático en cada push a main.
 
 ---
 
-# 🌐 Variables de entorno
+# 📊 Performance
 
-Desarrollo:
-
-```
-STEAM_API_KEY=
-FACEIT_API_KEY=
-```
-
-GitHub Pages:
-
-No utiliza variables de entorno porque es un sitio estático.
-
-Para utilizar APIs dinámicas se recomienda Vercel.
-
----
-
-# 📦 Build
-
-Estado:
-
-✅ Compila correctamente.
-
-Resultado:
-
-- TypeScript sin errores
-- Static Export funcionando
-- Responsive correcto
-
----
-
-# ⚠️ Problemas conocidos
-
-## FACEIT
-
-- Algunos nicknames devuelven 404.
-- El endpoint de estadísticas devuelve 400.
-- Debe revisarse la API v4.
-
----
-
-## Imágenes
-
-Train y Vertigo utilizan backgrounds temporales.
-
-Pendiente reemplazarlos por imágenes reales.
-
----
-
-# 📈 Performance
-
-- Carga aproximada: 300 ms
+- Carga aproximada: ~300ms (localhost)
 - Responsive funcionando
 - Imágenes optimizadas para Static Export
-
-Advertencia menor:
-
-- LCP en imágenes (no crítico).
+- ⚠️ LCP warning en imágenes (no crítico)
 
 ---
 
-# 🚨 Prioridades del Proyecto (Actualizado)
+# 🎨 Diseño y Estilo
 
-## 🔴 PRIORIDAD CRÍTICA
+Inspiración visual principal: FACEIT, ProSettings, Leetify, Scope.gg
 
-El desarrollo de nuevas funcionalidades queda en segundo plano hasta mejorar completamente la experiencia de usuario.
-
-El objetivo principal es convertir CS2 Hub en una aplicación con apariencia profesional, moderna y orientada al aprendizaje de Counter-Strike 2.
-
-La inspiración visual principal debe ser:
-
-- FACEIT
-- ProSettings
-- Leetify
-- Scope.gg
-
-Manteniendo siempre:
-
-- Tema oscuro.
-- Colores negros y grises.
-- Naranja como color principal de acento.
-- Azul únicamente para elementos secundarios.
-- Diseño limpio.
-- Excelente rendimiento.
-- Sin animaciones pesadas.
+Reglas de diseño:
+- Tema oscuro siempre
+- Colores base: negros y grises
+- Naranja como color de acento principal
+- Azul solo para elementos secundarios
+- Diseño limpio, sin animaciones pesadas
 
 ---
 
-# 🎨 Rediseño General
+# 🚨 Prioridades del Proyecto
 
-Toda la aplicación debe compartir el mismo lenguaje visual.
+## 🔴 Alta Prioridad
 
-Objetivos:
-
-- Sidebar mucho más moderna y profesional.
-- Mejor distribución de espacios.
-- Cards consistentes.
-- Tipografía clara.
-- Componentes reutilizables.
-- Bordes y sombras uniformes.
-- Mejor experiencia en desktop y mobile.
-- Placeholders cuando aún no exista contenido.
-- Nunca dejar secciones vacías.
-
-Los mapas actuales son el ejemplo visual que debe seguir el resto de la aplicación.
+### Pestaña Mapas
+Al ingresar a un mapa individual, rediseñar completamente:
+- Header con imagen grande, nombre y callouts con overlay oscuro
+- Información general: descripción, dificultad, ritmo, estilo de juego
+- Dos pestañas: Terrorist / Counter-Terrorist
+- Estrategias por tipo de ronda: Eco, Force, Semi Buy, Full Buy
+- Filtros por zona (A / Mid / B) y rol (Entry, Support, Lurker, IGL, AWP)
+- Placeholders cuando no haya contenido real
 
 ---
 
-# 🗺️ Pestaña Mapas (Máxima Prioridad)
+## 🟡 Media Prioridad
 
-La pantalla principal de mapas funciona muy bien visualmente.
+### Pestaña Crosshairs
+✅ Ya rediseñada. Posibles mejoras futuras:
+- Preview aún más grande
+- Favoritas destacadas
 
-Al ingresar a un mapa actualmente la información se siente desordenada.
+### Pestaña Config
+Convertir en ficha profesional del jugador (inspiración ProSettings / FACEIT):
+- Mouse (DPI, sens, zoom, polling rate, m_yaw)
+- Video (resolución, aspect ratio, brillo, refresh rate, display mode)
+- Video avanzado (todos los parámetros CS2)
+- Viewmodel, HUD, Radar, Launch Options
+- Crosshair con preview integrado
+- Descarga de config con un clic
 
-Debe rediseñarse completamente.
-
-## Cada mapa deberá contener
-
-### Header
-
-- Imagen grande del mapa.
-- Nombre.
-- Calls principales sobre la imagen.
-- Overlay oscuro.
-
----
-
-### Información General
-
-Mostrar:
-
-- Descripción.
-- Dificultad.
-- Ritmo.
-- Estilo de juego.
-- Puntos importantes.
+### Pestaña Estadísticas
+Mejoras futuras:
+- Historial de partidas
+- Evolución de ELO
+- Gráficos y comparativas
+- Tendencias
 
 ---
 
-### Objetivos del mapa
+## 🟢 Baja Prioridad
 
-Dividir en dos columnas.
-
-## Terrorist
-
-Explicar:
-
-- Qué busca este lado.
-- Qué zonas controlar.
-- Cómo se suele ganar el mapa.
-- Cuáles son los objetivos principales.
-
-Ejemplo Mirage:
-
-- Ganar medio.
-- Presionar Connector.
-- Abrir A con utilidades.
-- Castigar rotaciones.
+- Optimización de performance
+- Refactor interno y limpieza de código
 
 ---
 
-## Counter-Terrorist
-
-Explicar:
-
-- Qué zonas defender.
-- Qué información obtener.
-- Cómo negar el control del mapa.
-- Cómo jugar las rotaciones.
-
----
-
-## Dos pestañas principales
-
-Cada mapa tendrá:
-
-- Terrorist
-- Counter-Terrorist
-
-Toda la información cambiará dependiendo del lado seleccionado.
-
----
-
-## Dentro de Terrorist
-
-Mostrar estrategias separadas por tipo de ronda.
-
-- Eco
-- Force Buy
-- Semi Buy
-- Full Buy
-
-Cada estrategia deberá mostrar:
-
-- Nombre.
-- Objetivo.
-- Explicación paso a paso.
-- Jugadores necesarios.
-- Dificultad.
-
----
-
-## Filtros
-
-Permitir filtrar por:
-
-Ataque
-
-- A
-- Medio
-- B
-
-Rol
-
-- Entry
-- Support
-- Lurker
-- IGL
-- AWP
-
-Contenido disponible
-
-- Smokes
-- Flash
-- Molotovs
-- Executes
-- Defaults
-- Splits
-- Jugadas rápidas
-
----
-
-## Dentro de Counter-Terrorist
-
-La misma estructura pero orientada a defensa.
-
-Mostrar:
-
-- Defensas.
-- Crossfires.
-- Retakes.
-- Pushes.
-- Anti Eco.
-- Force.
-- Full Buy.
-
-Filtros
-
-- A
-- Medio
-- B
-
-Rol
-
-- Anchor
-- Rotador
-- AWP
-- Support
-
----
-
-## Placeholders
-
-Mientras una sección no tenga información real deberá mostrar placeholders bien diseñados.
-
-Nunca dejar espacios vacíos.
-
----
-
-# 🎯 Pestaña Crosshairs
-
-Debe rediseñarse tomando como referencia páginas como ProSettings.
-
-Objetivos:
-
-- Preview en vivo.
-- Canvas grande.
-- Copiar código con un clic.
-- Crear miras manualmente.
-- Editar nombre.
-- Guardar favoritas.
-- Mejor organización de las cards.
-- Búsqueda rápida.
-
-Cada card debería mostrar:
-
-- Preview.
-- Nombre.
-- Última actualización.
-- Botón copiar.
-- Código.
-
----
-
-# ⚙️ Pestaña Config
-
-Debe convertirse en una ficha profesional del jugador.
-
-Inspiración:
-
-- ProSettings
-- FACEIT
-
-La información deberá organizarse como una ficha técnica.
-
-## Mouse
-
-- DPI
-- Sensibilidad
-- Zoom
-- Polling Rate
-- m_yaw
-
----
-
-## Video
-
-- Resolución
-- Aspect Ratio
-- Brillo
-- Refresh Rate
-- Display Mode
-
----
-
-## Video Avanzado
-
-Mostrar todos los parámetros de CS2.
-
----
-
-## Viewmodel
-
----
-
-## HUD
-
----
-
-## Radar
-
----
-
-## Launch Options
-
----
-
-## Crosshair
-
-Con preview integrado.
-
----
-
-## Descarga
-
-Todo el config debe poder descargarse con un solo clic.
-
-El diseño deberá ser similar al ejemplo de referencia, sin incluir publicidad.
-
----
-
-# 📊 Pestaña Estadísticas
-
-Luego del rediseño visual se continuará mejorando la sección de estadísticas.
-
-Objetivos futuros:
-
-- Historial de partidas.
-- Evolución de ELO.
-- Gráficos.
-- Comparativas.
-- Tendencias.
-- Más estadísticas del jugador.
-
----
-
-# 🟠 Prioridad Media
-
-## FACEIT API
-
-Actualmente presenta problemas de integración.
-
-No es una prioridad inmediata.
-
-Pendiente:
-
-- Revisar autenticación.
-- Verificar endpoint correcto.
-- Revisar Player ID.
-- Mejorar manejo de errores.
-
-Mientras tanto el resto de la aplicación debe seguir evolucionando independientemente de FACEIT.
-
----
-
-# 🟢 Prioridad Baja
-
-## Optimización
-
-- Performance.
-- Imágenes.
-- LCP.
-- Refactor interno.
-- Limpieza del código.
-
----
-
-# 🎯 Objetivo del Proyecto
-
-CS2 Hub no debe ser solamente un lugar para guardar configuraciones.
-
-Debe convertirse en una plataforma completa para jugadores de Counter-Strike 2.
-
-El usuario debería poder encontrar en un único lugar:
-
-- Mapas.
-- Estrategias.
-- Utilidades.
-- Smokes.
-- Flash.
-- Molotovs.
-- Executes.
-- Crosshairs.
-- Configuraciones.
-- Estadísticas.
-- Recursos de aprendizaje.
-
-Todas las secciones deberán compartir el mismo diseño visual, manteniendo una estética moderna inspirada en FACEIT y priorizando siempre la experiencia de usuario antes que agregar nuevas funcionalidades.
-
-# ✅ Estado actual
-
-Proyecto completamente funcional.
-
-Implementado:
-
-- ✅ Mapas
-- ✅ Crosshair Manager
-- ✅ Config Manager
-- ✅ Notes
-- ✅ Steam Stats
-- ✅ Responsive
-- ✅ LocalStorage
-- ✅ GitHub Pages
-- ✅ Static Export
-
-Pendiente únicamente:
-
-- Finalizar integración completa con FACEIT.
+# ✅ Estado Actual
+
+| Funcionalidad | Estado |
+|---|---|
+| Mapas (grid) | ✅ Completo |
+| Mapa individual (detalle) | 🔴 Pendiente rediseño |
+| Crosshair Manager | ✅ Completo y rediseñado |
+| Config Manager | ✅ Funcional |
+| Steam Stats | ✅ Funcionando |
+| FACEIT Stats | ✅ Funcionando (corregido 27 Jun 2026) |
+| Responsive | ✅ Completo |
+| LocalStorage | ✅ Completo |
+| GitHub Pages / Vercel | ✅ Configurado |
+| Static Export | ✅ Funcionando |
