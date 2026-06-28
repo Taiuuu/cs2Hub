@@ -1,388 +1,414 @@
 'use client';
 
-import { useState, use } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { use, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { allMaps } from '@/lib/mapsData';
+import { MapData, Tactic } from '@/types';
+import { ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react';
 
-type CalloutMarker = {
-  id: string;
-  label: string;
-  left: string;
-  top: string;
+// ─── helpers ────────────────────────────────────────────────────────────────
+
+const ROUND_LABELS: Record<string, string> = {
+  Pistol: 'Pistola', Eco: 'Eco', Force: 'Forzada', Buy: 'Compra',
+  AntiEco: 'Anti-Eco', Default: 'Default', Protocol: 'Execute',
+  Retake: 'Retake', MidRound: 'Mid-Round', Reaggression: 'Re-aggression',
 };
 
-const mapCalloutMarkers: Record<string, CalloutMarker[]> = {
-  dust2: [
-    { id: 'largo', label: 'Largo', left: '18%', top: '56%' },
-    { id: 'corto', label: 'Corto', left: '62%', top: '74%' },
-    { id: 'mid', label: 'Mid', left: '50%', top: '39%' },
-    { id: 'b-tuneles', label: 'B túneles', left: '78%', top: '58%' },
-    { id: 'b-planta', label: 'B planta', left: '80%', top: '72%' },
-  ],
-  mirage: [
-    { id: 'short', label: 'Short', left: '24%', top: '63%' },
-    { id: 'connector', label: 'Connector', left: '48%', top: '46%' },
-    { id: 'palacio', label: 'Palacio', left: '16%', top: '40%' },
-    { id: 'window', label: 'Ventana', left: '56%', top: '34%' },
-    { id: 'apps', label: 'Apps', left: '78%', top: '72%' },
-  ],
-  inferno: [
-    { id: 'banana', label: 'Banana', left: '34%', top: '48%' },
-    { id: 'mid', label: 'Mid', left: '56%', top: '36%' },
-    { id: 'palacio', label: 'Palacio', left: '16%', top: '26%' },
-  ],
-  nuke: [
-    { id: 'rampa', label: 'Rampa', left: '72%', top: '64%' },
-    { id: 'secret', label: 'Secret', left: '84%', top: '56%' },
-    { id: 'afuera', label: 'Afuera', left: '38%', top: '74%' },
-  ],
-  vertigo: [
-    { id: 'a-site', label: 'Site A', left: '24%', top: '20%' },
-    { id: 'mid', label: 'Mid', left: '50%', top: '44%' },
-    { id: 'b-site', label: 'Site B', left: '76%', top: '72%' },
-  ],
-  ancient: [
-    { id: 'mid', label: 'Mid', left: '48%', top: '42%' },
-    { id: 'a-site', label: 'Site A', left: '26%', top: '20%' },
-    { id: 'b-site', label: 'Site B', left: '78%', top: '72%' },
-  ],
-  anubis: [
-    { id: 'mid', label: 'Mid', left: '50%', top: '44%' },
-    { id: 'site-a', label: 'Site A', left: '26%', top: '18%' },
-    { id: 'site-b', label: 'Site B', left: '78%', top: '72%' },
-  ],
-  cache: [
-    { id: 'mid', label: 'Mid', left: '50%', top: '40%' },
-    { id: 'a-site', label: 'Site A', left: '24%', top: '20%' },
-    { id: 'b-site', label: 'Site B', left: '76%', top: '70%' },
-  ],
-  overpass: [
-    { id: 'agua', label: 'Agua', left: '30%', top: '60%' },
-    { id: 'monster', label: 'Monster', left: '50%', top: '40%' },
-    { id: 'a-site', label: 'Site A', left: '22%', top: '20%' },
-  ],
-  train: [
-    { id: 'ivy', label: 'Ivy', left: '28%', top: '35%' },
-    { id: 'a-site', label: 'Site A', left: '24%', top: '20%' },
-    { id: 'b-site', label: 'Site B', left: '76%', top: '70%' },
-  ],
+const ROUND_ORDER = ['Pistol','Default','Eco','Force','Buy','Protocol','AntiEco','Retake','MidRound','Reaggression'];
+
+const SIDE_COLOR = {
+  T:  { bg: 'rgba(234,179,8,0.08)',  border: '#854d0e', text: '#fbbf24', badge: 'rgba(234,179,8,0.15)'  },
+  CT: { bg: 'rgba(59,130,246,0.08)', border: '#1e3a5f', text: '#60a5fa', badge: 'rgba(59,130,246,0.15)' },
 };
 
-const categoryColors: Record<string, string> = {
-  Default: 'bg-zinc-700',
-  Protocol: 'bg-indigo-700',
-  Retake: 'bg-violet-800',
-  Reaggression: 'bg-rose-800',
-  AntiEco: 'bg-green-800',
-  Pistol: 'bg-purple-800',
-  Eco: 'bg-yellow-800',
-  Force: 'bg-orange-800',
-  Buy: 'bg-blue-800',
-  MidRound: 'bg-slate-700',
-};
+function groupBySide(tactics: Tactic[]) {
+  const t  = tactics.filter(t => t.team === 'T');
+  const ct = tactics.filter(t => t.team === 'CT');
+  return { T: t, CT: ct };
+}
 
-export default function MapDetailPage({ params }: { params: Promise<{ mapId: string }> }) {
-  const { mapId } = use(params);
-  const map = allMaps.find((m) => m.id === mapId);
-  const [selectedTeam, setSelectedTeam] = useState<'T' | 'CT'>('T');
-  const [selectedCategory, setSelectedCategory] = useState<string>('Default');
-  const [activeTab, setActiveTab] = useState<'overview' | 'callouts' | 'strats'>('overview');
-  const [highlightedCallout, setHighlightedCallout] = useState<string | null>(null);
+function groupByCategory(tactics: Tactic[]) {
+  const map: Record<string, Tactic[]> = {};
+  for (const t of tactics) {
+    const cat = t.category || 'Default';
+    if (!map[cat]) map[cat] = [];
+    map[cat].push(t);
+  }
+  return map;
+}
 
-  if (!map) {
+// ─── Tactic Card ────────────────────────────────────────────────────────────
+
+function TacticCard({ tactic, side }: { tactic: Tactic; side: 'T' | 'CT' }) {
+  const [open, setOpen] = useState(false);
+  const col = SIDE_COLOR[side];
+
+  return (
+    <div
+      className="rounded-xl overflow-hidden transition-all"
+      style={{ background: '#0d0d0d', border: `1px solid ${open ? col.border : '#1e1e1e'}` }}
+    >
+      {/* Header */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-start justify-between gap-3 p-4 text-left"
+        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+      >
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <span className="text-sm font-semibold" style={{ color: '#ffffff' }}>
+              {tactic.name}
+            </span>
+            <span
+              className="text-xs px-2 py-0.5 rounded-full font-medium"
+              style={{ background: col.badge, color: col.text }}
+            >
+              {ROUND_LABELS[tactic.category || ''] || tactic.category}
+            </span>
+          </div>
+          {tactic.setup && (
+            <p className="text-xs font-mono" style={{ color: '#444444' }}>{tactic.setup}</p>
+          )}
+        </div>
+        <span style={{ color: '#333333', flexShrink: 0, marginTop: 2 }}>
+          {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </span>
+      </button>
+
+      {/* Expanded */}
+      {open && (
+        <div className="px-4 pb-4 space-y-4" style={{ borderTop: '1px solid #1a1a1a' }}>
+          {tactic.description && (
+            <p className="text-sm pt-4 leading-relaxed" style={{ color: '#888888' }}>
+              {tactic.description}
+            </p>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {tactic.objectivePrincipal && (
+              <InfoBlock label="Objetivo" value={tactic.objectivePrincipal} accent={col.text} />
+            )}
+            {tactic.winCondition && (
+              <InfoBlock label="Condición de victoria" value={tactic.winCondition} accent="#22c55e" />
+            )}
+            {tactic.timingWindows && (
+              <InfoBlock label="Timing" value={tactic.timingWindows} accent="#f59e0b" />
+            )}
+            {tactic.postplant && (
+              <InfoBlock label="Post-plant" value={tactic.postplant} accent="#a78bfa" />
+            )}
+          </div>
+
+          {tactic.minimumUtility && tactic.minimumUtility.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold mb-2" style={{ color: '#444444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Utilidad mínima
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {tactic.minimumUtility.map((u, i) => (
+                  <span key={i} className="text-xs px-2.5 py-1 rounded-lg"
+                    style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#aaaaaa' }}>
+                    {u}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {tactic.reactionTree && (
+            <div>
+              <p className="text-xs font-semibold mb-2" style={{ color: '#444444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Árbol de reacción
+              </p>
+              <p className="text-xs leading-relaxed" style={{ color: '#666666', fontStyle: 'italic' }}>
+                {tactic.reactionTree}
+              </p>
+            </div>
+          )}
+
+          {tactic.commonMistakes && tactic.commonMistakes.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold mb-2" style={{ color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Errores comunes
+              </p>
+              <ul className="space-y-1">
+                {tactic.commonMistakes.map((m, i) => (
+                  <li key={i} className="text-xs flex gap-2" style={{ color: '#666666' }}>
+                    <span style={{ color: '#ef444488' }}>×</span> {m}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {tactic.roles && tactic.roles.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold mb-2" style={{ color: '#444444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Roles
+              </p>
+              <div className="space-y-2">
+                {tactic.roles.map((role, i) => (
+                  <div key={i} className="rounded-lg p-3" style={{ background: '#111111', border: '1px solid #1e1e1e' }}>
+                    <p className="text-xs font-semibold mb-1" style={{ color: col.text }}>
+                      {role.label || role.name}
+                      {role.position && <span style={{ color: '#555555', fontWeight: 400 }}> — {role.position}</span>}
+                    </p>
+                    {role.objective && <p className="text-xs" style={{ color: '#666666' }}>{role.objective}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InfoBlock({ label, value, accent }: { label: string; value: string; accent: string }) {
+  return (
+    <div className="rounded-lg p-3" style={{ background: '#111111', border: '1px solid #1a1a1a' }}>
+      <p className="text-xs font-semibold mb-1" style={{ color: accent, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+        {label}
+      </p>
+      <p className="text-xs leading-relaxed" style={{ color: '#888888' }}>{value}</p>
+    </div>
+  );
+}
+
+// ─── Side Panel ─────────────────────────────────────────────────────────────
+
+function SidePanel({ map, side }: { map: MapData; side: 'T' | 'CT' }) {
+  const col = SIDE_COLOR[side];
+  const tactics = groupBySide(map.tactics)[side];
+  const byCategory = groupByCategory(tactics);
+  const fundamentals = side === 'T' ? map.fundamentals.T : map.fundamentals.CT;
+
+  const orderedCats = ROUND_ORDER.filter(c => byCategory[c]);
+  const otherCats = Object.keys(byCategory).filter(c => !ROUND_ORDER.includes(c));
+
+  return (
+    <div className="space-y-6">
+      {/* Fundamentals */}
+      <div className="rounded-xl p-4" style={{ background: '#0d0d0d', border: `1px solid ${col.border}` }}>
+        <p className="text-xs font-semibold mb-3" style={{ color: col.text, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          Principios {side === 'T' ? 'Terrorista' : 'Counter-Terrorista'}
+        </p>
+        <ul className="space-y-2">
+          {fundamentals.map((f, i) => (
+            <li key={i} className="flex gap-2 text-xs leading-relaxed" style={{ color: '#777777' }}>
+              <span style={{ color: col.text, flexShrink: 0 }}>›</span>
+              {f}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Win condition */}
+      <div className="rounded-xl p-4" style={{ background: '#0d0d0d', border: '1px solid #1e1e1e' }}>
+        <p className="text-xs font-semibold mb-2" style={{ color: '#444444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          Condición de victoria
+        </p>
+        <p className="text-sm leading-relaxed" style={{ color: '#888888' }}>
+          {side === 'T' ? map.philosophy.tWinCondition : map.philosophy.ctWinCondition}
+        </p>
+      </div>
+
+      {/* Tactics by category */}
+      {[...orderedCats, ...otherCats].map(cat => (
+        <div key={cat}>
+          <p className="text-xs font-semibold mb-2 px-1"
+            style={{ color: '#333333', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            {ROUND_LABELS[cat] || cat}
+          </p>
+          <div className="space-y-2">
+            {byCategory[cat].map(t => (
+              <TacticCard key={t.id} tactic={t} side={side} />
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {tactics.length === 0 && (
+        <div className="text-center py-10 rounded-xl" style={{ background: '#0d0d0d', border: '1px solid #1e1e1e' }}>
+          <p className="text-sm" style={{ color: '#333333' }}>Sin jugadas cargadas aún</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Page ───────────────────────────────────────────────────────────────────
+
+export default function MapDetailPage({ params }: { params: Promise<{ map: string }> }) {
+  const { map: mapId } = use(params);
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'T' | 'CT'>('T');
+  const [calloutSite, setCalloutSite] = useState<'siteA' | 'siteB' | 'middle'>('siteA');
+
+  const mapData = allMaps.find(m => m.id === mapId);
+
+  if (!mapData) {
     return (
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto p-6 md:p-8">
-          <p className="text-red-400">Mapa no encontrado</p>
+      <div className="flex-1 flex items-center justify-center" style={{ background: '#0a0a0a' }}>
+        <div className="text-center">
+          <p className="text-lg font-semibold mb-2" style={{ color: '#ffffff' }}>Mapa no encontrado</p>
+          <button onClick={() => router.push('/maps')}
+            className="text-sm" style={{ color: '#ff5500' }}>
+            ← Volver a mapas
+          </button>
         </div>
       </div>
     );
   }
 
-  const tactics = map.tactics ?? [];
-  const categories = Array.from(new Set(tactics.map((t) => t.category)));
-  const filteredTactics = tactics.filter(
-    (t) => t.team === selectedTeam && t.category === selectedCategory
-  );
-  const calloutMarkers = mapCalloutMarkers[map.id] ?? [];
-
-  // Callouts: soporta tanto string[] como {name, description}[]
-  const toStringArray = (arr: Array<string | { name: string; description?: string }>) =>
-    arr.map((x) => (typeof x === 'string' ? x : x.name));
-
-  const siteA = toStringArray(map.callouts?.siteA ?? []);
-  const siteB = toStringArray(map.callouts?.siteB ?? []);
-  const middle = toStringArray(map.callouts?.middle ?? []);
-
-  // Fundamentals: soporta {T, CT} y {t, ct}
-  const fundamentalsT: string[] = (map.fundamentals as any)?.T ?? (map.fundamentals as any)?.t ?? [];
-  const fundamentalsCT: string[] = (map.fundamentals as any)?.CT ?? (map.fundamentals as any)?.ct ?? [];
+  const CALLOUT_TABS = [
+    { key: 'siteA' as const,  label: 'Site A' },
+    { key: 'siteB' as const,  label: 'Site B' },
+    { key: 'middle' as const, label: 'Mid' },
+  ];
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="max-w-6xl mx-auto p-6 md:p-8">
+    <div className="flex-1 overflow-y-auto" style={{ background: '#0a0a0a' }}>
+      {/* Hero */}
+      <div className="relative h-64 md:h-80 overflow-hidden">
+        <Image
+          src={`/maps/backgrounds/${mapId}.jpg`}
+          alt={mapData.name}
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(10,10,10,0.95) 100%)' }} />
 
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Link href="/maps" className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-400 transition hover:border-zinc-700 hover:text-white">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+        {/* Back */}
+        <button
+          onClick={() => router.push('/maps')}
+          className="absolute top-5 left-5 flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg transition-all"
+          style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff', cursor: 'pointer' }}
+        >
+          <ChevronLeft className="w-4 h-4" /> Mapas
+        </button>
+
+        {/* Map info */}
+        <div className="absolute bottom-6 left-6 right-6">
+          <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">Mapa</p>
-              <h1 className="mt-2 text-4xl font-semibold text-white">{map.name}</h1>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-full border border-zinc-800 bg-zinc-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-zinc-300">
-              {map.sideFavor}
-            </span>
-            <span className="rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-white">
-              {tactics.length} estrategias
-            </span>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex flex-wrap gap-3 mb-10">
-          {[
-            { key: 'overview', label: 'Resumen' },
-            { key: 'callouts', label: 'Callouts' },
-            { key: 'strats', label: 'Estrategias' },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setActiveTab(tab.key as any)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                activeTab === tab.key
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
-                  : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* OVERVIEW */}
-        {activeTab === 'overview' && (
-          <>
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_360px] mb-8">
-              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-                <h2 className="text-lg font-semibold text-white mb-3">Filosofía del mapa</h2>
-                <p className="text-zinc-300 leading-relaxed">{map.description}</p>
-                {map.philosophy && (
-                  <div className="mt-4 space-y-2 text-sm text-zinc-400">
-                    <p><span className="text-red-400 font-medium">T:</span> {map.philosophy.tWinCondition}</p>
-                    <p><span className="text-blue-400 font-medium">CT:</span> {map.philosophy.ctWinCondition}</p>
-                    <p><span className="text-zinc-300 font-medium">Tempo:</span> {map.philosophy.tempo}</p>
-                    <p><span className="text-zinc-300 font-medium">Rotaciones:</span> {map.philosophy.rotationComplexity}</p>
-                  </div>
-                )}
-              </div>
-              <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-                <h2 className="text-lg font-semibold text-white mb-3">Callouts clave</h2>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-zinc-400 mb-1">Site A</p>
-                    <p className="text-xs text-zinc-300 leading-relaxed">{siteA.join(', ')}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-zinc-400 mb-1">Medio</p>
-                    <p className="text-xs text-zinc-300 leading-relaxed">{middle.join(', ')}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-zinc-400 mb-1">Site B</p>
-                    <p className="text-xs text-zinc-300 leading-relaxed">{siteB.join(', ')}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {(fundamentalsT.length > 0 || fundamentalsCT.length > 0) && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                {fundamentalsT.length > 0 && (
-                  <div className="border border-red-900 rounded-3xl p-6 bg-zinc-900">
-                    <h3 className="text-lg font-semibold text-red-400 mb-3">Fundamentos T</h3>
-                    <ul className="space-y-3">
-                      {fundamentalsT.map((tip, idx) => (
-                        <li key={idx} className="text-sm text-zinc-300 flex gap-2">
-                          <span className="text-red-400 mt-1">▪</span>
-                          <span>{tip}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {fundamentalsCT.length > 0 && (
-                  <div className="border border-blue-900 rounded-3xl p-6 bg-zinc-900">
-                    <h3 className="text-lg font-semibold text-blue-400 mb-3">Fundamentos CT</h3>
-                    <ul className="space-y-3">
-                      {fundamentalsCT.map((tip, idx) => (
-                        <li key={idx} className="text-sm text-zinc-300 flex gap-2">
-                          <span className="text-blue-400 mt-1">▪</span>
-                          <span>{tip}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
-
-        {/* CALLOUTS */}
-        {activeTab === 'callouts' && (
-          <div className="space-y-8 mb-8">
-            <div className="border border-zinc-800 rounded-3xl overflow-hidden bg-zinc-950">
-              <div className="relative aspect-[4/3] min-h-[440px] bg-zinc-950">
-                <img
-                  src={`/maps/callouts/${map.id}.jpg`}
-                  alt={`Minimap de ${map.name}`}
-                  className="h-full w-full object-cover brightness-90"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              <div className="flex items-center gap-2 mb-1">
+                <Image
+                  src={`/maps/icons/${mapId}.png`}
+                  alt={mapData.name}
+                  width={28} height={28}
+                  className="object-contain"
                 />
-                {calloutMarkers.map((marker) => (
-                  <button
-                    key={marker.id}
-                    type="button"
-                    onMouseEnter={() => setHighlightedCallout(marker.label)}
-                    onMouseLeave={() => setHighlightedCallout(null)}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-blue-500/90 p-3 shadow-lg transition hover:scale-110"
-                    style={{ left: marker.left, top: marker.top }}
-                  />
-                ))}
-                <div className="absolute left-4 bottom-4 rounded-3xl bg-black/80 px-4 py-3 text-sm text-white">
-                  {highlightedCallout ?? 'Pasá el cursor sobre una zona'}
-                </div>
+                <h1 className="text-3xl md:text-4xl font-bold" style={{ color: '#ffffff' }}>
+                  {mapData.name}
+                </h1>
               </div>
+              <p className="text-sm" style={{ color: '#aaaaaa' }}>{mapData.description}</p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {[{ label: 'Site A', items: siteA }, { label: 'Medio', items: middle }, { label: 'Site B', items: siteB }].map(({ label, items }) => (
-                <div key={label} className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-                  <h3 className="text-sm font-semibold text-zinc-200 uppercase tracking-[0.2em] mb-4">{label}</h3>
-                  <ul className="space-y-2 text-sm text-zinc-300">
-                    {items.map((c) => (
-                      <li key={c} className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-blue-400" />{c}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+            <span
+              className="text-xs font-semibold px-3 py-1.5 rounded-full"
+              style={{
+                background: mapData.sideFavor === 'T-sided' ? 'rgba(234,179,8,0.15)'
+                  : mapData.sideFavor === 'CT-sided' ? 'rgba(59,130,246,0.15)'
+                  : 'rgba(255,255,255,0.08)',
+                color: mapData.sideFavor === 'T-sided' ? '#fbbf24'
+                  : mapData.sideFavor === 'CT-sided' ? '#60a5fa'
+                  : '#aaaaaa',
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
+              {mapData.sideFavor}
+            </span>
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* STRATS */}
-        {activeTab === 'strats' && (
-          <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-900">
-            <h2 className="text-2xl font-bold text-white mb-6">Estrategias</h2>
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-8">
 
-            {/* Filtro equipo */}
-            <div className="mb-6 space-y-4">
-              <div>
-                <p className="text-sm font-medium text-zinc-300 mb-2">Lado</p>
-                <div className="flex gap-2 flex-wrap">
-                  {(['T', 'CT'] as const).map((team) => (
-                    <button
-                      key={team}
-                      onClick={() => setSelectedTeam(team)}
-                      className={`px-4 py-2 rounded-full font-medium transition-colors ${
-                        selectedTeam === team
-                          ? team === 'T' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'
-                          : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-                      }`}
-                    >
-                      {team === 'T' ? '🔴 Terroristas' : '🔵 Counter-Terrorists'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Filtro categoría */}
-              {categories.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium text-zinc-300 mb-2">Categoría</p>
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => setSelectedCategory(cat)}
-                        className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                          selectedCategory === cat
-                            ? `${categoryColors[cat] ?? 'bg-zinc-600'} text-white`
-                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Lista de tácticas */}
-            {filteredTactics.length > 0 ? (
-              <div className="space-y-4">
-                {filteredTactics.map((tactic) => (
-                  <div key={tactic.id} className="border border-zinc-700 rounded-3xl p-5 hover:bg-zinc-800 transition-colors">
-                    <div className="flex items-start justify-between mb-3 gap-3">
-                      <h3 className="text-xl font-semibold text-white">{tactic.name}</h3>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${categoryColors[tactic.category] ?? 'bg-zinc-600'}`}>
-                        {tactic.category}
-                      </span>
-                    </div>
-                    {tactic.setup && (
-                      <p className="text-xs text-zinc-400 mb-2">Setup: <span className="text-zinc-300">{tactic.setup}</span></p>
-                    )}
-                    <p className="text-sm text-zinc-300 mb-3">{tactic.description}</p>
-                    {tactic.winCondition && (
-                      <p className="text-xs text-green-400 mb-2">✓ {tactic.winCondition}</p>
-                    )}
-                    {tactic.minimumUtility && tactic.minimumUtility.length > 0 && (
-                      <div className="mb-3">
-                        <p className="text-xs font-medium text-zinc-400 mb-2">Utilidades mínimas</p>
-                        <div className="flex flex-wrap gap-2">
-                          {tactic.minimumUtility.map((u, i) => (
-                            <span key={i} className="bg-zinc-800 text-zinc-300 px-3 py-1 rounded-full text-xs">{u}</span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {tactic.reactionTree && (
-                      <div className="mt-3 p-3 rounded-2xl bg-zinc-950 border border-zinc-800">
-                        <p className="text-xs font-medium text-zinc-400 mb-1">Árbol de reacción</p>
-                        <p className="text-xs text-zinc-300 leading-relaxed">{tactic.reactionTree}</p>
-                      </div>
-                    )}
-                    {tactic.roles && tactic.roles.length > 0 && (
-                      <div className="mt-3">
-                        <p className="text-xs font-medium text-zinc-400 mb-2">Roles</p>
-                        <div className="flex flex-wrap gap-2">
-                          {tactic.roles.map((role, i) => (
-                            <span key={i} className="bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-1 rounded-full text-xs">
-                              {role.label ?? role.name}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-10">
-                <p className="text-zinc-400">No hay estrategias para {selectedTeam === 'T' ? 'Terroristas' : 'Counter-Terrorists'} en {selectedCategory}</p>
-              </div>
-            )}
+        {/* Key areas */}
+        <div>
+          <p className="text-xs font-semibold mb-3" style={{ color: '#333333', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            Zonas clave
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {mapData.philosophy.keyAreas.map(area => (
+              <span key={area} className="text-xs px-3 py-1 rounded-full"
+                style={{ background: '#111111', border: '1px solid #2a2a2a', color: '#888888' }}>
+                {area}
+              </span>
+            ))}
           </div>
-        )}
+        </div>
 
+        {/* Callouts */}
+        <div className="rounded-xl overflow-hidden" style={{ background: '#0d0d0d', border: '1px solid #1e1e1e' }}>
+          <div className="flex" style={{ borderBottom: '1px solid #1a1a1a' }}>
+            {CALLOUT_TABS.map(t => (
+              <button key={t.key} onClick={() => setCalloutSite(t.key)}
+                className="flex-1 py-3 text-sm font-medium transition-colors"
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  color: calloutSite === t.key ? '#ffffff' : '#444444',
+                  borderBottom: calloutSite === t.key ? '2px solid #ff5500' : '2px solid transparent',
+                }}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            {mapData.callouts[calloutSite].map((c, i) => (
+              <div key={i} className="rounded-lg px-3 py-2.5" style={{ background: '#111111', border: '1px solid #1a1a1a' }}>
+                <p className="text-xs font-semibold mb-0.5" style={{ color: '#ff5500' }}>{c.name}</p>
+                <p className="text-xs leading-relaxed" style={{ color: '#555555' }}>{c.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* T / CT Tabs */}
+        <div>
+          <div className="flex gap-2 mb-6">
+            {(['T', 'CT'] as const).map(side => (
+              <button
+                key={side}
+                onClick={() => setActiveTab(side)}
+                className="px-6 py-2.5 rounded-lg text-sm font-semibold transition-all"
+                style={{
+                  cursor: 'pointer', border: 'none',
+                  background: activeTab === side
+                    ? (side === 'T' ? '#854d0e' : '#1e3a5f')
+                    : '#111111',
+                  color: activeTab === side
+                    ? (side === 'T' ? '#fbbf24' : '#60a5fa')
+                    : '#444444',
+                  outline: activeTab === side
+                    ? `1px solid ${side === 'T' ? '#854d0e' : '#1e3a5f'}`
+                    : '1px solid #1e1e1e',
+                }}
+              >
+                {side === 'T' ? '🟡 Terrorist' : '🔵 Counter-Terrorist'}
+              </button>
+            ))}
+          </div>
+
+          <SidePanel map={mapData} side={activeTab} />
+        </div>
+
+        {/* Philosophy footer */}
+        <div className="rounded-xl p-5 grid grid-cols-1 md:grid-cols-2 gap-4"
+          style={{ background: '#0d0d0d', border: '1px solid #1e1e1e' }}>
+          <div>
+            <p className="text-xs font-semibold mb-1" style={{ color: '#333333', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Tempo</p>
+            <p className="text-sm" style={{ color: '#666666' }}>{mapData.philosophy.tempo}</p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold mb-1" style={{ color: '#333333', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Complejidad de rotaciones</p>
+            <p className="text-sm" style={{ color: '#666666' }}>{mapData.philosophy.rotationComplexity}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
