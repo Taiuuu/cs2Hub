@@ -37,12 +37,23 @@ interface FaceitStats {
 
 interface FACEITProfile {
   nickname: string;
-  level?: number | null;
-  elo?: number | null;
-  games?: number;
-  gamesWon?: number;
-  gamesLost?: number;
-  lastUpdated: Date;
+  faceitId: string;
+  country: string | null;
+  registered: string | null;
+  elo: number;
+  peakElo: number | null;
+  level: number;
+  matches: number;
+  wins: number;
+  winrate: number;
+  hs: number;
+  kd: number;
+  adr: number | null;
+  udr: number | null;
+  clutch1v1: number | null;
+  clutch1v2: number | null;
+  lastMatch: string | null;
+  recent: ('W' | 'L')[];
 }
 
 function extractSteamIdentifier(urlOrId: string): string {
@@ -206,16 +217,26 @@ export async function getFACEITProfile(nickname: string): Promise<FACEITProfile 
 
     const statsData = await statsRes.json();
     const lt = statsData.lifetime ?? {};
-    const wl = (lt['W/L'] ?? '0/0').split('/');
 
     return {
       nickname: player.nickname,
-      level: player.games?.cs2?.skill_level ?? null,
-      elo: player.games?.cs2?.faceit_elo ?? null,
-      games: parseInt(lt['Matches'] ?? '0'),
-      gamesWon: parseInt(wl[0] ?? '0'),
-      gamesLost: parseInt(wl[1] ?? '0'),
-      lastUpdated: new Date(),
+      faceitId: player.player_id,
+      country: player.country ?? null,
+      registered: player.activated_at ?? null,
+      elo: player.games?.cs2?.faceit_elo ?? 0,
+      peakElo: null,
+      level: player.games?.cs2?.skill_level ?? 0,
+      matches: parseInt(lt['Matches'] ?? '0'),
+      wins: parseInt(lt['Wins'] ?? '0'),
+      winrate: parseInt(lt['Win Rate %'] ?? '0'),
+      hs: parseFloat(lt['Average Headshots %'] ?? '0'),
+      kd: parseFloat(lt['Average K/D Ratio'] ?? '0'),
+      adr: lt['ADR'] ? parseFloat(lt['ADR']) : null,
+      udr: null,
+      clutch1v1: lt['1v1 Win Rate'] ? parseFloat(lt['1v1 Win Rate']) : null,
+      clutch1v2: lt['1v2 Win Rate'] ? parseFloat(lt['1v2 Win Rate']) : null,
+      lastMatch: null,
+      recent: (lt['Recent Results'] as unknown as string[] ?? []).map(r => r === '1' ? 'W' : 'L') as ('W' | 'L')[],
     };
   } catch (error) {
     console.error('Error al obtener datos de FACEIT:', error);
