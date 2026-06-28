@@ -1,3 +1,12 @@
+import {
+  MouseSettings,
+  VideoSettings,
+  AdvancedVideoSettings,
+  ViewmodelSettings,
+  HudSettings,
+  RadarSettings,
+} from "./types";
+
 // Miras (Crosshairs)
 export interface CrosshairCvars {
   cl_crosshairgap?: number;
@@ -30,7 +39,14 @@ export interface GameConfig {
   id: string;
   name: string;
   description?: string;
-  settings: Record<string, string | number | boolean>;
+  crosshairShareCode?: string; // opcional: referencia a una mira guardada en "Miras"
+  mouse?: MouseSettings;
+  video?: VideoSettings;
+  advancedVideo?: AdvancedVideoSettings;
+  viewmodel?: ViewmodelSettings;
+  hud?: HudSettings;
+  radar?: RadarSettings;
+  launchOptions?: string;
   createdAt: Date;
 }
 
