@@ -163,7 +163,7 @@ async function getFaceitProfile(nickname: string) {
   const cache = { next: { revalidate: 3600 } };
   try {
     const playerRes = await fetch(
-      `https://open.faceit.com/api/v4/players?nickname=${encodeURIComponent(nickname)}`,
+      `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(nickname)}`,
       { headers, ...cache }
     );
     if (!playerRes.ok) return null;
@@ -174,7 +174,7 @@ async function getFaceitProfile(nickname: string) {
     const level = cs2?.skill_level ?? 0;
     const [statsRes, historyRes] = await Promise.all([
       fetch(`https://open.faceit.com/api/v4/players/${player.player_id}/stats?game=cs2`, { headers, ...cache }),
-      fetch(`https://open.faceit.com/api/v4/players/${player.player_id}/history?game=cs2&limit=5`, { headers, ...cache }),
+      fetch(`https://open.faceit.com/data/v4/players/${player.player_id}/history?game=cs2&limit=5`, { headers, ...cache }),
     ]);
     let stats = {
       matches: 0, wins: 0, winrate: 0, hs: 0, kd: 0,
