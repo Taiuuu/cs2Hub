@@ -35,6 +35,16 @@ interface FaceitStats {
   }>;
 }
 
+interface FACEITProfile {
+  nickname: string;
+  level?: number | null;
+  elo?: number | null;
+  games?: number;
+  gamesWon?: number;
+  gamesLost?: number;
+  lastUpdated: Date;
+}
+
 function extractSteamIdentifier(urlOrId: string): string {
   const vanityMatch = urlOrId.match(/\/id\/([^/]+)/);
   if (vanityMatch) return vanityMatch[1];
@@ -156,92 +166,53 @@ async function getCS2Stats(steamId64: string) {
   }
 }
 
-async function getFaceitProfile(nickname: string) {
-  const apiKey = process.env.FACEIT_API_KEY;
-  if (!apiKey) return null;
-  const headers = { Authorization: `Bearer ${apiKey}` };
-  const cache = { next: { revalidate: 3600 } };
+export async function getFACEITProfile(nickname: string): Promise<FACEITProfile | null> {
   try {
+    // 1. Buscar jugador por nickname
     const playerRes = await fetch(
       `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(nickname)}`,
-      { headers, ...cache }
-    );
-    if (!playerRes.ok) return null;
-    const player: FaceitPlayerResponse = await playerRes.json();
-    if (!player.player_id) return null;
-    const cs2 = player.games?.cs2;
-    const elo = cs2?.faceit_elo ?? 0;
-    const level = cs2?.skill_level ?? 0;
-    const [statsRes, historyRes] = await Promise.all([
-      fetch(`https://open.faceit.com/api/v4/players/${player.player_id}/stats?game=cs2`, { headers, ...cache }),
-      fetch(`https://open.faceit.com/data/v4/players/${player.player_id}/history?game=cs2&limit=5`, { headers, ...cache }),
-    ]);
-    let stats = {
-      matches: 0, wins: 0, winrate: 0, hs: 0, kd: 0,
-      adr: null as number | null, udr: null as number | null,
-      clutch1v1: null as number | null, clutch1v2: null as number | null,
-    };
-    if (statsRes.ok) {
-      const statsData: FaceitStats = await statsRes.json();
-      const lt = statsData.lifetime ?? {};
-      const wl = (lt['W/L'] ?? '0/0').split('/');
-      const wins = parseInt(wl[0] ?? '0');
-      const losses = parseInt(wl[1] ?? '0');
-      const total = wins + losses;
-      let totalAdr = 0, totalUdr = 0, totalClutch1v1 = 0, totalClutch1v2 = 0, segCount = 0;
-      if (statsData.segments?.length) {
-        for (const seg of statsData.segments) {
-          const s = seg.stats;
-          if (s['Average Damage per Round']) { totalAdr += parseFloat(s['Average Damage per Round']); segCount++; }
-          if (s['Average Utility Damage per Round']) totalUdr += parseFloat(s['Average Utility Damage per Round']);
-          if (s['1v1 Win Rate']) totalClutch1v1 += parseFloat(s['1v1 Win Rate']);
-          if (s['1v2 Win Rate']) totalClutch1v2 += parseFloat(s['1v2 Win Rate']);
-        }
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.FACEIT_API_KEY}`,
+          Accept: 'application/json',
+        },
       }
-      stats = {
-        matches: parseInt(lt['Matches'] ?? '0') || total,
-        wins,
-        winrate: total > 0 ? Math.round((wins / total) * 100) : 0,
-        hs: parseFloat((lt['Headshots %'] ?? '0').replace('%', '')),
-        kd: parseFloat(lt['Average K/D Ratio'] ?? '0'),
-        adr: segCount > 0 ? parseFloat((totalAdr / segCount).toFixed(1)) : null,
-        udr: segCount > 0 ? parseFloat((totalUdr / segCount).toFixed(1)) : null,
-        clutch1v1: segCount > 0 ? parseFloat((totalClutch1v1 / segCount).toFixed(2)) : null,
-        clutch1v2: segCount > 0 ? parseFloat((totalClutch1v2 / segCount).toFixed(2)) : null,
-      };
-    }
-    let recent: ('W' | 'L')[] = [];
-    let lastMatch: string | null = null;
-    if (historyRes.ok) {
-      const historyData = await historyRes.json();
-      const items: Array<{
-        finished_at: number;
-        results?: { winner?: string };
-        teams?: { faction1?: { players?: Array<{ player_id: string }> }; faction2?: { players?: Array<{ player_id: string }> } };
-      }> = historyData.items ?? [];
-      recent = items.map((match) => {
-        const faction1Players = match.teams?.faction1?.players ?? [];
-        const playerInFaction1 = faction1Players.some((p) => p.player_id === player.player_id);
-        const winner = match.results?.winner;
-        const myFaction = playerInFaction1 ? 'faction1' : 'faction2';
-        return winner === myFaction ? 'W' : 'L';
-      });
-      if (items[0]?.finished_at) lastMatch = new Date(items[0].finished_at * 1000).toISOString();
-    }
+    );
+
+    if (!playerRes.ok) return null;
+
+    const player = await playerRes.json();
+    const playerId = player.player_id;
+    if (!playerId) return null;
+
+    // 2. Obtener stats con el player_id
+    const statsRes = await fetch(
+      `https://open.faceit.com/data/v4/players/${player.player_id}/stats?game=cs2`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.FACEIT_API_KEY}`,
+          Accept: 'application/json',
+        },
+      }
+    );
+
+    if (!statsRes.ok) return null;
+
+    const statsData = await statsRes.json();
+    const lt = statsData.lifetime ?? {};
+    const wl = (lt['W/L'] ?? '0/0').split('/');
+
     return {
       nickname: player.nickname,
-      faceitId: player.player_id,
-      country: player.country ?? null,
-      registered: player.activated_at ?? null,
-      elo,
-      peakElo: null,
-      level,
-      ...stats,
-      lastMatch,
-      recent,
+      level: player.games?.cs2?.skill_level ?? null,
+      elo: player.games?.cs2?.faceit_elo ?? null,
+      games: parseInt(lt['Matches'] ?? '0'),
+      gamesWon: parseInt(wl[0] ?? '0'),
+      gamesLost: parseInt(wl[1] ?? '0'),
+      lastUpdated: new Date(),
     };
   } catch (error) {
-    console.error('FACEIT profile error:', error);
+    console.error('Error al obtener datos de FACEIT:', error);
     return null;
   }
 }
@@ -254,7 +225,7 @@ export async function GET(request: NextRequest) {
     const defaultSteamId = '76561198169332338';
     const [steam, faceit] = await Promise.all([
       getSteamProfile(steamUsername),
-      getFaceitProfile(faceitNickname),
+      getFACEITProfile(faceitNickname),
     ]);
     const steamId64 = steam?.steamId64 ?? defaultSteamId;
     const cs2 = await getCS2Stats(steamId64);
