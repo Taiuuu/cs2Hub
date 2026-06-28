@@ -187,7 +187,7 @@ export async function getFACEITProfile(nickname: string): Promise<FACEITProfile 
 
     // 2. Obtener stats con el player_id
     const statsRes = await fetch(
-      `https://open.faceit.com/data/v4/players/${player.player_id}/stats?game=cs2`,
+      `https://open.faceit.com/data/v4/players/${player.player_id}/stats/cs2`,
       {
         headers: {
           Authorization: `Bearer ${process.env.FACEIT_API_KEY}`,
