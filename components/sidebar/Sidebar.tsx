@@ -26,7 +26,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/stats', label: 'Stats', icon: <BarChart3 className="w-5 h-5" />, description: 'Steam & FACEIT' },
   { href: '/crosshairs', label: 'Miras', icon: <Crosshair className="w-5 h-5" />, description: 'Crosshair manager' },
   { href: '/configs', label: 'Configs', icon: <Settings className="w-5 h-5" />, description: 'Ajustes del juego' },
-  { href: '/notes', label: 'Notas', icon: <BookOpen className="w-5 h-5" />, description: 'Tus apuntes' },
 ];
 
 export function Sidebar() {
