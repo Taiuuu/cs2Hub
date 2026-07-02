@@ -69,7 +69,7 @@ export function CrosshairForm({ onAdd }: CrosshairFormProps) {
   };
 
   const inputStyle: React.CSSProperties = {
-    background: '#0a0a0a', border: '1px solid #2a2a2a',
+    background: 'var(--bg-base)', border: '1px solid var(--border-subtle)',
     borderRadius: 8, color: '#ffffff', padding: '10px 14px',
     width: '100%', fontSize: 13, outline: 'none', boxSizing: 'border-box',
   };
@@ -88,14 +88,14 @@ export function CrosshairForm({ onAdd }: CrosshairFormProps) {
         <button
           onClick={() => setIsOpen(true)}
           className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all"
-          style={{ background: 'rgba(255,85,0,0.08)', border: '1px solid #ff5500', color: '#ff5500', cursor: 'pointer' }}
+          style={{ background: 'var(--accent-muted)', border: '1px solid var(--color-accent-default)', color: 'var(--color-accent-default)', cursor: 'pointer' }}
         >
           <Plus className="w-4 h-4" /> Nueva mira
         </button>
       ) : (
-        <div className="rounded-xl overflow-hidden" style={{ background: '#0d0d0d', border: '1px solid #1e1e1e' }}>
+        <div className="rounded-xl overflow-hidden bg-[var(--color-bg-card)] border border-[var(--color-border-subtle)] shadow-[var(--shadow-sm)]">
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid #1a1a1a' }}>
+          <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
             <span className="text-sm font-semibold" style={{ color: '#ffffff' }}>Nueva mira</span>
             <button type="button" onClick={() => { setIsOpen(false); setFormData({ name: '', code: '', description: '', cvarsRaw: '' }); setParsedCvars(undefined); }}
               style={{ color: '#444444', background: 'none', border: 'none', cursor: 'pointer' }}
@@ -107,7 +107,7 @@ export function CrosshairForm({ onAdd }: CrosshairFormProps) {
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 lg:grid-cols-2">
               {/* Form */}
-              <div className="p-5 space-y-4" style={{ borderRight: '1px solid #1a1a1a' }}>
+              <div className="p-5 space-y-4" style={{ borderRight: '1px solid var(--border-subtle)' }}>
                 <div>
                   <label style={labelStyle}>Nombre</label>
                   <input type="text" placeholder="ej: Mira competitiva" value={formData.name}
@@ -179,7 +179,7 @@ export function CrosshairForm({ onAdd }: CrosshairFormProps) {
               </div>
 
               {/* Preview */}
-              <div className="flex flex-col items-center justify-center p-6 gap-3" style={{ background: '#0a0a0a' }}>
+              <div className="flex flex-col items-center justify-center p-6 gap-3" style={{ background: 'var(--bg-base)' }}>
                 <CrosshairPreview cvars={parsedCvars} size={180} />
                 <p className="text-xs text-center" style={{ color: parsedCvars ? '#555' : '#2a2a2a' }}>
                   {parsedCvars ? 'Preview en tiempo real' : 'Pegá los cvars para ver la mira'}

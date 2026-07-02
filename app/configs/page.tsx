@@ -235,7 +235,7 @@ function downloadCfg(config: GameConfig) {
 
 // ─── Shared input style ───────────────────────────────────────────────────────
 const inputBase: React.CSSProperties = {
-  width: '100%', background: '#111111', border: '1px solid #2a2a2a',
+  width: '100%', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
   borderRadius: 12, color: '#ffffff', padding: '10px 14px',
   fontSize: 14, outline: 'none', boxSizing: 'border-box',
 };
@@ -309,7 +309,7 @@ export default function ConfigsPage() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto" style={{ background: '#0a0a0a' }}>
+    <div className="flex-1 overflow-y-auto" style={{ background: 'var(--bg-base)' }}>
       <div className="max-w-6xl mx-auto p-6 md:p-8 space-y-8">
 
         <div>
@@ -345,8 +345,8 @@ export default function ConfigsPage() {
 
         <div className="grid gap-6 xl:grid-cols-[1fr_280px]">
           {/* FORMULARIO */}
-          <section className="rounded-xl p-6"
-            style={{ background: '#0d0d0d', border: `1px solid ${editingId ? 'rgba(249,115,22,0.4)' : '#1e1e1e'}` }}>
+          <section className="rounded-xl p-6 bg-[var(--color-bg-card)] border shadow-[var(--shadow-sm)]"
+            style={{ borderColor: editingId ? 'rgba(249,115,22,0.4)' : 'var(--color-border-subtle)' }}>
             <div className="flex items-center justify-between gap-4 mb-6">
               <div>
                 <h2 className="text-xl font-semibold mb-0.5" style={{ color: '#ffffff' }}>
@@ -415,7 +415,7 @@ export default function ConfigsPage() {
                           className="flex flex-1 items-center gap-3 text-left"
                           style={{ background: 'none', border: 'none', cursor: isEnabled ? 'pointer' : 'default', padding: 0 }}>
                           <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${isEnabled ? accent.bg : ''}`}
-                            style={!isEnabled ? { background: '#1a1a1a' } : {}}>
+                            style={!isEnabled ? { background: 'var(--bg-card)' } : {}}>
                             <Icon className={`h-4 w-4 ${isEnabled ? accent.text : 'text-[#333333]'}`} />
                           </span>
                           <span className="text-sm font-medium" style={{ color: isEnabled ? '#ffffff' : '#444444' }}>
@@ -447,7 +447,7 @@ export default function ConfigsPage() {
                               return (
                                 <label key={field.key}
                                   className="flex items-center justify-between gap-3 rounded-lg px-3 py-2.5"
-                                  style={{ background: '#0d0d0d', border: '1px solid #1e1e1e' }}>
+                                  style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
                                   <span className="text-sm" style={{ color: '#aaaaaa' }}>{field.label}</span>
                                   <input type="checkbox" checked={!!value}
                                     onChange={(e) => setFieldValue(section.key, field.key, e.target.checked)}
@@ -462,7 +462,7 @@ export default function ConfigsPage() {
                                   <select value={String(value)}
                                     onChange={(e) => setFieldValue(section.key, field.key, e.target.value)}
                                     className={`w-full rounded-lg px-3 py-2 text-sm focus:outline-none ${accent.ring}`}
-                                    style={{ background: '#0d0d0d', border: '1px solid #2a2a2a', color: '#ffffff' }}>
+                                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', color: '#ffffff' }}>
                                     <option value="">— Sin definir —</option>
                                     {field.options?.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
                                   </select>
@@ -479,7 +479,7 @@ export default function ConfigsPage() {
                                   onChange={(e) => setFieldValue(section.key, field.key, e.target.value)}
                                   placeholder={field.placeholder}
                                   className={`w-full rounded-lg px-3 py-2 text-sm focus:outline-none ${accent.ring}`}
-                                  style={{ background: '#0d0d0d', border: '1px solid #2a2a2a', color: '#ffffff' }} />
+                                  style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', color: '#ffffff' }} />
                               </div>
                             );
                           })}
@@ -524,7 +524,7 @@ export default function ConfigsPage() {
           </section>
 
           {/* TIPS */}
-          <aside className="rounded-xl p-5 h-fit" style={{ background: '#0d0d0d', border: '1px solid #1e1e1e' }}>
+          <aside className="rounded-xl p-5 h-fit bg-[var(--color-bg-card)] border border-[var(--color-border-subtle)] shadow-[var(--shadow-sm)]">
             <h2 className="text-base font-semibold mb-4" style={{ color: '#ffffff' }}>Consejos</h2>
             <div className="space-y-3 text-sm">
               {[
@@ -532,7 +532,7 @@ export default function ConfigsPage() {
                 { title: 'Nombres útiles', body: 'Usá nombres como «Config 31/5/2026» o «Setup de práctica» para identificar rápido cada versión.' },
                 { title: 'Descargar .cfg', body: 'Cada config guardada tiene un botón para descargar el archivo .cfg listo para importar en CS2.' },
               ].map(tip => (
-                <div key={tip.title} className="rounded-lg p-3" style={{ background: '#111111', border: '1px solid #1a1a1a' }}>
+                <div key={tip.title} className="rounded-lg p-3" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)' }}>
                   <p className="text-xs font-semibold mb-1" style={{ color: '#ff5500', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{tip.title}</p>
                   <p style={{ color: '#555555', fontSize: 12, lineHeight: 1.6 }}>{tip.body}</p>
                 </div>
@@ -544,8 +544,7 @@ export default function ConfigsPage() {
         {/* LISTADO */}
         <section className="grid gap-4 lg:grid-cols-2">
           {configs.length === 0 && (
-            <div className="lg:col-span-2 rounded-xl py-14 text-center"
-              style={{ border: '1px dashed #2a2a2a', background: '#0d0d0d' }}>
+            <div className="lg:col-span-2 rounded-xl py-14 text-center border border-dashed border-[var(--color-border-subtle)] bg-[var(--color-bg-card)]">
               <p style={{ color: '#333333' }}>Todavía no guardaste ninguna configuración.</p>
             </div>
           )}
@@ -553,10 +552,9 @@ export default function ConfigsPage() {
             const isBeingEdited = editingId === config.id;
             const activeSections = SECTIONS.filter((s) => (config as any)[s.key]);
             return (
-              <article key={config.id} className="rounded-xl p-5 transition"
+              <article key={config.id} className="rounded-xl p-5 transition bg-[var(--color-bg-card)] border shadow-[var(--shadow-sm)]"
                 style={{
-                  background: '#0d0d0d',
-                  border: `1px solid ${isBeingEdited ? 'rgba(249,115,22,0.5)' : '#1e1e1e'}`,
+                  borderColor: isBeingEdited ? 'rgba(249,115,22,0.5)' : 'var(--color-border-subtle)',
                 }}>
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
@@ -579,7 +577,7 @@ export default function ConfigsPage() {
 
                 {config.crosshairShareCode && (
                   <div className="mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-xs"
-                    style={{ background: '#111111', border: '1px solid #1e1e1e', color: '#555555' }}>
+                    style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: '#555555' }}>
                     <Crosshair className="h-3.5 w-3.5" style={{ color: '#333333' }} />
                     <span className="font-mono truncate" style={{ color: '#ff5500' }}>{config.crosshairShareCode}</span>
                   </div>
@@ -595,7 +593,7 @@ export default function ConfigsPage() {
                       const values = (config as any)[section.key] as Record<string, any>;
                       return (
                         <div key={section.key} className="rounded-lg p-3"
-                          style={{ background: '#111111', border: '1px solid #1a1a1a' }}>
+                          style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)' }}>
                           <div className="mb-2 flex items-center gap-2">
                             <span className={`flex h-6 w-6 items-center justify-center rounded-lg ${accent.bg}`}>
                               <Icon className={`h-3.5 w-3.5 ${accent.text}`} />
@@ -621,7 +619,7 @@ export default function ConfigsPage() {
                       );
                     })}
                     {config.launchOptions && (
-                      <div className="rounded-lg p-3" style={{ background: '#111111', border: '1px solid #1a1a1a' }}>
+                      <div className="rounded-lg p-3" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)' }}>
                         <div className="mb-1 flex items-center gap-2">
                           <Terminal className="h-3.5 w-3.5" style={{ color: '#333333' }} />
                           <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#444444' }}>Lanzamiento</span>

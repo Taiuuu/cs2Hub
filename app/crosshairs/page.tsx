@@ -11,6 +11,7 @@ const DEFAULT_CROSSHAIRS: Crosshair[] = [
     id: '1',
     name: 'donk',
     code: 'CSGO-yHtOW-SswFo-Ypfyr-2pswm-zL3ED',
+    cvars: { cl_crosshairsize: 4, cl_crosshairgap: 1, cl_crosshairthickness: 0.5, cl_crosshaircolor: 1 },
     description: 'Cruz cerrada clásica para duelos crisp',
     team: 'Both',
     createdAt: new Date('2026-05-28T10:00:00'),
@@ -19,6 +20,7 @@ const DEFAULT_CROSSHAIRS: Crosshair[] = [
     id: '2',
     name: 'ropz',
     code: 'CSGO-5UHEt-3RFCY-4Nu8t-4UYGQ-vJN2G',
+    cvars: { cl_crosshairsize: 5, cl_crosshairgap: 2, cl_crosshairthickness: 1, cl_crosshaircolor: 2, cl_crosshairdot: true },
     description: 'Cruz proporcional 16:9, perfecta para juego versátil',
     team: 'Both',
     createdAt: new Date('2026-05-28T10:05:00'),
@@ -27,6 +29,7 @@ const DEFAULT_CROSSHAIRS: Crosshair[] = [
     id: '3',
     name: 'ZywOo',
     code: 'CSGO-DR6Tv-VTbfJ-VTrAM-fVkGe-zJNQB',
+    cvars: { cl_crosshairsize: 2, cl_crosshairgap: 0.5, cl_crosshairthickness: 0.5, cl_crosshairdot: true, cl_crosshaircolor: 0 },
     description: 'Mira de punto pequeño, precisión máxima',
     team: 'Both',
     createdAt: new Date('2026-05-28T10:10:00'),
@@ -96,7 +99,7 @@ export default function CrosshairsPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{
-                  background: '#0d0d0d',
+                  background: 'var(--bg-base)',
                   border: '1px solid #1e1e1e',
                   borderRadius: 8,
                   color: '#ffffff',

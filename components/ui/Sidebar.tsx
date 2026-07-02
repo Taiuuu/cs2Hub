@@ -39,7 +39,7 @@ export function Sidebar() {
       {/* Mobile toggle */}
       <button
         className="fixed top-4 left-4 z-40 p-2 rounded-lg md:hidden"
-        style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#ffffff' }}
+        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', color: '#ffffff' }}
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle menu"
       >
@@ -51,7 +51,7 @@ export function Sidebar() {
         className={`fixed top-0 left-0 h-screen w-60 flex flex-col transition-transform duration-200 z-30 md:relative md:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ background: '#0d0d0d', borderRight: '1px solid #1e1e1e' }}
+        style={{ background: 'var(--bg-elevated)', borderRight: '1px solid var(--border-subtle)' }}
       >
         {/* Logo */}
         <div className="px-5 py-6" style={{ borderBottom: '1px solid #1a1a1a' }}>
