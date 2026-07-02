@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useEffect, useState } from 'react';
+import { EloChart } from './EloChart';
 
 interface SteamData {
   name: string;
@@ -250,7 +251,7 @@ function FaceitSection({ faceit }: { faceit: FaceitData }) {
         <Stat label="Clutch 1v1" value={faceit.clutch1v1 !== null ? `${(faceit.clutch1v1 * 100).toFixed(1)}%` : '-'} />
         <Stat label="Clutch 1v2" value={faceit.clutch1v2 !== null ? `${(faceit.clutch1v2 * 100).toFixed(1)}%` : '-'} />
       </div>
-      <div className="pt-4 border-t border-[var(--color-border-subtle)]">
+      <div className="pt-4 border-t border-[var(--color-border-subtle)] mb-5">
         <div className="flex items-center justify-between mb-3">
           <p className="text-[11px] uppercase tracking-widest text-zinc-500">Ultimas partidas</p>
           {faceit.lastMatch && (
@@ -275,6 +276,9 @@ function FaceitSection({ faceit }: { faceit: FaceitData }) {
             <NullBadge />
           )}
         </div>
+      </div>
+      <div className="mt-5">
+        <EloChart nickname={faceit.nickname} />
       </div>
     </Card>
   );
