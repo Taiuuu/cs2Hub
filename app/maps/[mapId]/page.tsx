@@ -273,7 +273,7 @@ export default function MapDetailPage({ params }: { params: Promise<{ mapId: str
       {/* Hero */}
       <div className="relative h-64 md:h-80 overflow-hidden">
         <Image
-          src={`/maps/backgrounds/${mapId}.jpg`}
+          src={`/maps/backgrounds/${mapId}.webp`}
           alt={mapData.name}
           fill
           className="object-cover"
