@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   Zap,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -25,7 +26,8 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/maps', label: 'Mapas', icon: <Map className="w-5 h-5" />, description: 'Estrategias y calls' },
   { href: '/stats', label: 'Stats', icon: <BarChart3 className="w-5 h-5" />, description: 'Steam & FACEIT' },
   { href: '/crosshairs', label: 'Miras', icon: <Crosshair className="w-5 h-5" />, description: 'Crosshair manager' },
-  { href: '/configs', label: 'Configs', icon: <Settings className="w-5 h-5" />, description: 'Ajustes del juego' },
+  { href: '/configs', label: 'Configs', icon: <SlidersHorizontal className="w-5 h-5" />, description: 'Ajustes del juego' },
+  { href: '/settings', label: 'Configuración', icon: <Settings className="w-5 h-5" />, description: 'Backup & datos' },
 ];
 
 export function Sidebar() {

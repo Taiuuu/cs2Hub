@@ -321,10 +321,70 @@ export default function PlayerFetcher({ steamUsername, faceitNickname }: Props) 
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-40 rounded-2xl bg-zinc-900 border border-zinc-800 animate-pulse" />
-        ))}
+      <div className="flex flex-col gap-4">
+        {/* Steam Card Skeleton */}
+        <div className="border border-zinc-700 rounded-xl bg-gradient-to-br from-zinc-900 to-zinc-950 overflow-hidden animate-pulse">
+          <div className="bg-gradient-to-r from-blue-600/20 to-blue-700/20 border-b border-zinc-700 p-6">
+            <div className="flex items-start gap-4">
+              <div className="w-16 h-16 rounded-lg bg-zinc-800" />
+              <div className="flex-1">
+                <div className="h-6 bg-zinc-800 rounded w-3/4 mb-2" />
+                <div className="h-4 bg-zinc-800 rounded w-1/4" />
+              </div>
+              <div className="w-20 text-right">
+                <div className="h-8 bg-zinc-800 rounded w-full mb-2" />
+                <div className="h-4 bg-zinc-800 rounded w-full" />
+              </div>
+            </div>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="h-24 bg-zinc-800 rounded" />
+            <div className="h-20 bg-zinc-800 rounded" />
+          </div>
+        </div>
+
+        {/* CS2 Section Skeleton */}
+        <div className="border border-zinc-700 rounded-xl bg-zinc-950 overflow-hidden p-6 animate-pulse">
+          <div className="h-4 bg-zinc-800 rounded w-1/4 mb-4" />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="space-y-2">
+                <div className="h-4 bg-zinc-800 rounded w-1/2" />
+                <div className="h-6 bg-zinc-800 rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* FACEIT Card Skeleton */}
+        <div className="border border-zinc-700 rounded-xl bg-gradient-to-br from-zinc-900 to-zinc-950 overflow-hidden animate-pulse">
+          <div className="bg-gradient-to-r from-orange-600/20 to-red-600/20 border-b border-zinc-700 p-6">
+            <div className="flex items-start gap-4">
+              <div className="w-16 h-16 rounded-lg bg-zinc-800" />
+              <div className="flex-1">
+                <div className="h-6 bg-zinc-800 rounded w-3/4 mb-2" />
+                <div className="h-4 bg-zinc-800 rounded w-1/4" />
+              </div>
+              <div className="w-20 text-center">
+                <div className="h-8 bg-zinc-800 rounded w-full mb-2" />
+                <div className="h-4 bg-zinc-800 rounded w-full" />
+              </div>
+            </div>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              {[1, 2].map((i) => (
+                <div key={i} className="h-16 bg-zinc-800 rounded" />
+              ))}
+            </div>
+            <div className="h-20 bg-zinc-800 rounded" />
+            <div className="grid grid-cols-2 gap-4">
+              {[1, 2].map((i) => (
+                <div key={i} className="h-16 bg-zinc-800 rounded" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

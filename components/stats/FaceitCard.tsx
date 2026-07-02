@@ -1,6 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Users, Flame, Target, Award, Zap } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface FaceitStats {
   id: string;
@@ -23,11 +25,85 @@ interface FaceitCardProps {
   loading?: boolean;
 }
 
+interface EloDataPoint {
+  date: string;
+  elo: number;
+}
+
 export function FaceitCard({ stats, loading = false }: FaceitCardProps) {
+  const [eloData, setEloData] = useState<EloDataPoint[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    if (stats?.nickname && !loading) {
+      setLoadingHistory(true);
+      fetch(`/api/stats/history?faceitNickname=${encodeURIComponent(stats.nickname)}&limit=10`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.eloData) {
+            setEloData(data.eloData);
+          }
+        })
+        .catch((err) => console.error('Error loading ELO history:', err))
+        .finally(() => setLoadingHistory(false));
+    }
+  }, [stats?.nickname, loading]);
   if (loading) {
     return (
-      <div className="animate-pulse">
-        <div className="bg-zinc-800 rounded-xl h-40"></div>
+      <div className="border border-zinc-700 rounded-xl bg-gradient-to-br from-zinc-900 to-zinc-950 overflow-hidden">
+        {/* Header skeleton */}
+        <div className="bg-gradient-to-r from-orange-600/20 to-red-600/20 border-b border-zinc-700 p-6">
+          <div className="flex items-start gap-4">
+            {/* Avatar skeleton */}
+            <div className="w-16 h-16 rounded-lg bg-zinc-800 animate-pulse" />
+            <div className="flex-1">
+              {/* Name skeleton */}
+              <div className="h-6 bg-zinc-800 rounded w-3/4 mb-2 animate-pulse" />
+              {/* Label skeleton */}
+              <div className="h-4 bg-zinc-800 rounded w-1/4 animate-pulse" />
+            </div>
+            {/* Level skeleton */}
+            <div className="w-16 h-16 bg-zinc-800 rounded-lg animate-pulse" />
+          </div>
+        </div>
+
+        {/* Stats skeleton */}
+        <div className="p-6 space-y-6">
+          {/* ELO and Matches row */}
+          <div className="grid grid-cols-2 gap-4">
+            {[1, 2].map((i) => (
+              <div key={i} className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/50">
+                <div className="h-4 bg-zinc-700 rounded w-2/3 mb-3 animate-pulse" />
+                <div className="h-8 bg-zinc-700 rounded w-1/2 animate-pulse" />
+              </div>
+            ))}
+          </div>
+
+          {/* Win Rate skeleton */}
+          <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/50">
+            <div className="h-4 bg-zinc-700 rounded w-1/3 mb-3 animate-pulse" />
+            <div className="flex items-end gap-4">
+              <div>
+                <div className="h-8 bg-zinc-700 rounded w-20 mb-2 animate-pulse" />
+                <div className="h-4 bg-zinc-700 rounded w-24 animate-pulse" />
+              </div>
+              <div className="flex-1 h-6 bg-zinc-700 rounded-full animate-pulse" />
+            </div>
+          </div>
+
+          {/* K/D and HS% skeleton */}
+          <div className="grid grid-cols-2 gap-4">
+            {[1, 2].map((i) => (
+              <div key={i} className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/50">
+                <div className="h-4 bg-zinc-700 rounded w-2/3 mb-3 animate-pulse" />
+                <div className="h-8 bg-zinc-700 rounded w-1/2 animate-pulse" />
+              </div>
+            ))}
+          </div>
+
+          {/* Last updated skeleton */}
+          <div className="h-4 bg-zinc-700 rounded w-1/3 mx-auto animate-pulse pt-4 border-t border-zinc-700" />
+        </div>
       </div>
     );
   }
@@ -72,6 +148,46 @@ export function FaceitCard({ stats, loading = false }: FaceitCardProps) {
           </div>
         </div>
       </div>
+
+      {/* ELO Evolution Chart */}
+      {eloData.length > 0 && (
+        <div className="bg-zinc-900/50 border-b border-zinc-700 p-6">
+          <div className="mb-3">
+            <h4 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider">Evolución de ELO</h4>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={eloData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" />
+              <XAxis 
+                dataKey="date" 
+                stroke="#71717a"
+                style={{ fontSize: '12px' }}
+              />
+              <YAxis 
+                stroke="#71717a"
+                style={{ fontSize: '12px' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#18181b',
+                  border: '1px solid #3f3f46',
+                  borderRadius: '8px',
+                  color: '#fff',
+                }}
+                formatter={(value) => [`${value} ELO`, 'ELO']}
+              />
+              <Line
+                type="monotone"
+                dataKey="elo"
+                stroke="#ff5500"
+                strokeWidth={2}
+                dot={{ fill: '#ff5500', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="p-6 space-y-6">
