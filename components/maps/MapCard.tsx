@@ -20,6 +20,7 @@ export function MapCard({ id, nombre, fondo, icono }: MapCardProps) {
             src={fondo}
             alt={nombre}
             fill
+            loading="lazy"
             className="object-cover transition-all duration-250 group-hover:brightness-110"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />

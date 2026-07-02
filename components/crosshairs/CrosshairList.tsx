@@ -64,11 +64,11 @@ function CrosshairModal({ crosshair, onClose, onDelete, onCopy }: {
     >
       <div
         className="w-full max-w-md rounded-2xl overflow-hidden"
-        style={{ background: '#111111', border: '1px solid #2a2a2a' }}
+        style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid #1a1a1a' }}>
+        <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
           <div>
             <h2 className="font-bold text-base" style={{ color: '#ffffff' }}>{crosshair.name}</h2>
             {crosshair.description && (
@@ -83,12 +83,12 @@ function CrosshairModal({ crosshair, onClose, onDelete, onCopy }: {
         </div>
 
         {/* Preview grande */}
-        <div className="flex items-center justify-center py-8" style={{ background: '#0a0a0a' }}>
+        <div className="flex items-center justify-center py-8" style={{ background: 'var(--bg-base)' }}>
           <CrosshairPreview cvars={crosshair.cvars} size={220} />
         </div>
 
         {/* Tabs */}
-        <div className="flex" style={{ borderBottom: '1px solid #1a1a1a' }}>
+        <div className="flex" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
           {(['code', 'config'] as const).map(t => (
             <button
               key={t}
@@ -111,7 +111,7 @@ function CrosshairModal({ crosshair, onClose, onDelete, onCopy }: {
             <div className="flex gap-2 items-center">
               <div
                 className="flex-1 font-mono text-sm px-3 py-2.5 rounded-lg break-all"
-                style={{ background: '#0a0a0a', border: '1px solid #1e1e1e', color: '#ff5500' }}
+                style={{ background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--color-accent-default)' }}
               >
                 {crosshair.code || '—'}
               </div>
@@ -135,7 +135,7 @@ function CrosshairModal({ crosshair, onClose, onDelete, onCopy }: {
                 <>
                   <div
                     className="font-mono text-xs px-3 py-3 rounded-lg leading-relaxed"
-                    style={{ background: '#0a0a0a', border: '1px solid #1e1e1e', color: '#aaaaaa', maxHeight: 160, overflowY: 'auto' }}
+                    style={{ background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: '#aaaaaa', maxHeight: 160, overflowY: 'auto' }}
                   >
                     {Object.entries(crosshair.cvars).map(([k, v]) => (
                       <div key={k}>
@@ -173,7 +173,7 @@ function CrosshairModal({ crosshair, onClose, onDelete, onCopy }: {
           <button
             onClick={() => { onDelete(); onClose(); }}
             className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs transition-all"
-            style={{ background: 'transparent', border: '1px solid #2a2a2a', color: '#444444', cursor: 'pointer' }}
+            style={{ background: 'transparent', border: '1px solid var(--border-subtle)', color: '#444444', cursor: 'pointer' }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLElement).style.borderColor = '#7f1d1d';
               (e.currentTarget as HTMLElement).style.color = '#ef4444';
@@ -198,8 +198,8 @@ export function CrosshairList({ crosshairs, onDelete, onCopy }: CrosshairListPro
 
   if (crosshairs.length === 0) {
     return (
-      <div className="text-center py-16 rounded-xl border" style={{ borderColor: '#1e1e1e', background: '#0d0d0d' }}>
-        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#1a1a1a' }}>
+      <div className="text-center py-16 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-card)] shadow-[var(--shadow-sm)]">
+        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 bg-[var(--color-bg-elevated)]">
           <span style={{ color: '#ff5500', fontSize: 22 }}>+</span>
         </div>
         <p className="font-medium mb-1" style={{ color: '#ffffff' }}>No tenés miras guardadas</p>
@@ -215,15 +215,13 @@ export function CrosshairList({ crosshairs, onDelete, onCopy }: CrosshairListPro
           <div
             key={crosshair.id}
             onClick={() => setSelected(crosshair)}
-            className="rounded-xl flex flex-col overflow-hidden cursor-pointer transition-all duration-150"
-            style={{ background: '#0d0d0d', border: '1px solid #1e1e1e' }}
+            className="rounded-xl flex flex-col overflow-hidden cursor-pointer transition-all duration-150 bg-[var(--color-bg-card)] border border-[var(--color-border-subtle)] shadow-[var(--shadow-sm)]"
             onMouseEnter={e => (e.currentTarget.style.borderColor = '#ff550044')}
             onMouseLeave={e => (e.currentTarget.style.borderColor = '#1e1e1e')}
           >
             {/* Preview */}
             <div
-              className="flex items-center justify-center"
-              style={{ background: '#111111', height: 120, borderBottom: '1px solid #1a1a1a' }}
+              className="flex items-center justify-center h-30 bg-[var(--color-bg-elevated)] border-b border-[var(--color-border-subtle)]"
             >
               <CrosshairPreview cvars={crosshair.cvars} size={100} />
             </div>

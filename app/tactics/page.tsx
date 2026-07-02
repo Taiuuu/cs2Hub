@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Tactic, MapName, TacticType } from '@/types';
+import { MapName, TacticType } from '@/types';
 
-const sampleTactics: Tactic[] = [
+const sampleTactics = [
   {
     id: 'tac-1',
     name: 'Rush B rápido con utility',

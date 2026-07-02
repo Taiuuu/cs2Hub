@@ -19,52 +19,15 @@ interface SteamCardProps {
 export function SteamCard({ stats, loading = false }: SteamCardProps) {
   if (loading) {
     return (
-      <div className="border border-zinc-700 rounded-xl bg-gradient-to-br from-zinc-900 to-zinc-950 overflow-hidden">
-        {/* Header skeleton */}
-        <div className="bg-gradient-to-r from-blue-600/20 to-blue-700/20 border-b border-zinc-700 p-6">
-          <div className="flex items-start gap-4">
-            {/* Avatar skeleton */}
-            <div className="w-16 h-16 rounded-lg bg-zinc-800 animate-pulse" />
-            <div className="flex-1">
-              {/* Name skeleton */}
-              <div className="h-6 bg-zinc-800 rounded w-3/4 mb-2 animate-pulse" />
-              {/* Label skeleton */}
-              <div className="h-4 bg-zinc-800 rounded w-1/4 animate-pulse" />
-            </div>
-            {/* Level skeleton */}
-            <div className="text-right">
-              <div className="h-8 bg-zinc-800 rounded w-16 mb-2 animate-pulse" />
-              <div className="h-4 bg-zinc-800 rounded w-20 animate-pulse" />
-            </div>
-          </div>
-        </div>
-
-        {/* Content skeleton */}
-        <div className="p-6 space-y-4">
-          {/* Profile Link skeleton */}
-          <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/50">
-            <div className="h-4 bg-zinc-700 rounded w-1/3 mb-3 animate-pulse" />
-            <div className="space-y-2">
-              <div className="h-4 bg-zinc-700 rounded w-full animate-pulse" />
-              <div className="h-4 bg-zinc-700 rounded w-4/5 animate-pulse" />
-            </div>
-          </div>
-
-          {/* Info badge skeleton */}
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-            <div className="h-6 bg-zinc-700 rounded w-3/4 mx-auto animate-pulse" />
-          </div>
-
-          {/* Last updated skeleton */}
-          <div className="h-4 bg-zinc-700 rounded w-1/3 mx-auto animate-pulse pt-4 border-t border-zinc-700" />
-        </div>
+      <div className="animate-pulse">
+        <div className="bg-[var(--color-bg-card)] rounded-xl h-40"></div>
       </div>
     );
   }
 
   if (!stats) {
     return (
-      <div className="border-2 border-dashed border-zinc-700 rounded-xl p-8 text-center">
+      <div className="border border-dashed border-[var(--color-border-subtle)] rounded-xl p-8 text-center bg-[var(--color-bg-card)]">
         <User className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
         <p className="text-zinc-400">No se pudieron cargar los datos de Steam</p>
       </div>
@@ -72,15 +35,15 @@ export function SteamCard({ stats, loading = false }: SteamCardProps) {
   }
 
   return (
-    <div className="border border-zinc-700 rounded-xl bg-gradient-to-br from-zinc-900 to-zinc-950 overflow-hidden shadow-xl">
+    <div className="border border-[var(--color-border-subtle)] rounded-xl bg-[var(--color-bg-card)] overflow-hidden shadow-[var(--shadow-sm)]">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600/20 to-blue-700/20 border-b border-zinc-700 p-6">
+      <div className="bg-[var(--color-bg-elevated)] border-b border-[var(--color-border-subtle)] p-6">
         <div className="flex items-start gap-4">
           {stats.avatar && (
             <img
               src={stats.avatar}
               alt={stats.nickname}
-              className="w-16 h-16 rounded-lg border border-zinc-600"
+              className="w-16 h-16 rounded-lg border border-[var(--color-border-subtle)]"
             />
           )}
           <div className="flex-1">
@@ -97,7 +60,7 @@ export function SteamCard({ stats, loading = false }: SteamCardProps) {
       {/* Content */}
       <div className="p-6 space-y-4">
         {/* Profile Link */}
-        <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/50">
+        <div className="bg-[var(--color-bg-base)] rounded-lg p-4 border border-[var(--color-border-subtle)]">
           <div className="flex items-center gap-2 mb-2">
             <Heart className="w-4 h-4 text-red-500" />
             <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Perfil</span>
@@ -113,14 +76,14 @@ export function SteamCard({ stats, loading = false }: SteamCardProps) {
         </div>
 
         {/* Info Badge */}
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-center">
+        <div className="bg-[var(--color-blue-default)]/10 border border-[var(--color-blue-muted)] rounded-lg p-4 text-center">
           <p className="text-sm text-blue-300">
             Nivel {stats.level} en Counter-Strike 2
           </p>
         </div>
 
         {/* Last Updated */}
-        <div className="text-xs text-zinc-500 text-center pt-4 border-t border-zinc-700">
+        <div className="text-xs text-[var(--color-foreground)]/70 text-center pt-4 border-t border-[var(--color-border-subtle)]">
           Actualizado: {new Date(stats.lastUpdated).toLocaleTimeString('es-AR')}
         </div>
       </div>

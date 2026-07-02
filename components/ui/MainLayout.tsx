@@ -1,6 +1,6 @@
 'use client';
 
-import { Sidebar } from '@/components/sidebar/Sidebar';
+import { Sidebar } from '@/components/ui/Sidebar';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   return (

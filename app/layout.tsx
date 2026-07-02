@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { MainLayout } from "@/components/layout/MainLayout";
-import { baseMetadata } from "@/app/layout/metadata";
+import { MainLayout } from "@/components/ui/MainLayout";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,7 +13,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = baseMetadata;
+export const metadata: Metadata = {
+  title: "CS2 Hub",
+  description: "Competitive Counter-Strike 2 toolkit",
+};
 
 export default function RootLayout({
   children,

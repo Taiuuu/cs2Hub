@@ -75,7 +75,7 @@ function faceitLevelColor(level: number): string {
 }
 
 function faceitLevelBg(level: number): string {
-  if (level <= 0) return 'bg-zinc-700';
+  if (level <= 0) return 'bg-[var(--color-bg-elevated)]';
   if (level <= 4) return 'bg-green-950';
   if (level <= 7) return 'bg-orange-950';
   if (level <= 9) return 'bg-red-950';
@@ -119,7 +119,7 @@ function SectionHeader({ title }: { title: string }) {
 
 function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-zinc-800 bg-zinc-950 p-5 ${className}`}>
+    <div className={`rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-card)] shadow-[var(--shadow-sm)] p-5 ${className}`}>
       {children}
     </div>
   );
@@ -127,7 +127,7 @@ function Card({ children, className = '' }: { children: React.ReactNode; classNa
 
 function NullBadge() {
   return (
-    <span className="text-xs text-zinc-600 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-full">
+    <span className="text-xs text-[var(--color-foreground)]/70 bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] px-2 py-0.5 rounded-full">
       no disponible
     </span>
   );
@@ -139,9 +139,9 @@ function SteamSection({ steam }: { steam: SteamData }) {
       <SectionHeader title="Steam" />
       <div className="flex items-center gap-4 mb-5">
         {steam.avatar ? (
-          <img src={steam.avatar} alt={steam.name} className="w-14 h-14 rounded-xl border border-zinc-700 object-cover" />
+          <img src={steam.avatar} alt={steam.name} className="w-14 h-14 rounded-xl border border-[var(--color-border-subtle)] object-cover" />
         ) : (
-          <div className="w-14 h-14 rounded-xl bg-zinc-800 flex items-center justify-center text-2xl">?</div>
+          <div className="w-14 h-14 rounded-xl bg-[var(--color-bg-elevated)] flex items-center justify-center text-2xl">?</div>
         )}
         <div>
           <p className="text-xl font-bold text-white">{steam.name}</p>
@@ -159,7 +159,7 @@ function SteamSection({ steam }: { steam: SteamData }) {
         <Stat label="Nivel XP" value={String(steam.xpLevel)} />
         <Stat label="Amigos" value={steam.friends !== null ? String(steam.friends) : '-'} />
       </div>
-      <div className="mt-5 pt-4 border-t border-zinc-800">
+      <div className="mt-5 pt-4 border-t border-[var(--color-border-subtle)]">
         <p className="text-[11px] uppercase tracking-widest text-zinc-500 mb-3">Commendations</p>
         <div className="flex gap-6">
           {(['friendly', 'leader', 'teacher'] as const).map((k) => {
@@ -206,7 +206,7 @@ function CS2Section({ cs2 }: { cs2: CS2Data | null }) {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-3 mb-5">
         {bars.map((b) => <BarStat key={b.label} label={b.label} value={b.value} />)}
       </div>
-      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-800">
+      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[var(--color-border-subtle)]">
         <Stat label="K/D" value={fmt(cs2.kd)} />
         <Stat label="Rating" value={fmt(cs2.rating)} />
         <Stat label="Peak Rating" value={fmt(cs2.peakRating)} />
@@ -244,13 +244,13 @@ function FaceitSection({ faceit }: { faceit: FaceitData }) {
         <Stat label="HS%" value={`${fmt(faceit.hs, 1)}%`} />
         <Stat label="K/D" value={fmt(faceit.kd)} />
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 pt-4 border-t border-zinc-800 mb-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 pt-4 border-t border-[var(--color-border-subtle)] mb-5">
         <Stat label="ADR" value={faceit.adr !== null ? fmt(faceit.adr, 1) : '-'} />
         <Stat label="UDR" value={faceit.udr !== null ? fmt(faceit.udr, 1) : '-'} />
         <Stat label="Clutch 1v1" value={faceit.clutch1v1 !== null ? `${(faceit.clutch1v1 * 100).toFixed(1)}%` : '-'} />
         <Stat label="Clutch 1v2" value={faceit.clutch1v2 !== null ? `${(faceit.clutch1v2 * 100).toFixed(1)}%` : '-'} />
       </div>
-      <div className="pt-4 border-t border-zinc-800">
+      <div className="pt-4 border-t border-[var(--color-border-subtle)]">
         <div className="flex items-center justify-between mb-3">
           <p className="text-[11px] uppercase tracking-widest text-zinc-500">Ultimas partidas</p>
           {faceit.lastMatch && (
@@ -315,76 +315,24 @@ export default function PlayerFetcher({ steamUsername, faceitNickname }: Props) 
     setError(null);
     fetch(`/api/stats?steamUsername=${encodeURIComponent(steamUsername)}&faceitNickname=${encodeURIComponent(faceitNickname)}`)
       .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-      .then((json: PlayerData) => { setData(json); setLoading(false); })
-      .catch((err) => { setError(err.message); setLoading(false); });
+      .then((json: PlayerData) => { 
+        if (!json) throw new Error('No response data');
+        setData(json); 
+        setLoading(false); 
+      })
+      .catch((err) => { 
+        const msg = err instanceof Error ? err.message : String(err);
+        setError(msg || 'Error desconocido al cargar datos'); 
+        setLoading(false); 
+      });
   }, [steamUsername, faceitNickname]);
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-4">
-        {/* Steam Card Skeleton */}
-        <div className="border border-zinc-700 rounded-xl bg-gradient-to-br from-zinc-900 to-zinc-950 overflow-hidden animate-pulse">
-          <div className="bg-gradient-to-r from-blue-600/20 to-blue-700/20 border-b border-zinc-700 p-6">
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-lg bg-zinc-800" />
-              <div className="flex-1">
-                <div className="h-6 bg-zinc-800 rounded w-3/4 mb-2" />
-                <div className="h-4 bg-zinc-800 rounded w-1/4" />
-              </div>
-              <div className="w-20 text-right">
-                <div className="h-8 bg-zinc-800 rounded w-full mb-2" />
-                <div className="h-4 bg-zinc-800 rounded w-full" />
-              </div>
-            </div>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="h-24 bg-zinc-800 rounded" />
-            <div className="h-20 bg-zinc-800 rounded" />
-          </div>
-        </div>
-
-        {/* CS2 Section Skeleton */}
-        <div className="border border-zinc-700 rounded-xl bg-zinc-950 overflow-hidden p-6 animate-pulse">
-          <div className="h-4 bg-zinc-800 rounded w-1/4 mb-4" />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="space-y-2">
-                <div className="h-4 bg-zinc-800 rounded w-1/2" />
-                <div className="h-6 bg-zinc-800 rounded" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* FACEIT Card Skeleton */}
-        <div className="border border-zinc-700 rounded-xl bg-gradient-to-br from-zinc-900 to-zinc-950 overflow-hidden animate-pulse">
-          <div className="bg-gradient-to-r from-orange-600/20 to-red-600/20 border-b border-zinc-700 p-6">
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-lg bg-zinc-800" />
-              <div className="flex-1">
-                <div className="h-6 bg-zinc-800 rounded w-3/4 mb-2" />
-                <div className="h-4 bg-zinc-800 rounded w-1/4" />
-              </div>
-              <div className="w-20 text-center">
-                <div className="h-8 bg-zinc-800 rounded w-full mb-2" />
-                <div className="h-4 bg-zinc-800 rounded w-full" />
-              </div>
-            </div>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              {[1, 2].map((i) => (
-                <div key={i} className="h-16 bg-zinc-800 rounded" />
-              ))}
-            </div>
-            <div className="h-20 bg-zinc-800 rounded" />
-            <div className="grid grid-cols-2 gap-4">
-              {[1, 2].map((i) => (
-                <div key={i} className="h-16 bg-zinc-800 rounded" />
-              ))}
-            </div>
-          </div>
-        </div>
+      <div className="flex flex-col gap-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-40 rounded-2xl bg-[var(--color-bg-card)] border border-[var(--color-border-subtle)] animate-pulse" />
+        ))}
       </div>
     );
   }
