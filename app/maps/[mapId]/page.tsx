@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { allMaps } from '@/lib/mapsData';
@@ -241,7 +241,7 @@ function SidePanel({ map, side }: { map: MapData; side: 'T' | 'CT' }) {
 
 // ─── Page ───────────────────────────────────────────────────────────────────
 export default function MapDetailPage({ params }: { params: Promise<{ mapId: string }> }) {
-  const { mapId } = use(params);
+  const { mapId } = React.use(params);
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'T' | 'CT'>('T');
   const [calloutSite, setCalloutSite] = useState<'siteA' | 'siteB' | 'middle'>('siteA');
