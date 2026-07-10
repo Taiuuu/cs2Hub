@@ -1,1102 +1,185 @@
 ================================================================================
-CS2 HUB — CONTEXTO COMPLETO DE MAPAS Y TÁCTICAS PARA COPILOT
+PROMPT MAESTRO — GENERADOR DE TÁCTICAS CS2
 ================================================================================
-Este archivo describe en detalle la estructura de datos, filosofía, tácticas
-competitivas reales y mejoras de UI/UX para cada mapa del pool activo de CS2.
-Usalo como referencia para generar o mejorar los archivos de mapas del proyecto.
-
-MAPAS CUBIERTOS: Dust2, Mirage, Inferno, Nuke, Vertigo, Ancient, Anubis
-CATEGORÍAS DE TÁCTICA: Default, Protocol, Retake, Reaggression, AntiEco,
-                        Pistol, Eco, Force, Buy (Full Buy), MidRound
+Este archivo es el prompt de sistema que le pasás a Copilot/Claude cada vez que
+querés generar tácticas para un mapa nuevo (o ampliar uno existente). Reemplaza
+la sección de "tácticas" de tu CONTEXT.md anterior; la estructura de fundamentos,
+callouts y philosophy se mantiene igual.
 
 ================================================================================
-ESTRUCTURA MEJORADA DE PÁGINA DE MAPA (UI/UX)
+1. ROL
 ================================================================================
-Cada página de mapa debería mostrar las siguientes pestañas/secciones:
-1. Filosofía del mapa (philosophy + tempo + rotationComplexity)
-2. Fundamentos (cosas básicas que todo CT/T debe saber)
-3. Callouts (siteA, siteB, middle con descripción breve de cada zona)
-4. Tácticas — filtradas por: tipo (pistol/eco/force/full buy/default/etc.) y equipo (T/CT)
-5. Postplant (posiciones clave y cómo jugar después de plantar)
-6. Retakes (cómo recuperar cada sitio)
-7. Utility lineups clave (lista de smokes/flashes/molotovs importantes con descripción)
-
-En el componente de cada táctica, mostrar siempre:
-- Nombre, categoría, equipo (T/CT), setup (distribución de jugadores)
-- Condición de victoria, condición de falla, errores comunes
-- Utility mínima requerida (badges)
-- Árbol de reacción (reactionTree): texto estilo "si X -> hacer Y"
-- Timing windows
-- Roles (cada rol con posición, objetivo, utility, timing, responsabilidad,
-  qué mirar, comunicación, qué hacer si muere un compañero, qué hacer sin contacto)
+Sos un generador de tácticas competitivas de CS2 para VESP/Centro (o el módulo
+de tácticas de mi app). Te voy a pasar el nombre de un mapa y me devolvés un
+set de tácticas siguiendo EXACTAMENTE la taxonomía y el formato de abajo.
+No inventes callouts que no existen en el mapa real. No mezcles idiomas: los
+callouts van en su nombre real (inglés/propio del mapa, ej: Banana, Jungle,
+Connector, Heaven) — NO se traducen. Todo lo demás (instrucciones, pasos,
+comunicación entre jugadores) va en español rioplatense (voseo: "tenés",
+"tirá", "quedate", "avisá", "cubrí", "date una vuelta").
 
 ================================================================================
-MAPA: DUST2
+2. TAXONOMÍA FIJA (no se puede salir de estas categorías)
 ================================================================================
-ID: dust2
-Nombre: Dust 2
-SideFavor: CT-sided (ligera ventaja CT en pro play)
-Descripción competitiva:
-  Dust 2 es el mapa más icónico de CS. La CT tiene ventaja estructural por el
-  control de largo y el mid. El T debe coordinar presión simultánea para no
-  quedar aislado. El AWP en largo y el AWP en mid son posiciones dominantes que
-  deben ser tratadas con prioridad en cada ronda.
+side (2):
+  - "T"   -> Terrorist
+  - "CT"  -> Counter-Terrorist
 
-Philosophy:
-  - La clave del mapa es el control de mid. Quien domina mid puede atacar corto
-    y dividir la defensa CT.
-  - Largo tiene ventaja de CT por defecto, pero se puede counterjugglar con
-    smokes y flashes de apoyo.
-  - El T no debería comprometer ambos sitios simultáneamente sin información
-    previa; debe usar el mid como palanca.
-  - tWinCondition: Ganar el control de mid temprano y luego explotar el split
-    A (corto + mid) o el execute B (con smoke de puerta y tunnels).
-  - ctWinCondition: Mantener el AWP en largo, negar mid con smokes/flashes y
-    castigar los rushes de B con molotov de auto.
-  - keyAreas: Largo, Mid, Corto, B Site, Tunnels, Ventanas
-  - tempo: Reactivo CT; el T debe imponer el ritmo.
-  - rotationComplexity: Media — las rotaciones CT son cortas pero los ángulos
-    son predecibles.
+tacticType (7) — reemplaza a tu viejo campo "category":
+  - "Execute"  -> ejecución directa a un sitio con utility completa
+  - "Rush"     -> velocidad y volumen de jugadores, poca o nula utility
+  - "Explode"  -> entrada explosiva post-control de mid/zona neutral
+  - "Split"    -> ataque a un sitio desde dos ángulos distintos simultáneos
+  - "Wrap"     -> rodeo/flanqueo tardío desde un ángulo no evidente
+  - "Fake"     -> amague a un sitio para forzar rotación y golpear el otro
+  - "Setup"    -> posicionamiento defensivo CT (o T en anti-eco), no es ataque
 
-Callouts:
-  - siteA: [A Site, Rampa, Coche, Pit, Corto, Catwalk, CT Largo, Puerta A]
-  - siteB: [B Site, Auto, Puerta B, Tunnels, Lower Tunnels, Upper B, Ventana B]
-  - middle: [Mid, Ventanas, Catwalk, Xbox, Doble Puerta, Suelo Mid]
+economy (4):
+  - "Pistol"  -> ronda pistola
+  - "Eco"     -> ronda económica / anti-eco
+  - "Force"   -> compra forzada (SMGs, armadura sin rifle completo)
+  - "Rifle"   -> full buy
 
-Fundamentals:
-  T:
-    - "Largo no se debe pushear sin smoke de corner y flash; el AWP CT destruye
-      cualquier entrada descubierta."
-    - "Mid con dos jugadores permite el split A más rápido del mapa."
-    - "B tunnels es la ruta más fácil de ejecutar pero CT lo sabe; mezclar con
-      fakes a A genera rotaciones."
-    - "El lurker de largo debe quedarse en corner hasta ~18s antes de avanzar."
-  CT:
-    - "El AWP en largo es la posición más rentable del mapa; si el AWP muere
-      temprano la CT pierde la ronda en la mayoría de los casos."
-    - "Ventanas es el mejor callout del mapa; un jugador ahí observa mid, corto
-      y puede rotarse a A o B."
-    - "Dos molotovs en auto y tunnels al inicio frenan cualquier rush B."
-    - "El CT de B nunca debe pushear tunnels sin información clara."
-
---- TÁCTICAS DUST2 ---
-
-[DEFAULT] Default 2-1-2
-  team: T
-  setup: 2 Largo / 1 Mid / 2 B
-  description: Presión dividida para leer la respuesta CT antes de comprometerse.
-  objectivePrincipal: Obtener información de largo y mid para decidir el sitio.
-  concept: No gastar util hasta tener lectura; el mid va a ventanas para observar.
-  winCondition: Llegar a 20s con un pick o información clara del lado débil.
-  failureStates: [Largo y mid perdidos sin información, Util gastada sin impacto]
-  commonMistakes: [Entrar solos a largo, Mid sin apoyo de flash]
-  minimumUtility: [Smoke corner largo, Flash ventanas]
-  priorityWeapons: [AWP largo, Rifle mid]
-  timingWindows: Decidir sitio entre 18-22s.
-  reactionTree: >
-    Pick en largo -> ejecutar A con split corto/mid;
-    Pick en mid -> explotar B con tunnels;
-    Sin pick -> resetear y jugar una segunda ronda de presión.
-  lurkTiming: El lurker de corto entra a los 20s para cortar rotación CT.
-  postplant: Cubrir desde Rampa y Pit.
-  roles:
-    entry (Largo):
-      position: Largo CT
-      objective: Ganas espacio y forzar que el AWP CT se reubique.
-      utility: Smoke corner, Flash pocket
-      timing: Avanzar a 10s, smoke a 12s.
-      responsibility: Abrir largo con trades; no morirse expuesto.
-      whatToLook: Corner, CT Spawn, Puerta A
-      communication: "Largo limpio / AWP visto en corner"
-      onTeammateDeath: Retroceder al corner y esperar el segundo trade.
-      onNoContact: Avanzar al CT Largo y buscar información de corto.
-      postplant: Cubrir desde Rampa con el rifle.
-    support (Mid):
-      position: Ventanas / Suelo Mid
-      objective: Observar los movimientos CT y preparar el split.
-      utility: Flash ventanas, Smoke xbox
-      timing: Llegar a ventanas a 8s.
-      responsibility: Proveer información de rotaciones CT.
-      whatToLook: Catwalk, CT Spawn, Puerta A
-      communication: "CT rotó a B / mid despejado"
-      onTeammateDeath: Cerrar mid y acompañar al grupo que queda.
-      onNoContact: Mantener la posición en ventanas hasta la decisión de sitio.
-      postplant: Cubrir desde Xbox o Catwalk.
-
-[PROTOCOL] Execute B Full
-  team: T
-  setup: 5 B (3 tunnels / 2 mid apoyo)
-  description: Ejecución total a B con smokes de puerta, auto y ventana B.
-  objectivePrincipal: Tomar B con ventaja numérica antes de que CT rote de A.
-  concept: Inundar B con util para eliminar todos los ángulos CT.
-  winCondition: B plantado con tres jugadores vivos para postplant.
-  failureStates: [Smoke de puerta falla, CT rotó rápido desde A]
-  commonMistakes: [Entrar sin smoke de ventana B, No cubrir auto]
-  minimumUtility: [Smoke puerta B, Smoke auto, Flash upper B, Molotov site]
-  priorityWeapons: [Rifle x3, SMG tunnels]
-  timingWindows: Entrar a 20-22s con todas las smokes activas.
-  utilityLayering: Smoke puerta -> Smoke auto -> Flash upper -> Molotov site -> Entrada
-  reactionTree: >
-    B despejado -> plantar en base y retener;
-    CT fuerte en B -> plantar atrás y jugar postplant largo;
-    Rotación de A -> castigar con lurker en mid.
-  postplant: Cubrir desde tunnels y upper B; el lurker corta la rotación en mid.
-  roles:
-    entry (Upper B / Puerta):
-      position: Puerta B / Upper B
-      objective: Ser el primer cuerpo en el site y absorber el primer disparo.
-      utility: Flash upper B antes de entrar.
-      timing: Entrar en cuanto la smoke de puerta esté activa.
-      responsibility: Llegar al site y tomar posición antes que el resto del equipo.
-      whatToLook: Auto, Ventana B, CT ángulos
-      communication: "Upper B limpio / dentro del site"
-      onTeammateDeath: Tomar la posición más segura y esperar el segundo trade.
-      onNoContact: Plantar en base y cubrir desde auto.
-      postplant: Cubrir desde auto o puerta con la smoke caída.
-
-[RETAKE] Retake A
-  team: CT
-  setup: 1 Pit / 2 CT Spawn / 1 Corto / 1 Long
-  description: Recuperar A usando el pit como primera capa y CT como segunda.
-  objectivePrincipal: Limpiar A con crossfire sin perder el CT para rotaciones.
-  concept: Pit entra primero para atraer el fuego; CT flanquea desde corto.
-  winCondition: A limpio con al menos dos CTs vivos.
-  failureStates: [Pit muere sin trade, Rampa cubierta por postplant]
-  minimumUtility: [Smoke rampa, Flash site, Molotov coche]
-  utilityLayering: Smoke rampa -> Flash coche -> Molotov site -> Entrada Pit
-  timingWindows: Iniciar retake a 22-25s.
-  reactionTree: >
-    Pit despejado -> CT entra desde corto con flash;
-    Rampa contestada -> esperár que la smoke caiga y entrar;
-    Dos Ts en site -> necesitás tres CTs mínimo para el retake.
-  postplant: Cubrir desde Pit y Rampa con el CT adicional.
-  roles:
-    anchor (Pit):
-      position: Pit
-      objective: Ser la primera presencia en A y forzar que el T se exponga.
-      utility: Flash site antes de asomarse.
-      timing: Entrar a Pit a 23s.
-      responsibility: Absorber el primer fuego y marcar la posición del T.
-      whatToLook: Coche, Site, Rampa
-      communication: "T en coche / dos en site"
-      onTeammateDeath: Retroceder a pit corto y esperar el flash de CT.
-      onNoContact: Avanzar al site limpiando ángulos.
-      postplant: Defender la bomba desde Pit cubriendo CT.
-
-[RETAKE] Retake B
-  team: CT
-  setup: 2 Upper B / 2 Tunnels / 1 Mid
-  description: Recuperar B usando upper B para crossfire y tunnels para cortar postplant.
-  objectivePrincipal: Limpiar B antes de que el T consolide la posición.
-  winCondition: B limpio sin dejar que el T juegue el postplant.
-  minimumUtility: [Smoke site, Flash upper, Molotov tunnels]
-  reactionTree: >
-    Upper B claro -> entrar en dos y flanquear desde puerta;
-    Tunnels bloqueado -> usar smoke para entrar por upper;
-    T en auto -> necesitás la flash primero antes de asomarte.
-  postplant: Cubrir desde upper B y cortar los ángulos de tunnels.
-
-[PISTOL] Rush B Tunnels
-  team: T
-  setup: 5 B (todos por tunnels)
-  description: Rush completo por tunnels con flashes coordinadas de upper y lower.
-  objectivePrincipal: Ganar B en ronda de pistol antes de que la CT tenga time.
-  concept: Velocidad y abrumación numérica.
-  minimumUtility: [Flash lower tunnels, Flash upper tunnels, Molotov auto]
-  timingWindows: Entrar a B a 18s.
-  winCondition: B plantado con tres vivos para postplant.
-  commonMistakes: [Entrar apilados, No flashear auto]
-  reactionTree: >
-    B vacío -> plantar y retener;
-    CT en upper -> usar molotov de auto y flanquear;
-    CT roturó de A -> usar lurker de mid para cortar.
-
-[PISTOL] Default CT Pistol
-  team: CT
-  setup: 2 A (largo + corto) / 1 Mid (ventanas) / 2 B (upper + puerta)
-  description: Setup estándar CT para pistol que cubre todos los ángulos sin over-aggression.
-  concept: Jugar posiciones seguras, no pushear sin información.
-  minimumUtility: [Molotov tunnels, Flash largo]
-  winCondition: Al menos dos intercambios positivos antes de que el T plante.
-  commonMistakes: [Pushear largo sin flash, Abandonar mid en pistol]
-
-[ECO] Mid Pick + Rush
-  team: T
-  setup: 2 Mid / 3 B
-  description: Conseguir un pick en mid con el rifle eco y luego ejecutar B con ventaja.
-  minimumUtility: [Flash ventanas]
-  winCondition: Pick en mid + B plantado.
-  reactionTree: >
-    Pick en mid -> 5 B con ventaja numérica;
-    Sin pick -> rush B directo a 22s;
-    CT reaggression -> reset y jugar económico.
-
-[FORCE] Force B con SMG
-  team: T
-  setup: 5 B
-  description: Rush B con SMGs aprovechando que el CT probablemente tenga escopetas o pistolas mejoradas.
-  minimumUtility: [Smoke puerta, Flash upper]
-  winCondition: B plantado con ventaja de trade.
-  timingWindows: Entrar antes de 18s para pillar al CT despistado.
-
-[FULL BUY] Full Execute A Split
-  team: T
-  setup: 2 Largo / 2 Mid-Corto / 1 Lurk B
-  description: Split A con jugadores desde largo y desde corto vía mid, sincronizados con util.
-  objectivePrincipal: Aislar el site A en un crossfire desde dos ángulos.
-  minimumUtility: [Smoke CT A, Smoke Rampa, Flash corto, Flash largo, Molotov pit]
-  utilityLayering: Smoke CT A -> Smoke Rampa -> Flash corto simultáneo -> Molotov Pit -> Entrada
-  timingWindows: Ejecutar a 22-24s.
-  winCondition: A plantado con cuatro vivos.
-  reactionTree: >
-    Corto despejado -> entrada doble simultánea;
-    Largo resistido -> el split de corto entra primero;
-    CT rota de B -> lurker corta en mid.
-  postplant: Cubrir desde Rampa y Pit; uno defiende la base del site.
-
-[ANTI-ECO] Setup B + Información de Largo
-  team: CT
-  setup: 3 B / 1 Largo / 1 Mid
-  description: Colapsar sobre B si el eco intenta un rush, usando largo y mid para información.
-  minimumUtility: [Molotov tunnels, Flash upper B]
-  winCondition: El eco no planta; si planta, retake inmediato con dos CTs vivos.
-
-[MID ROUND] Rotate A from B Pressure
-  team: T
-  description: Después de generar presión en B, rotar a A aprovechando la rotación del CT.
-  timingWindows: Cambiar a A después de 18s si CT confirmó rotación a B.
-  reactionTree: >
-    CT confirmado en B -> todos rotan a A inmediato;
-    CT no rota -> ejecutar B con ventaja numérica;
-    CT dividido -> explotar el sitio más débil.
+Nota: NO se generan retakes. Los retakes son late-round (dependen de cómo
+quedó viva la ronda, no se pueden planear pre-round), quedan fuera del
+alcance de este generador. `postplant` sí se mantiene como sub-campo dentro
+de la táctica (qué hacer después de plantar en un Execute/Split/Rush), porque
+eso sí es parte del plan pre-round.
 
 ================================================================================
-MAPA: MIRAGE
+3. FORMATO DE TÍTULO
 ================================================================================
-ID: mirage
-Nombre: Mirage
-SideFavor: Balanced (CT leve ventaja en pro play)
-Descripción competitiva:
-  Mirage es el mapa más jugado del pool competitivo. El control de mid es
-  fundamental; quien domina mid puede splitear A (ramp + CT) o apoyar B. La CT
-  tiene múltiples ángulos en A pero el T puede aislarlos con utility. El ejecutar
-  A con smokes de jungle, CT y stairs es el execute más efectivo del mapa.
+"<Sitio/Acción> <TacticType> - <Referencia>"
+Ejemplos reales (cs2.app): "A Execute - Spirit", "B Fake to A - MOUZ",
+"CT Mid Push - Spirit", "B Split Pistol - Vitality".
 
-Philosophy:
-  - tWinCondition: Ganar el control de mid-ramp para el split A, o ejecutar B
-    directamente con util completa.
-  - ctWinCondition: Mantener el control de mid con el AWP, castigar los defaults
-    T con aggression de ramp y negar short con molotovs.
-  - keyAreas: Mid, Ramp, Short, A Site, B Apps, Jungle, Palace
-  - tempo: El T impone el ritmo en los primeros 15s; CT reacciona.
-  - rotationComplexity: Alta — rotaciones de A a B requieren pasar por CT que
-    está expuesta.
-
-Callouts:
-  - siteA: [A Site, Ticket booth, Jungle, CT, Stairs, Ramp, Short, Triple box, Tetris, Palace]
-  - siteB: [B Site, Van, Bench, Apartments, Short apps, Long apps, B short, Market]
-  - middle: [Mid, Window, Short mid, Top mid, Connector, Catwalk, Ladder room]
-
-Fundamentals:
-  T:
-    - "Ramp sin información es suicidio; siempre flashear antes de entrar."
-    - "El split A necesita un jugador en CT y otro en jungle/stairs para ser efectivo."
-    - "B Apps con dos jugadores y utility completa es el execute más seguro del mapa."
-    - "Mid connector es el callout más importante; un lurker ahí puede cortar
-       cualquier rotación CT."
-  CT:
-    - "El AWP en mid es la posición más rentable; perderla cambia la dinámica de la ronda."
-    - "Molotov de ramp al inicio niega el control T antes de que puedan flashear."
-    - "Un CT en jungle puede ganar el duelo de stairs y salvar el site A."
-    - "B nunca se debe sobre-aggresive; dos CTs en van y bench es suficiente."
-
---- TÁCTICAS MIRAGE ---
-
-[DEFAULT] Default 2-1-2 Mirage
-  team: T
-  setup: 2 B Apps / 1 Mid / 2 A (palace + ramp)
-  description: Lectura de la defensa CT con presencia en los tres flancos.
-  objectivePrincipal: Identificar el lado débil de la CT antes de comprometerse.
-  winCondition: Pick en palace o mid + ejecutar el sitio débil a 22s.
-  minimumUtility: [Smoke top mid, Flash ramp, Flash apps]
-  timingWindows: Decidir sitio entre 18-22s.
-  reactionTree: >
-    Pick en palace -> split A con palace + stairs;
-    Pick en mid -> apoyo de B con tres jugadores;
-    Sin pick -> reset y jugar segunda ronda de presión.
-  postplant: Cubrir desde ticket booth y jungle.
-  roles:
-    entry (A - Palace):
-      position: Palace
-      objective: Avanzar por palace y buscar información del ticket booth.
-      utility: Flash palace antes de asomarse al site.
-      timing: Avanzar a palace a 10s.
-      responsibility: Forzar al CT de A a mantener su posición.
-      whatToLook: Ticket booth, Stairs CT, Jungle
-      communication: "CT en ticket / jungle libre"
-      onTeammateDeath: Retroceder a palace y esperar el flash del compañero.
-      onNoContact: Avanzar hasta el site y cubrir la entrada de stairs.
-      postplant: Cubrir desde ticket booth o detrás del triple box.
-
-[PROTOCOL] Full Execute A
-  team: T
-  setup: 2 Palace / 2 Stairs-Ramp / 1 Mid Lurk
-  description: Ejecución coordinada a A con smokes de jungle, CT spawn y stairs.
-  objectivePrincipal: Tomar A site con crossfire desde palace y stairs.
-  minimumUtility: [Smoke jungle, Smoke CT spawn, Smoke stairs, Flash ticket, Molotov site o CT]
-  utilityLayering: Smoke CT -> Smoke jungle -> Smoke stairs -> Flash ticket -> Entrada simultánea
-  timingWindows: Ejecutar a 22-24s cuando todas las smokes estén activas.
-  winCondition: A plantado bajo jungle con cuatro vivos.
-  failureStates: [Smoke de CT no aterriza, Jungle no smokada y hay AWP]
-  commonMistakes: [Entrar sin que todas las smokes estén activas, No cubrir catwalk]
-  reactionTree: >
-    A claro con smokes -> entrada doble palace + stairs;
-    CT aggression de stairs -> esperás la smoke y entras por palace;
-    AWP en jungle -> smoke jungle primero, luego entrar.
-  postplant: Cubrir desde jungle (fumado) y ticket booth; lurker corta rotación en connector.
-
-[PROTOCOL] Full Execute B Apps
-  team: T
-  setup: 4 B Apps / 1 Mid Lurk
-  description: Inundar B por apps con smokes de van, bench y short.
-  objectivePrincipal: Tomar B site antes de que CT rote de A.
-  minimumUtility: [Smoke van, Smoke bench, Flash short apps, Molotov market o site]
-  utilityLayering: Smoke van -> Smoke bench -> Flash short -> Molotov -> Entrada
-  timingWindows: Entrar a 20-22s.
-  winCondition: B plantado bajo bench con tres vivos.
-  reactionTree: >
-    B despejado -> plantar bajo bench;
-    CT en van -> smoke van y flanquear desde market;
-    CT aggression de short -> retroceder y esperar.
-  postplant: Cubrir desde bench y van; lurker corta en connector o short.
-
-[RETAKE] Retake A
-  team: CT
-  setup: 1 CT Spawn / 2 Jungle / 1 Stairs / 1 Mid-Connector
-  description: Retake de A usando jungle como entrada principal y CT como flanqueo.
-  minimumUtility: [Smoke triple box, Flash site, Molotov o Flash jungle]
-  utilityLayering: Smoke triple box -> Flash jungle -> Entrada CT spawn + Jungle
-  timingWindows: Iniciar retake a 22-25s.
-  winCondition: A limpio con dos CTs vivos.
-  reactionTree: >
-    Jungle limpio -> entrada doble CT + jungle;
-    T en ticket booth -> smoke ticket y entrar por jungle;
-    T en triple box -> molotov triple box y esperar el movimiento.
-
-[RETAKE] Retake B
-  team: CT
-  setup: 2 B Short / 2 Apps / 1 CT Spawn
-  description: Retake B usando presión desde apps y short con flashes coordinadas.
-  minimumUtility: [Smoke van, Flash site, Molotov bench]
-  winCondition: B limpio con tres CTs vivos.
-  reactionTree: >
-    Van libre -> entrar por short B;
-    Bench libre -> apps entra primero;
-    T consolida site -> necesitás smoke de van para entrar seguro.
-
-[PISTOL] Rush A con Palace
-  team: T
-  setup: 5 A (3 palace / 2 ramp-stairs)
-  description: Rush coordiando a A por palace con flashes y molotov de site.
-  minimumUtility: [Flash palace, Flash ticket, Molotov site o CT]
-  timingWindows: Entrar a 18-20s.
-  winCondition: A plantado en el primer trade.
-  commonMistakes: [Ir a palace de a uno, No usar las flashes simultáneamente]
-
-[PISTOL] CT Default Pistol
-  team: CT
-  setup: 2 A (jungle + ticket) / 1 Mid / 2 B (van + short)
-  description: Setup CT conservador que cubre todos los flancos sin over-aggression.
-  minimumUtility: [Molotov ramp, Flash mid]
-  winCondition: Dos intercambios positivos antes de que el T plante.
-
-[ECO] Mid Pick + Rush B
-  team: T
-  setup: 1 Mid AWP / 2 Mid apoyo / 2 B
-  description: Conseguir un pick en mid-window con el AWP y luego ejecutar B.
-  minimumUtility: [Smoke window]
-  winCondition: Pick en window + B plantado.
-  reactionTree: >
-    Pick en window -> 4 B immediate;
-    Sin pick -> rush B directo;
-    CT aggression -> reset economía.
-
-[FORCE] B Apps Force
-  team: T
-  setup: 4 Apps / 1 Mid
-  description: Forzar B apps con SMGs aprovechando que la CT tenga armamento ligero.
-  minimumUtility: [Smoke van, Flash apps]
-  winCondition: B plantado en los primeros trades.
-  timingWindows: Entrar antes de 18s.
-
-[FULL BUY] Mid Control + Split A
-  team: T
-  setup: 2 Mid (window + connector) / 2 Palace / 1 Ramp
-  description: Controlar mid para el split A más efectivo del mapa.
-  objectivePrincipal: Llegar a connector y entrar a A desde CT + palace simultáneamente.
-  minimumUtility: [Smoke window, Smoke CT, Flash ticket, Smoke jungle, Molotov site]
-  utilityLayering: Smoke window -> avanzar mid -> Smoke CT + Smoke jungle -> Flash ticket -> Split
-  timingWindows: Ejecutar a 22-24s después de tomar connector.
-  winCondition: A plantado bajo jungle con cuatro vivos.
-  reactionTree: >
-    Connector tomado -> split inmediato palace + CT;
-    CT aggression en mid -> retroceder y jugar execute B;
-    AWP en jungle -> smoke jungle y entrar por CT con lurk.
-
-[ANTI-ECO] Hold Mid + B Two
-  team: CT
-  setup: 2 Mid (ventana + short) / 1 A / 2 B
-  description: Priorizar el control de mid para evitar que el eco tome connector.
-  minimumUtility: [Molotov top mid, Flash short mid]
-  winCondition: Eco no llega a connector; si intenta B, dos CTs están listos.
-
-[MID ROUND] Backdoor B desde Mid
-  team: T
-  description: Después de generar presión en A con palace, girar a B por mid-connector.
-  timingWindows: Cambiar a 18s si CT rota a A.
-  reactionTree: >
-    CT rota a A -> pasar connector a B rápido;
-    CT no rota -> ejecutar A con palace + ramp;
-    CT dividido -> explotar con el grupo más numeroso.
+`<Referencia>` es el nombre de un equipo pro real (ej: Spirit, MOUZ, FURIA,
+NAVI, Vitality, G2, Liquid) asociado a esa táctica o a un estilo de juego
+similar al de ese equipo. Usalo siempre — sirve para que yo pueda corroborar
+después si la táctica es real/vigente buscando ese equipo + mapa. Si no tenés
+una referencia real confiable para esa táctica puntual, decilo explícitamente
+en vez de inventar una asociación falsa.
 
 ================================================================================
-MAPA: INFERNO
+4. ESTRUCTURA DE DATOS POR TÁCTICA (TypeScript)
 ================================================================================
-(Ya definido en el script Python del proyecto — se extiende aquí con más detalle)
+Generá cada táctica con esta interfaz (extiende tu modelo actual, no lo
+reemplaza — los campos viejos como winCondition, minimumUtility,
+utilityLayering, reactionTree, commonMistakes, failureStates se mantienen):
 
-ID: inferno
-Nombre: Inferno
-SideFavor: Balanced
-Descripción competitiva:
-  Inferno gira en torno al control de banana. Si los T toman banana libre, tienen
-  la presión suficiente para ejecutar B o crear el fake para A. El split A
-  (palace + short) es el ataque T más efectivo pero requiere timing preciso.
-  La CT tiene que negar banana con nades y mantener mid para las rotaciones.
+```typescript
+export type Side = "T" | "CT";
+export type TacticType =
+  | "Execute" | "Rush" | "Explode" | "Split" | "Wrap" | "Fake" | "Setup";
+export type Economy = "Pistol" | "Eco" | "Force" | "Rifle";
 
-[MEJORAS a la estructura existente del proyecto]:
-  - Agregar a la filosofía: "sideFavor: Balanced — la CT tiene ventaja estructural
-    en A (múltiples ángulos) pero B puede caer rápido si banana se pierde."
-  - En callouts, agregar descripciones: 
-      siteA -> Pit (posición profunda T), Truck (cover de entry), Library (rotación CT)
-      siteB -> Banana (pasillo principal), Coil (cover T en banana), 
-               Second Oranges (posición CT ofensiva)
-  - Agregar táctica de lurk desde CT hacia B (reaggression alternativa)
-  - Agregar táctica de 5-man rush B pistol con molotov de platform
+export interface TacticRole {
+  id: string;                    // ej: "entry-a", "smoker", "lurker-mid"
+  rolNombre: string;              // ej: "Entry Palace"
+  posicion: string;               // callout donde arranca
+  arma: string;                   // arma sugerida según economy
+  utilidad: string[];             // ["Flash palace", "Smoke jungle"]
+  pasos: string[];                // paso a paso numerado, en rioplatense
+  comunicacion: string[];         // calls que grita ese rol ("CT en ticket")
+  siCompañeroMuere: string;
+  siSinContacto: string;
+  postplant?: string;
+}
 
-[TACTICS ADICIONALES para Inferno]
-
-[PROTOCOL] Full A Split via Palace + Short
-  team: T
-  setup: 2 Palace / 2 Short (vía mid) / 1 Lurk B
-  description: Split A clásico de pro play; entrar desde palace y short simultáneamente.
-  objectivePrincipal: Aislar el site A con dos ángulos de entrada para forzar trades negativos al CT.
-  minimumUtility: [Smoke library, Smoke CT, Smoke pit, Flash short, Flash palace]
-  utilityLayering: Smoke library -> Smoke CT -> Smoke pit -> Flash corto -> Flash palace -> Entrada
-  timingWindows: Ejecutar a 22-24s con todas las smokes activas.
-  winCondition: A plantado bajo library o en puerta con cuatro vivos.
-  failureStates: [Short sigue activo con AWP, Library no smokada y hay ángulo]
-  commonMistakes: [Entrar sin que todas las smokes estén activas, Palace entra solo sin apoyo]
-  reactionTree: >
-    Short fumado y library fumado -> entrada doble simultánea;
-    CT aggression desde short -> esperás la smoke y entras por palace;
-    Lurk corta rotación si CT llega de B.
-  postplant: Cubrir desde pit y library (fumada); lurker corta en B.
-
-[REAGGRESSION] CT Aggression Mid
-  team: CT
-  setup: 2 Mid / 3 Banana
-  description: Aggression de CT hacia mid para negar el control T y recuperar corto.
-  objectivePrincipal: Tomar el control de mid e impedir el split A.
-  minimumUtility: [Smoke mid, Flash corto]
-  timingWindows: Antes de 12s si mid está libre.
-  winCondition: Pick en mid + control de corto.
-  reactionTree: >
-    Mid despejado -> empujar hasta banco y negar T;
-    T en mid -> retroceder a CT y mantener el ángulo;
-    Banana presionada -> priorizar banana sobre mid.
+export interface Tactic {
+  id: string;                     // slug: "a-execute-spirit"
+  mapId: string;
+  titulo: string;                 // "A Execute - Spirit"
+  sitio: "A" | "B" | "Mid";
+  side: Side;
+  tacticType: TacticType;
+  economy: Economy;
+  referencia?: string;            // equipo/autor de estilo
+  resumen: string;                // 1-2 líneas, rioplatense, sin jerga técnica
+  setup: string;                  // "3 Palace / 2 Mid"
+  objetivoPrincipal?: string;
+  winCondition: string;
+  failureStates?: string[];
+  commonMistakes?: string[];
+  minimumUtility: string[];
+  utilityLayering?: string;       // orden de tiradas paso a paso
+  timingWindow?: string;          // "Ejecutar a 22-24s"
+  pasosGenerales: string[];       // paso a paso del team, numerado
+  roles: TacticRole[];            // mínimo 1, idealmente uno por jugador
+  reactionTree?: string;          // "si X -> hacer Y"
+  postplant?: string;
+  videoUrl: string | null;        // por ahora siempre null, se completa después
+}
+```
 
 ================================================================================
-MAPA: NUKE
+5. ESTILO RIOPLATENSE — GLOSARIO OBLIGATORIO
 ================================================================================
-(Ya definido en el script Python del proyecto — se extiende aquí)
+Usar SIEMPRE voseo y este tipo de vocabulario en `pasos`, `comunicacion`,
+`siCompañeroMuere`, `siSinContacto`, `resumen`:
 
-ID: nuke
-Nombre: Nuke
-SideFavor: CT-sided (la CT más fuerte del pool activo)
-Descripción competitiva:
-  Nuke es el mapa más favorecedor para la CT del pool. El T debe crear presión
-  vertical (ramp + vent simultáneo) para dividir la defensa. La CT puede jugar
-  muy agresiva en outside y ramp porque tiene múltiples vías de escape y apoyo.
-  El execute A (ramp + squeaky) y el execute B (yard + secret) son los únicos
-  dos ataques realmente efectivos.
+  - "tirá / tirate"      en vez de "lanza / lánzate"
+  - "quedate"            en vez de "quédate"
+  - "avisá"              en vez de "avisa"
+  - "cubrí"              en vez de "cubre"
+  - "date una vuelta"    (flanqueo/rotación corta)
+  - "metele"             (entrar con decisión)
+  - "esperá la smoke"    en vez de "espera el humo"
+  - "cortá la rotación"  (interceptar rotación CT/T)
+  - "posta"              (en serio / confirmado, para remarcar prioridad)
+  - "fumado/a"           (zona cubierta por smoke) — mantiene tu convención
+                          actual del CONTEXT.md
 
-[MEJORAS a la estructura existente]:
-  - Agregar: "sideFavor: CT-sided — el T necesita utility perfecta y ejecución
-    coordinada para ganar rounds; un solo error en ramp puede costar la ronda."
-  - En callouts, agregar: 
-      siteA -> Heaven (posición dominante AWP), Hut (cover CT), 
-               Trophy (ángulo A site), Ramp (entrada principal T)
-      siteB -> Hell (posición debajo del site), Secret (ruta alternativa T),
-               Silo (cover exterior), Yard (zona abierta)
-  - Agregar táctica específica de 5-man outside force para pistol
-
-[TACTICS ADICIONALES para Nuke]
-
-[PROTOCOL] Full Execute A (Ramp + Squeaky)
-  team: T
-  setup: 3 Ramp / 2 Squeaky
-  description: Execute coordinado a A con smokes de heaven, hut y squeaky door.
-  objectivePrincipal: Tomar A site con crossfire desde ramp y squeaky simultáneamente.
-  minimumUtility: [Smoke heaven, Smoke squeaky, Smoke hut, Flash ramp, Molotov trophy room]
-  utilityLayering: Smoke heaven -> Smoke hut -> Smoke squeaky -> Flash ramp -> Entrada
-  timingWindows: Ejecutar a 22-24s con todas las smokes activas.
-  winCondition: A plantado en el centro con cuatro vivos.
-  reactionTree: >
-    Heaven fumado y hut fumado -> entrada ramp y squeaky simultánea;
-    CT aggression desde ramp -> esperás smoke y entras por squeaky;
-    Outside pressure -> lurker corta la rotación de afuera.
-  postplant: Cubrir desde ramp (a resguardo) y squeaky (dentro del site).
-
-[PISTOL] Outside Rush + B Entry
-  team: T
-  setup: 5 Outside (3 yard / 2 secret)
-  description: Rush masivo por outside hacia B aprovechando que la CT no tiene util en pistol.
-  minimumUtility: [Smoke yard, Flash B]
-  timingWindows: Entrar antes de 18s.
-  winCondition: B plantado en el primer trade.
-  commonMistakes: [No cubrir secret, Ir apilados al mismo ángulo de silo]
-
-[ANTI-ECO] Ramp Aggression
-  team: CT
-  setup: 3 Ramp / 2 Heaven
-  description: Aggression masiva de CT en ramp para matar el eco en lobby.
-  minimumUtility: [Flash lobby, Molotov ramp entry]
-  winCondition: Eco muerto antes de llegar a los sitios.
-  commonMistakes: [Over-aggression sin trade, No retroceder si el eco tiene rifles]
+No usar "vosotros", "tú", "lanza", ni doblaje neutro de España/México.
+Mantené el tono directo y técnico que ya usás vos en el proyecto (sin relleno).
 
 ================================================================================
-MAPA: VERTIGO
+6. CALLOUTS — REGLA DE ORO
 ================================================================================
-ID: vertigo
-Nombre: Vertigo
-SideFavor: CT-sided
-Descripción competitiva:
-  Vertigo es el mapa más vertical del pool. El control de mid es decisivo; quien
-  domina mid puede atacar A por ramp o B por scaffolding. La CT tiene ventaja
-  porque los ángulos de CT son difíciles de limpiar sin utility. El T debe usar
-  molotovs de way-boost y smokes de stairs para ejecutar A efectivamente.
-
-Philosophy:
-  - tWinCondition: Controlar mid y ejecutar A con smokes de stairs y CT, o
-    ejecutar B con smokes de ramp y scaffolding.
-  - ctWinCondition: Mantener el control de mid con el AWP en stairs y castigar
-    cualquier rush de A con molotov de way.
-  - keyAreas: Mid, Stairs, A Site, B Site, Ramp, Scaffolding, CT, Way
-  - tempo: La CT impone el ritmo; el T debe ser paciente para no caer en trampas.
-  - rotationComplexity: Alta — las rotaciones CT son lentas porque las escaleras
-    son el único camino rápido.
-
-Callouts:
-  - siteA: [A Site, Way, Stairs CT, CT A, Top stairs, Ramp A, Side A]
-  - siteB: [B Site, Ramp B, Scaffolding, Catwalk, Pillar, CT B, Elevator]
-  - middle: [Mid, T-mid, CT-mid, Boost, Connector]
-
-Fundamentals:
-  T:
-    - "Mid sin control previo es la muerte; flashear antes de entrar al boost."
-    - "A necesita mínimo tres smokes para ser ejecutable: stairs CT, way y ramp."
-    - "B con dos jugadores por scaffolding y uno por ramp crea un crossfire imposible."
-    - "El lurker en mid debe esperar la rotación CT antes de avanzar a B."
-  CT:
-    - "El AWP en stairs CT es la posición más rentable del mapa."
-    - "Molotov de way al inicio niega el control T de la rampa A."
-    - "Dos CTs en B (ramp + CT B) son suficientes si el tercero tiene mid."
-    - "Nunca salir de B por scaffolding sin información; es un suicidio."
-
---- TÁCTICAS VERTIGO ---
-
-[DEFAULT] Default 2-1-2 Vertigo
-  team: T
-  setup: 2 A (ramp + side) / 1 Mid / 2 B (scaffolding + ramp B)
-  description: Lectura CT con presencia en los tres flancos del mapa.
-  minimumUtility: [Smoke stairs CT, Flash mid]
-  timingWindows: Decidir sitio entre 18-22s.
-  reactionTree: >
-    Pick en mid -> split A con mid + ramp;
-    Pick en side A -> execute A completo;
-    Sin pick -> execute B con scaffolding + ramp.
-  postplant: Cubrir desde way y ramp A.
-
-[PROTOCOL] Full Execute A
-  team: T
-  setup: 4 A / 1 Lurk Mid
-  description: Ejecución coordinada a A con smokes de stairs CT, way y ramp.
-  minimumUtility: [Smoke stairs CT, Smoke way, Smoke ramp A, Flash side A, Molotov CT A]
-  utilityLayering: Smoke stairs CT -> Smoke way -> Smoke ramp A -> Flash side -> Molotov CT -> Entrada
-  timingWindows: Ejecutar a 22-24s.
-  winCondition: A plantado en centro con tres vivos.
-  failureStates: [Smoke de stairs CT no aterriza, Way sigue activo]
-  commonMistakes: [Entrar por ramp sin smoke de way, No cubrir stairs CT]
-  reactionTree: >
-    Stairs CT fumado y way fumado -> entrada simultánea desde ramp y side;
-    CT aggression en way -> esperás smoke y entras por ramp;
-    Mid lurk -> corta rotación si CT viene de B.
-  postplant: Cubrir desde way y side A con smokes activas.
-
-[PROTOCOL] Full Execute B
-  team: T
-  setup: 3 Scaffolding / 2 Ramp B
-  description: Ejecución a B con smokes de ramp B, CT B y scaffolding entry.
-  minimumUtility: [Smoke ramp B, Smoke CT B, Flash scaffolding, Molotov pillar]
-  utilityLayering: Smoke CT B -> Smoke ramp B -> Flash scaffolding -> Molotov pillar -> Entrada
-  timingWindows: Ejecutar a 20-22s.
-  winCondition: B plantado detrás del pillar con tres vivos.
-  reactionTree: >
-    CT B fumado -> entrada scaffolding + ramp simultánea;
-    CT aggression ramp -> smoke ramp y entrar por scaffolding;
-    Pillar activo -> molotov pillar antes de entrar.
-  postplant: Cubrir desde scaffolding y ramp B con smokes activas.
-
-[RETAKE] Retake A
-  team: CT
-  setup: 2 CT Spawn / 2 Stairs / 1 Mid
-  description: Retake de A usando stairs como entrada y CT spawn como flanqueo.
-  minimumUtility: [Smoke site, Flash way, Molotov ramp]
-  utilityLayering: Smoke site -> Flash way -> Entrada simultánea stairs + CT spawn
-  timingWindows: Iniciar a 22-25s.
-  winCondition: A limpio con dos CTs vivos.
-  reactionTree: >
-    Way libre -> entrar desde stairs y CT spawn;
-    T en site -> smoke site y coordinar entrada doble;
-    T en ramp -> molotov ramp antes de entrar.
-
-[RETAKE] Retake B
-  team: CT
-  setup: 2 CT B / 2 Catwalk / 1 Mid
-  description: Retake de B usando el CT de B como entrada y catwalk como flanqueo.
-  minimumUtility: [Smoke scaffolding, Flash site, Molotov pillar]
-  winCondition: B limpio con dos CTs vivos.
-  reactionTree: >
-    Scaffolding libre -> entrar CT B y catwalk;
-    T consolidado -> smoke scaffolding y flanquear;
-    Pillar activo -> molotov pillar antes de asomarse.
-
-[PISTOL] Rush A con Way
-  team: T
-  setup: 4 A / 1 Mid
-  description: Rush a A por way con flashes coordinadas y molotov de CT.
-  minimumUtility: [Flash way, Flash stairs CT, Molotov CT A]
-  timingWindows: Entrar a 18-20s.
-  winCondition: A plantado en el primer trade.
-  commonMistakes: [Ir por way sin flash, Agrupados en la escalera]
-
-[PISTOL] CT Default Pistol
-  team: CT
-  setup: 1 Stairs CT / 1 Mid / 2 A (way + ramp) / 1 B
-  description: Setup CT conservador; stairs CT es el punto clave del pistol.
-  minimumUtility: [Molotov way, Flash mid]
-  winCondition: Dos intercambios positivos.
-
-[ECO] Mid Pick + Rush A
-  team: T
-  setup: 2 Mid / 3 A
-  description: Conseguir un pick en mid y luego rushear A con ventaja.
-  minimumUtility: [Flash mid]
-  winCondition: Pick en mid + A plantado.
-
-[FORCE] B Scaffolding Force
-  team: T
-  setup: 4 Scaffolding / 1 Mid
-  description: Forzar B por scaffolding con SMGs en una ronda de force buy.
-  minimumUtility: [Smoke CT B, Flash scaffolding]
-  winCondition: B plantado con ventaja de trade.
-  timingWindows: Entrar antes de 18s.
-
-[FULL BUY] Mid Control + Split A
-  team: T
-  setup: 2 Mid / 2 A Ramp / 1 Side A
-  description: Tomar mid y luego splitear A desde ramp y side simultáneamente.
-  minimumUtility: [Smoke mid, Smoke stairs CT, Smoke way, Flash side, Molotov CT]
-  timingWindows: Ejecutar split a 22-24s después de tomar mid.
-  winCondition: A plantado con cuatro vivos.
-  reactionTree: >
-    Mid tomado -> split inmediato ramp + side;
-    CT aggression en mid -> retroceder y execute B;
-    AWP en stairs CT -> smoke stairs y entrar por way.
-
-[ANTI-ECO] Hold Mid Two CT
-  team: CT
-  setup: 2 Mid / 3 A
-  description: Priorizar el control de mid para evitar el split A del eco.
-  minimumUtility: [Molotov mid T, Flash stairs]
-  winCondition: Eco no llega a mid o muere en el intento.
-
-[MID ROUND] Rotate B from A Pressure
-  team: T
-  description: Generar presión en A, forzar la rotación CT y girar a B.
-  timingWindows: Cambiar a 18s si CT confirmó rotación a A.
-  reactionTree: >
-    CT rota a A -> todos a B por scaffolding + ramp;
-    CT no rota -> execute A completo;
-    CT dividido -> explotar el lado más débil.
+Los callouts de cada mapa (siteA, siteB, middle) van en su nombre real de la
+comunidad competitiva, tal cual figuran en tu CONTEXT.md para los mapas ya
+cargados (Dust2, Mirage, Inferno, Nuke, Vertigo, Ancient, Anubis). Si el mapa
+que pido es nuevo (no está en tu lista), primero generá:
+  1. philosophy (sideFavor, tWinCondition, ctWinCondition, keyAreas, tempo,
+     rotationComplexity)
+  2. callouts (siteA, siteB, middle)
+  3. fundamentals (T y CT, tono rioplatense)
+...y RECIÉN DESPUÉS las tácticas. Nunca inventes callouts sin chequear que
+existan en el mapa real.
 
 ================================================================================
-MAPA: ANCIENT
+7. CANTIDAD Y COBERTURA MÍNIMA POR MAPA
 ================================================================================
-ID: ancient
-Nombre: Ancient
-SideFavor: CT-sided (ligeramente)
-Descripción competitiva:
-  Ancient es un mapa estrecho con mucho humo requerido. El control de mid es
-  crítico para el T; quien tiene mid puede splitear A o apoyar B. La CT tiene
-  ventaja en A por los múltiples ángulos, pero B es relativamente fácil de
-  ejecutar. El AWP en mid y el AWP en A son posiciones dominantes.
+Cuando pida "tácticas completas de <mapa>", cubrí como mínimo:
+  - 1 Execute A y 1 Execute B (Rifle)
+  - 1 Split A o B (Rifle)
+  - 1 Fake (a cualquier sitio, Rifle o Eco)
+  - 1 Rush o Explode (Rifle o Force)
+  - 1 táctica Pistol por lado (T y CT) — la de CT usa tacticType "Setup"
+  - 1 Setup CT de mid-round / anti-eco
 
-Philosophy:
-  - tWinCondition: Controlar mid y splitear A (mid + main), o ejecutar B con
-    smokes completas de CT y pit.
-  - ctWinCondition: Mantener el AWP en mid, castigar los pushes de main con
-    molotovs y retener B con dos CTs sólidos.
-  - keyAreas: Mid, Main A, B Site, Donut (A), Ruins, Temple, CT
-  - tempo: La CT impone el ritmo; el T debe usar utility para romper el stalemate.
-  - rotationComplexity: Media-alta — las rotaciones de A a B son lentas.
+(No se incluyen retakes — quedan fuera del alcance de este generador, ver
+sección 2.)
 
-Callouts:
-  - siteA: [A Site, Main, Donut, Elbow, House (CT A), Temple, Ruins, Corner A, Steps]
-  - siteB: [B Site, Pit B, CT B, Open B, Cave, Ladder, Side B]
-  - middle: [Mid, Mid top, Mid CT, River, Bridge]
-
-Fundamentals:
-  T:
-    - "Main sin smoke de donut es suicidio; el CT tiene demasiados ángulos."
-    - "El control de mid-river permite el split A más efectivo del mapa."
-    - "B con smokes de CT B y pit B es ejecutable con dos jugadores."
-    - "Un lurker en mid puede cortar cualquier rotación CT de A a B."
-  CT:
-    - "El AWP en mid o en donut es fundamental; perderlos cambia la dinámica."
-    - "Molotov de main al inicio niega el avance T temprano."
-    - "Dos CTs en B (open B + CT B) son suficientes para la mayoría de los ataques."
-    - "El CT de temple puede ganar el duelo de ruins y salvar el site A."
-
---- TÁCTICAS ANCIENT ---
-
-[DEFAULT] Default 2-1-2 Ancient
-  team: T
-  setup: 2 A Main / 1 Mid / 2 B
-  description: Lectura de la CT con presencia en main, mid y B.
-  minimumUtility: [Smoke donut, Smoke mid CT, Flash main]
-  timingWindows: Decidir sitio entre 18-22s.
-  reactionTree: >
-    Pick en mid -> split A con mid + main;
-    Pick en donut -> execute A completo;
-    Sin pick -> execute B con CT B y pit smokes.
-  postplant: Cubrir desde donut y ruins.
-
-[PROTOCOL] Full Execute A
-  team: T
-  setup: 3 Main / 2 Mid (river)
-  description: Split A con smokes de house, donut y temple.
-  minimumUtility: [Smoke house CT, Smoke donut, Smoke temple, Flash main, Flash mid]
-  utilityLayering: Smoke house -> Smoke donut -> Smoke temple -> Flash main + Flash mid -> Entrada
-  timingWindows: Ejecutar a 22-24s.
-  winCondition: A plantado en el centro con cuatro vivos.
-  reactionTree: >
-    Donut fumado y temple fumado -> entrada main + mid simultánea;
-    AWP en donut -> smoke donut y entrar por mid;
-    CT aggression main -> esperás smokes y entráis por mid.
-  postplant: Cubrir desde donut y ruins con smokes activas.
-
-[PROTOCOL] Full Execute B
-  team: T
-  setup: 4 B / 1 Lurk Mid
-  description: Ejecución a B con smokes de CT B, pit B y open B.
-  minimumUtility: [Smoke CT B, Smoke pit B, Flash open B, Molotov ladder]
-  utilityLayering: Smoke CT B -> Smoke pit B -> Flash open B -> Molotov ladder -> Entrada
-  timingWindows: Ejecutar a 20-22s.
-  winCondition: B plantado en el centro con tres vivos.
-  reactionTree: >
-    CT B fumado -> entrada doble open B + cave;
-    CT aggression cave -> smoke cave y entrar por open B;
-    Lurker mid -> corta rotación si CT viene de A.
-  postplant: Cubrir desde pit B y CT B con smokes activas.
-
-[RETAKE] Retake A
-  team: CT
-  setup: 2 CT Spawn / 2 Temple / 1 Mid
-  description: Retake A usando temple y CT spawn como entradas coordinadas.
-  minimumUtility: [Smoke main, Flash site, Molotov ruins]
-  timingWindows: Iniciar a 22-25s.
-  winCondition: A limpio con dos CTs vivos.
-  reactionTree: >
-    Main libre -> entrar desde temple y CT spawn;
-    T en ruins -> molotov ruins antes de entrar;
-    T en donut -> smoke donut y flanquear desde temple.
-
-[RETAKE] Retake B
-  team: CT
-  setup: 2 CT B / 2 Open B / 1 Lurk Mid
-  description: Retake B coordinado desde CT B y open B.
-  minimumUtility: [Smoke site, Flash ladder, Molotov pit]
-  winCondition: B limpio con dos CTs vivos.
-  reactionTree: >
-    Open B libre -> entrar CT B y open B;
-    T en pit -> molotov pit y flanquear;
-    Ladder activa -> smoke ladder antes de entrar.
-
-[PISTOL] Rush A Main
-  team: T
-  setup: 5 A Main
-  description: Rush a A por main con flashes y molotov de donut.
-  minimumUtility: [Flash main, Smoke donut, Molotov house CT]
-  timingWindows: Entrar a 18-20s.
-  winCondition: A plantado en el primer trade.
-
-[PISTOL] CT Default Pistol
-  team: CT
-  setup: 1 Mid / 2 A (donut + main) / 2 B
-  description: Setup CT conservador; AWP en mid o donut.
-  minimumUtility: [Molotov main, Flash B entrada]
-  winCondition: Dos intercambios positivos.
-
-[ECO] Mid Pick + Execute A
-  team: T
-  setup: 2 Mid / 3 A Main
-  description: Pick en mid y luego execute A con ventaja numérica.
-  minimumUtility: [Smoke mid CT]
-  winCondition: Pick en mid + A plantado.
-
-[FORCE] B Force con SMG
-  team: T
-  setup: 4 B / 1 Mid
-  description: Forzar B con SMGs y utility mínima.
-  minimumUtility: [Smoke CT B, Flash open B]
-  winCondition: B plantado en los primeros trades.
-  timingWindows: Entrar antes de 18s.
-
-[FULL BUY] Mid Control + Split A
-  team: T
-  setup: 2 Mid (river) / 2 Main / 1 Temple (CT mid)
-  description: Tomar mid y splitear A desde main y mid simultáneamente.
-  minimumUtility: [Smoke mid CT, Smoke donut, Smoke house, Flash main, Molotov ruins]
-  timingWindows: Ejecutar split a 22-24s.
-  winCondition: A plantado con cuatro vivos.
-  reactionTree: >
-    Mid tomado -> split inmediato main + mid;
-    CT aggression en mid -> retroceder y execute B;
-    AWP en donut -> smoke donut y entrar por main.
-
-[ANTI-ECO] Hold Mid + B Two
-  team: CT
-  setup: 2 Mid / 1 A / 2 B
-  description: Priorizar mid para cortar el split A del eco.
-  minimumUtility: [Molotov main, Flash open B]
-  winCondition: Eco muerto en main o mid sin llegar a plantar.
-
-[MID ROUND] Rotate to B from A Fake
-  team: T
-  description: Fake A con presión en main, forzar rotación CT y girar a B.
-  timingWindows: Cambiar a B a los 18s cuando CT confirme rotación a A.
-  reactionTree: >
-    CT rota a A -> todos a B con smokes completas;
-    CT no rota -> execute A;
-    CT dividido -> explotar el sitio más débil.
+Si pido una sola táctica puntual (ej: "dame un B Split pistol de Inferno"),
+generá solo esa, completa, sin recortar ningún campo de la interfaz.
 
 ================================================================================
-MAPA: ANUBIS
+8. FORMATO DE ENTREGA
 ================================================================================
-ID: anubis
-Nombre: Anubis
-SideFavor: Balanced (leve ventaja T en pro play reciente)
-Descripción competitiva:
-  Anubis es el mapa más nuevo del pool activo. Tiene una estructura de dos sitios
-  con un mid muy relevante que conecta ambos lados. El T tiene rutas cortas hacia
-  ambos sites, lo que lo hace ideal para ejecuciones rápidas. La CT tiene que
-  gestionar bien el mid para no quedar desprotegida en rotaciones.
-
-Philosophy:
-  - tWinCondition: Ejecutar A con smokes de palace y CT, o ejecutar B rápido
-    aprovechando las rutas cortas.
-  - ctWinCondition: Mantener el control de mid y castigar los ataques T con
-    rotaciones rápidas desde CT.
-  - keyAreas: Mid, A Site, B Site, Water (B), Palace (A), Canal, Bridge
-  - tempo: El T puede imponer ritmo rápido; la CT necesita información temprana.
-  - rotationComplexity: Media — las rotaciones son más cortas que en otros mapas.
-
-Callouts:
-  - siteA: [A Site, Palace, Steps A, CT A, Arches, Stairs A, Corner A]
-  - siteB: [B Site, Water, Bridge B, CT B, Corner B, Short B, Boat]
-  - middle: [Mid, Canal, Pillar mid, Top mid, Connector]
-
-Fundamentals:
-  T:
-    - "A site con smokes de arches y CT A es ejecutable con tres jugadores."
-    - "B water con smoke de CT B y bridge es el execute más rápido del mapa."
-    - "El lurker en canal puede cortar rotaciones CT de A a B."
-    - "Palace sin smoke de arches es un ángulo muerto para el T."
-  CT:
-    - "El AWP en mid o en arches A es la posición más rentable."
-    - "Molotov de water al inicio niega el avance T por B."
-    - "Rotaciones de A a B son cortas; usar CT spawn para defender ambos lados."
-    - "No over-aggression en B short; el T puede flanquear desde canal."
-
---- TÁCTICAS ANUBIS ---
-
-[DEFAULT] Default 2-1-2 Anubis
-  team: T
-  setup: 2 A Palace / 1 Mid Canal / 2 B Water
-  description: Lectura CT con presencia simultánea en ambos sitios y mid.
-  minimumUtility: [Smoke arches A, Smoke CT B, Flash palace]
-  timingWindows: Decidir sitio entre 17-21s.
-  reactionTree: >
-    Pick en mid -> split A (palace + mid);
-    Pick en palace -> execute A completo;
-    Sin pick -> execute B con water + bridge.
-  postplant: Cubrir desde palace y steps A.
-
-[PROTOCOL] Full Execute A
-  team: T
-  setup: 3 Palace / 2 Mid
-  description: Execute A con smokes de CT A, arches y stairs.
-  minimumUtility: [Smoke CT A, Smoke arches, Smoke stairs A, Flash palace, Molotov corner A]
-  utilityLayering: Smoke CT A -> Smoke arches -> Smoke stairs -> Flash palace -> Entrada
-  timingWindows: Ejecutar a 20-22s.
-  winCondition: A plantado en el centro con cuatro vivos.
-  reactionTree: >
-    CT A fumado y arches fumado -> entrada palace + mid simultánea;
-    AWP en arches -> smoke arches primero;
-    CT aggression palace -> esperás smokes y entráis por mid.
-  postplant: Cubrir desde palace y arches con smokes activas.
-
-[PROTOCOL] Full Execute B
-  team: T
-  setup: 4 B Water / 1 Canal Lurk
-  description: Execute B rápido con smokes de CT B, bridge y corner B.
-  minimumUtility: [Smoke CT B, Smoke bridge B, Flash water, Molotov corner B]
-  utilityLayering: Smoke CT B -> Smoke bridge B -> Flash water -> Molotov corner B -> Entrada
-  timingWindows: Ejecutar a 18-20s (es una de las rutas más cortas del mapa).
-  winCondition: B plantado en el centro con tres vivos.
-  reactionTree: >
-    CT B fumado -> entrada doble water + bridge;
-    CT aggression water -> smoke water y entrar por short B;
-    Lurker canal -> corta rotación si CT viene de A.
-  postplant: Cubrir desde water y bridge con smokes activas.
-
-[RETAKE] Retake A
-  team: CT
-  setup: 2 CT Spawn / 2 Palace / 1 Canal
-  description: Retake A coordinado desde CT spawn y palace.
-  minimumUtility: [Smoke site A, Flash arches, Molotov steps A]
-  timingWindows: Iniciar a 21-24s.
-  winCondition: A limpio con dos CTs vivos.
-  reactionTree: >
-    Palace libre -> entrar CT spawn y palace;
-    T en arches -> smoke arches y flanquear;
-    T consolida site -> smoke site y coordinar entrada doble.
-
-[RETAKE] Retake B
-  team: CT
-  setup: 2 CT B / 2 Short B / 1 Canal
-  description: Retake B usando CT B y short B como entradas.
-  minimumUtility: [Smoke water, Flash site B, Molotov corner B]
-  winCondition: B limpio con dos CTs vivos.
-  reactionTree: >
-    Water libre -> entrar CT B y short B;
-    T en corner B -> molotov corner y entrar;
-    T en bridge -> smoke bridge y flanquear por CT B.
-
-[PISTOL] Rush A Palace
-  team: T
-  setup: 5 A Palace
-  description: Rush a A por palace con flashes y molotov de CT A.
-  minimumUtility: [Flash palace, Smoke arches, Molotov CT A]
-  timingWindows: Entrar a 16-18s.
-  winCondition: A plantado en el primer trade.
-  commonMistakes: [Ir a palace de a uno, No cubrir arches]
-
-[PISTOL] Rush B Water
-  team: T
-  setup: 5 B Water
-  description: Rush B por water con flashes coordinadas.
-  minimumUtility: [Flash water, Smoke CT B]
-  timingWindows: Entrar a 15-17s (B es muy cercano en Anubis).
-  winCondition: B plantado en el primer trade.
-
-[PISTOL] CT Default Pistol
-  team: CT
-  setup: 1 Mid / 2 A (arches + palace) / 2 B (water + CT B)
-  description: Setup CT conservador con AWP en arches o mid.
-  minimumUtility: [Molotov water, Flash arches]
-  winCondition: Dos intercambios positivos.
-
-[ECO] Mid Pick + Rush B
-  team: T
-  setup: 1 Mid / 4 B Water
-  description: Pick en mid con rifle eco y rush B con el resto del equipo.
-  minimumUtility: [Flash mid]
-  winCondition: Pick en mid + B plantado.
-
-[FORCE] B Water Force
-  team: T
-  setup: 4 Water / 1 Canal
-  description: Forzar B water con SMGs aprovechando rutas cortas.
-  minimumUtility: [Smoke CT B, Flash water]
-  winCondition: B plantado en los primeros trades.
-  timingWindows: Entrar antes de 16s.
-
-[FULL BUY] A Execute Full Utility
-  team: T
-  setup: 3 Palace / 1 Mid / 1 B (lurk)
-  description: Execute A completo con utility de smokes coordinadas desde palace y mid.
-  minimumUtility: [Smoke CT A, Smoke arches, Smoke stairs A, Flash palace, Molotov corner, Molotov CT A]
-  timingWindows: Ejecutar a 20-22s.
-  winCondition: A plantado con cuatro vivos.
-  reactionTree: >
-    CT A fumado -> entrada palace + mid;
-    CT aggression palace -> smoke y entrar por mid;
-    B lurk -> corta la rotación si CT viene de B.
-
-[ANTI-ECO] Hold Mid + A Two CT
-  team: CT
-  setup: 2 Mid / 3 A
-  description: Priorizar mid para evitar el split A del eco.
-  minimumUtility: [Molotov palace, Flash mid]
-  winCondition: Eco muerto en palace o mid sin plantar.
-
-[MID ROUND] B Quick after A Pressure
-  team: T
-  description: Generar presión rápida en A y girar a B si CT confirma rotación.
-  timingWindows: Cambiar a B a 16-18s (Anubis tiene rotaciones muy cortas).
-  reactionTree: >
-    CT rota a A -> rush B inmediato;
-    CT no rota -> execute A;
-    CT dividido -> explotar B que es el sitio más accesible.
+Devolvé el resultado como objeto(s) TypeScript válidos siguiendo la interfaz
+`Tactic` de la sección 4, listos para pegar en el archivo del mapa
+correspondiente (`strats/*.ts` o `protocols.ts` / `defaults.ts` según
+tacticType). No agregues explicación fuera del código salvo que la pida.
 
 ================================================================================
-NOTAS DE IMPLEMENTACIÓN PARA COPILOT
+9. CÓMO PEDIRLO (ejemplos de uso de este prompt)
 ================================================================================
-1. Usar la estructura del script Python existente para generar los archivos
-   TypeScript de cada mapa nuevo (dust2, mirage, vertigo, ancient, anubis).
-2. Cada mapa debe tener exactamente los mismos archivos que inferno y nuke:
-   philosophy.ts, callouts.ts, fundamentals.ts, defaults.ts, protocols.ts,
-   retakes.ts, reaggressions.ts, antiEco.ts, strats/pistol.ts, strats/eco.ts,
-   strats/force.ts, strats/buy.ts, strats/midRound.ts, index.ts.
-3. El CATEGORY_MAP del script Python debe incluir:
-   "Anti Eco": "Anti Eco", "Force Buy": "Force", "Full Buy": "Buy",
-   "Pistol": "Pistol", "Eco": "Eco", "Protocol": "Protocol",
-   "Default": "Default", "Retakes": "Retake", "Mid Round": "MidRound",
-   "Reaggression": "Reaggression"
-4. Cada táctica debe tener un campo roles con al menos un rol detallado.
-5. Los callouts deben estar organizados en siteA, siteB y middle.
-6. La UI de la página de mapa debería permitir filtrar por:
-   - equipo (T / CT / Ambos)
-   - categoría (Pistol / Eco / Force / Full Buy / Default / Protocol / etc.)
-   - tipo (ataque / defensa / retake)
-7. Cada rol debería mostrar en la UI:
-   - badge de equipo (T/CT), badge de categoría, setup visual (íconos de jugadores)
-   - utilityLayering como pasos visuales
-   - reactionTree como árbol de decisión clicable
-8. El campo postplant de cada táctica debe mostrarse en una sección separada
-   dentro de la vista de la táctica, no colapsado.
+- "Dame el Execute A de Anubis, Rifle, estilo Split desde palace y mid."
+- "Necesito la Setup CT de mid-round de Vertigo."
+- "Armame las 8 tácticas mínimas de Ancient completas."
+- "Convertí esta táctica vieja de Dust2 [pegar bloque] al formato nuevo."
+
 ================================================================================
-FIN DEL ARCHIVO DE CONTEXTO
+FIN DEL PROMPT
 ================================================================================
